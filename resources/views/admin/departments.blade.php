@@ -1,0 +1,242 @@
+@extends('layouts.admin')
+
+@section('title', 'Departments')
+
+@push('styles')
+<style>
+    .table-action-icon {
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+        margin-top: -3px;
+    }
+    .badge {
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    .table-cta-icon {
+        width: 14px;
+        height: 14px;
+    }
+</style>
+@endpush
+
+@section('content')
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="page-header">MANAGE DEPARTMENTS</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item fw-medium">Admin</li>
+                    <li class="breadcrumb-item active text-muted">Departments</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="flex-grow-1" style="max-width: 220px;">
+                    <input type="search" class="form-control form-control-sm" placeholder="Search..." id="departmentSearch">
+                </div>
+                <div class="d-flex flex-grow-1 justify-content-end p-0">
+                    <button class="btn btn-outline-success btn-sm d-flex mr-2">
+                        <span class="d-none d-sm-inline mr-1">Import</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="table-cta-icon" viewBox="0 0 256 256">
+                            <path d="M200,24H72A16,16,0,0,0,56,40V64H40A16,16,0,0,0,24,80v96a16,16,0,0,0,16,16H56v24a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V40A16,16,0,0,0,200,24ZM72,160a8,8,0,0,1-6.15-13.12L81.59,128,65.85,109.12a8,8,0,0,1,12.3-10.24L92,115.5l13.85-16.62a8,8,0,1,1,12.3,10.24L102.41,128l15.74,18.88a8,8,0,0,1-12.3,10.24L92,140.5,78.15,157.12A8,8,0,0,1,72,160Zm56,56H72V192h56Zm0-152H72V40h56Zm72,152H144V192a16,16,0,0,0,16-16v-8h40Zm0-64H160V104h40Zm0-64H160V80a16,16,0,0,0-16-16V40h56Z"></path>
+                        </svg>                
+                    </button>
+                    <button class="btn btn-primary btn-sm d-flex" data-toggle="modal" data-target="#addDepartmentModal">
+                        <span>Add Department</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body table-responsive p-0">
+                <table class="table table-bordered text-nowrap mb-0" id="departmentsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Department Name</th>
+                            <th>Short Name</th>
+                            <th>Students</th>
+                            <th>Coordinators</th>
+                            <th style="white-space: nowrap; width: 12%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($departments as $index => $department)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $department->dept_name }}</td>
+                            <td>{{ $department->short_name }}</td>
+                            <td>{{ $department->students_count }}</td>
+                            <td>{{ $department->coordinators_count }}</td>
+                            <td class="text-center px-2" style="white-space: nowrap;">
+                                <form action="{{ route('admin.delete_D', $department->dept_id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
+                                        <span class="d-none d-sm-inline">Delete</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="table-action-icon" viewBox="0 0 256 256">
+                                            <path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-end" id="paginationControls">
+                    <!-- Pagination will be generated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add Department Modal -->
+<div class="modal fade" id="addDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDepartmentModalLabel">Add New Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addDepartmentForm" action="{{ route('admin.new_d') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="deptName">Department Name</label>
+                        <input type="text" class="form-control" id="deptName" name="dept_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortName">Short Name</label>
+                        <input type="text" class="form-control" id="shortName" name="short_name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Department</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+$(document).ready(function() {
+    // Client-side search functionality
+    $('#departmentSearch').on('keyup', function() {
+        const searchText = $(this).val().toLowerCase();
+        $('#departmentsTable tbody tr').each(function() {
+            const rowText = $(this).text().toLowerCase();
+            $(this).toggle(rowText.indexOf(searchText) > -1);
+        });
+        updatePagination();
+    });
+
+    // Client-side pagination
+    const itemsPerPage = 10;
+    let currentPage = 1;
+
+    function updatePagination() {
+        const visibleRows = $('#departmentsTable tbody tr:visible');
+        const totalPages = Math.ceil(visibleRows.length / itemsPerPage);
+        const $pagination = $('#paginationControls');
+        $pagination.empty();
+
+        // Previous button
+        $pagination.append(`
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="prev">«</a>
+            </li>
+        `);
+
+        // Page numbers
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            $pagination.append(`
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>
+            `);
+        }
+
+        // Next button
+        $pagination.append(`
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="next">»</a>
+            </li>
+        `);
+
+        // Show/hide rows based on current page
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+
+        visibleRows.each(function(index) {
+            $(this).toggle(index >= startIndex && index < endIndex);
+        });
+    }
+
+    // Pagination click handler
+    $(document).on('click', '#paginationControls a', function(e) {
+        e.preventDefault();
+        const action = $(this).data('page');
+
+        if (action === 'prev' && currentPage > 1) {
+            currentPage--;
+        } else if (action === 'next') {
+            currentPage++;
+        } else if (!isNaN(action)) {
+            currentPage = parseInt(action);
+        }
+
+        updatePagination();
+    });
+
+    // Initialize pagination
+    updatePagination();
+
+    // Add department form submission
+    $('#addDepartmentForm').submit(function(e) {
+        e.preventDefault();
+        $(this).find('button[type="submit"]').prop('disabled', true);
+        
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                location.reload();
+            },
+            error: function(xhr) {
+                alert('Error: ' + xhr.responseJSON.message);
+                $('#addDepartmentForm').find('button[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
+});
+</script>
+@endsection

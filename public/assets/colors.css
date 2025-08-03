@@ -1,0 +1,46 @@
+
+
+/* Base color */
+.btn-gold {
+  color: #000; /* readable text */
+  background-color: #f7c500;
+  border-color: #f7c500;
+}
+
+/* Hover state */
+.btn-gold:hover {
+  color: #000;
+  background-color: #e6b800; /* darker gold */
+  border-color: #d9ad00;
+}
+
+/* Focus state */
+.btn-gold:focus, .btn-gold.focus {
+  box-shadow: 0 0 0 0.25rem rgba(247, 197, 0, 0.5);
+}
+
+/* Active (pressed) state */
+.btn-gold:active, .btn-gold.active,
+.show > .btn-gold.dropdown-toggle {
+  color: #000;
+  background-color: #cca300;
+  border-color: #b38f00;
+}
+
+/* Disabled state */
+.btn-gold:disabled, .btn-gold.disabled {
+  color: #000;
+  background-color: #727272;
+  border-color: #979695;
+  opacity: 0.65;
+}
+
+.bg-main {
+  background-color: #900303;; /* Gold background */
+}
+
+.active-profile {
+  color: #000; /* Ensure text is readable */
+  border: 3px solid #0d6efd; /* Optional: add border for emphasis */
+
+}
