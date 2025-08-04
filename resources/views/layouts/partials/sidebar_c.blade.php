@@ -11,7 +11,7 @@
       <!-- Sidebar user (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="{{asset(auth()->user()->pic)}}" class="img-circle elevation-2" alt="User Image">
+          <img src="{{ asset('storage/' . auth()->user()->pic) }}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="#" class="d-block">{{ Auth::user()->fname }} {{ Auth::user()->lname }}</a>
@@ -36,7 +36,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="{{route('coordinator.htes')}}" class="nav-link {{ Request::is('coordinator.htes*') ? 'current-page' : '' }}">
+            <a href="{{route('coordinator.htes')}}" class="nav-link {{ Request::is('coordinator/htes*') ? 'current-page' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="nav-link-icon" viewBox="0 0 256 256"><path d="M248,208H232V96a8,8,0,0,0,0-16H184V48a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16V208H24a8,8,0,0,0,0,16H248a8,8,0,0,0,0-16ZM80,72H96a8,8,0,0,1,0,16H80a8,8,0,0,1,0-16Zm-8,48a8,8,0,0,1,8-8H96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,120Zm64,88H88V160h48Zm8-80H128a8,8,0,0,1,0-16h16a8,8,0,0,1,0,16Zm0-40H128a8,8,0,0,1,0-16h16a8,8,0,0,1,0,16Zm72,120H184V96h32Z"></path></svg>
                 <p>HTEs</p>
             </a>

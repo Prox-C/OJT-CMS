@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HteController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InternController;
@@ -41,6 +42,11 @@ Route::prefix('intern')->group(function() {
     Route::post('/login', [AuthController::class, 'internAuthenticate'])->name('intern.authenticate');
 });
 
+Route::prefix('hte')->group(function() {
+    Route::get('/login', [AuthController::class, 'hteLogin'])->name('hte.login');
+    Route::post('/login', [AuthController::class, 'hteAuthenticate'])->name('hte.authenticate');
+});
+
 // Protected admin routes
 Route::middleware(['auth:web', 'admin'])->prefix('admin')->group(function() {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -72,9 +78,9 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::post('/interns', [CoordinatorController::class, 'registerIntern'])->name('coordinator.register_i');
 
     Route::get('/htes', [CoordinatorController::class, 'htes'])->name('coordinator.htes');
+    Route::get('/htes/create', [CoordinatorController::class, 'newHTE'])->name('coordinator.new_h');
+    Route::post('/htes', [CoordinatorController::class, 'registerHTE'])->name('coordinator.register_h');
 
-
-    
 });
 
 // Protected intern routes
@@ -95,15 +101,33 @@ Route::middleware(['auth:web', 'intern'])->prefix('intern')->group(function() {
    
 });
 
+// Protected HTE routes
+Route::middleware(['auth:web', 'hte'])->prefix('hte')->group(function() {
+    Route::get('/dashboard', [HteController::class, 'dashboard'])->name('hte.dashboard');
+   
+});
+
 /* System */
 // For coordinators
 // Unified password setup routes
 Route::get('/setup-password/{token}/{role}', [AuthController::class, 'showSetupForm'])
-    ->where('role', 'coordinator|intern') // Only accept these values
+    ->where('role', 'coordinator|intern|hte') // Only accept these values
     ->name('password.setup');
 
 Route::post('/setup-password/{token}/{role}', [AuthController::class, 'processSetup'])
-    ->where('role', 'coordinator|intern');
+    ->where('role', 'coordinator|intern|hte');
+
+
+    Route::get('/test-mail', function() {
+    return view('emails.hte-setup', [
+        'contactName' => 'Test Name',
+        'organizationName' => 'Test Org',
+        'contactEmail' => 'test@example.com',
+        'tempPassword' => 'temp123',
+        'setupLink' => '#',
+        'hasMoa' => true
+    ]);
+});
 
 
 

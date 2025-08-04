@@ -66,7 +66,7 @@
                                         <span class="badge bg-success-subtle text-success p-2">Submitted</span><br>
                                         <small>{{ $document->created_at->format('Y-m-d') }}</small>
                                     @else
-                                        <span class="badge bg-danger-subtle text-danger p-2">Missing</span>
+                                        <span class="badge bg-danger-subtle text-danger py-2 px-3 rounded-pill">Missing</span>
                                     @endif
                                 </td>
                                 <td class="text-center align-middle">

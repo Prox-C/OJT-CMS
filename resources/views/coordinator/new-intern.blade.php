@@ -8,7 +8,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="page-header">Intern Registration</h1>
+        <h1 class="page-header">INTERN REGISTRATION</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -24,7 +24,7 @@
     <div class="container-fluid">
         <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Add Student</h3>
+            <h3 class="card-title">Student Information</h3>
         </div>
 
         <div class="card-body">
