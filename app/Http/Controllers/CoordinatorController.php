@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Intern;
-use Illuminate\Http\Request;
-
+use App\Models\Hte;
 use App\Models\User;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Intern;
+
+use App\Mail\HteSetupMail;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Mail\InternSetupMail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 
 
@@ -21,6 +23,7 @@ class CoordinatorController extends Controller
         return view('coordinator.dashboard');
     }
 
+    // Intern Methods
     public function showInterns()
     {
         // Get the authenticated user's coordinator ID
@@ -65,7 +68,7 @@ class CoordinatorController extends Controller
             'lname' => $validated['last_name'],
             'contact' => $validated['contact'],
             'birthdate' => $validated['birthdate'],
-            'pic' => 'profile_pics/profile.jpg', // Default profile picture
+            'pic' => 'profile-pictures/profile.jpg', // Default profile picture
             'temp_password' => true,
             'username' => $validated['student_id']
         ]);
@@ -108,7 +111,88 @@ class CoordinatorController extends Controller
             ->with('success', 'Intern registered successfully. Activation email sent.');
     }
 
+    // HTE Methods
     public function htes() {
         return view('coordinator.htes');
     } 
+
+    public function newHTE() {
+        return view('coordinator.new-hte');
+    }
+
+    public function registerHTE(Request $request)
+    {
+        $validated = $request->validate([
+            'contact_email' => 'required|email|unique:users,email',
+            'contact_first_name' => 'required|string|max:255',
+            'contact_last_name' => 'required|string|max:255',
+            'contact_number' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'organization_name' => 'required|string|max:255',
+            'organization_type' => 'required|in:private,government,ngo,educational,other',
+            'hte_status' => 'required|in:active,new',
+            'description' => 'nullable|string',
+            'coordinator_id' => 'required|exists:coordinators,id'
+        ]);
+
+        // Generate temporary password
+        $tempPassword = Str::random(16);
+
+        // Create user account with default profile picture
+        $user = User::create([
+            'email' => $validated['contact_email'],
+            'password' => Hash::make($tempPassword),
+            'fname' => $validated['contact_first_name'],
+            'lname' => $validated['contact_last_name'],
+            'contact' => $validated['contact_number'],
+            'pic' => 'profile-pictures/profile.jpg', // Default profile picture
+            'temp_password' => true,
+            'username' => $validated['contact_email'] // HTEs use email as username
+        ]);
+
+        // Create HTE record
+        $hte = Hte::create([
+            'user_id' => $user->id,
+            'status' => $validated['hte_status'],
+            'type' => $validated['organization_type'],
+            'address' => $validated['address'],
+            'description' => $validated['description'],
+            'organization_name' => $validated['organization_name'],
+            'slots' => 0, // Initial slots can be 0, can be updated later
+            'moa_path' => null // Will be set after MOA is uploaded
+        ]);
+
+        // Generate activation token
+        $token = Str::random(60);
+        DB::table('password_setup_tokens')->insert([
+            'email' => $user->email,
+            'token' => $token,
+            'created_at' => now()
+        ]);
+
+        // Send activation email
+        $setupLink = route('password.setup', [
+            'token' => $token, 
+            'role' => 'hte' // New role for HTE
+        ]);
+        $contactName = $validated['contact_first_name'] . ' ' . $validated['contact_last_name'];
+        
+        // Check if we need to attach MOA (for new HTEs)
+        $moaAttachmentPath = null;
+        if ($validated['hte_status'] === 'new') {
+            $moaAttachmentPath = storage_path('app/public/moa-templates/default-moa.pdf');
+        }
+
+        Mail::to($user->email)->send(new HteSetupMail(
+            $setupLink,
+            $contactName,
+            $validated['organization_name'],
+            $tempPassword,
+            $moaAttachmentPath,
+            $user->email // Add the email address here
+        ));
+
+        return redirect()->route('coordinator.htes')
+            ->with('success', 'HTE registered successfully. Activation email sent.');
+    }
 }
