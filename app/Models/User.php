@@ -45,4 +45,9 @@ class User extends Authenticatable
         return $this->hasOne(Intern::class);
     }
 
+    public function hte()
+    {
+        return $this->hasOne(Hte::class);
+    }
+
 }
