@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hte;
 use App\Models\User;
 use App\Models\Admin;
-use App\Models\Coordinator;
 use App\Models\Intern;
-use Illuminate\Http\Request;
+use App\Models\Coordinator;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail; // For sending emails
@@ -30,6 +31,11 @@ class AuthController extends Controller
     public function internLogin()
     {
         return view('auth.login-intern');
+    }
+
+    public function hteLogin()
+    {
+        return view('auth.login-hte');
     }
 
     public function logout(Request $request)
@@ -128,24 +134,77 @@ class AuthController extends Controller
         ])->onlyInput('student_id');
     }
 
-    public function showSetupForm($token, $role)
+    public function hteAuthenticate(Request $request)
     {
-        $tokenData = DB::table('password_setup_tokens')
-            ->where('token', $token)
-            ->where('created_at', '>', now()->subHours(24))
-            ->first();
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-        if (!$tokenData) {
-            return redirect()->route("{$role}.login")
-                ->with('error', 'Invalid or expired activation link.');
+        // Find HTE by email with user relationship
+        $hte = Hte::with('user')->whereHas('user', function($query) use ($credentials) {
+            $query->where('email', $credentials['email']);
+        })->first();
+
+        if (!$hte) {
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->onlyInput('email');
         }
 
-        return view('auth.setup-password', [
-            'token' => $token,
-            'email' => $tokenData->email,
-            'role' => $role
-        ]);
+        // Attempt login
+        if (Auth::attempt([
+            'email' => $credentials['email'],
+            'password' => $credentials['password']
+        ], $request->remember)) {
+            // Check if user is actually an HTE
+            if (!auth()->user()->hte) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'This account is not registered as an HTE.',
+                ])->onlyInput('email');
+            }
+
+            $request->session()->regenerate();
+            return redirect()->intended('hte/dashboard');
+        }
+
+        return back()->withErrors([
+            'password' => 'The provided password is incorrect.',
+        ])->onlyInput('email');
     }
+
+public function showSetupForm($token, $role)
+{
+    // Validate the role first
+    if (!in_array($role, ['intern', 'coordinator', 'hte'])) {
+        return redirect()->route('login')
+            ->with('error', 'Invalid account type.');
+    }
+
+    $tokenData = DB::table('password_setup_tokens')
+        ->where('token', $token)
+        ->where('created_at', '>', now()->subHours(24))
+        ->first();
+
+    if (!$tokenData) {
+        return redirect()->route('login')
+            ->with('error', 'Invalid or expired activation link.');
+    }
+
+    // Check if user exists and has the correct role
+    $user = User::where('email', $tokenData->email)->first();
+    if (!$user) {
+        return redirect()->route('login')
+            ->with('error', 'User account not found.');
+    }
+
+    return view('auth.setup-password', [
+        'token' => $token,
+        'email' => $tokenData->email,
+        'role' => $role
+    ]);
+}
 
     public function processSetup(Request $request, $token, $role)
     {
