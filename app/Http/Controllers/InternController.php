@@ -60,52 +60,52 @@ class InternController extends Controller
         }
     }
 
-public function updateProfilePicture(Request $request)
-{
-    $request->validate([
-        'profile_pic' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-    ]);
+    public function updateProfilePicture(Request $request)
+    {
+        $request->validate([
+            'profile_pic' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
-    try {
-        $userId = auth()->id();
-        $user = DB::table('users')->where('id', $userId)->first();
-        
-        if (!$user) {
-            throw new \Exception('User not found');
-        }
-
-        if ($request->hasFile('profile_pic')) {
-            // Delete old picture if exists
-            if ($user->pic) {
-                Storage::delete($user->pic);
+        try {
+            $userId = auth()->id();
+            $user = DB::table('users')->where('id', $userId)->first();
+            
+            if (!$user) {
+                throw new \Exception('User not found');
             }
 
-            // Store new picture
-            $path = $request->file('profile_pic')->store('profile-pictures', 'public');
-            
-            // Update database directly
-            $updated = DB::table('users')
-                        ->where('id', $userId)
-                        ->update(['pic' => $path]);
-            
-            if (!$updated) {
-                throw new \Exception('Failed to update profile picture in database');
+            if ($request->hasFile('profile_pic')) {
+                // Delete old picture if exists
+                if ($user->pic) {
+                    Storage::delete($user->pic);
+                }
+
+                // Store new picture
+                $path = $request->file('profile_pic')->store('profile-pictures', 'public');
+                
+                // Update database directly
+                $updated = DB::table('users')
+                            ->where('id', $userId)
+                            ->update(['pic' => $path]);
+                
+                if (!$updated) {
+                    throw new \Exception('Failed to update profile picture in database');
+                }
+
+                return response()->json([
+                    'url' => asset('storage/'.$path),
+                    'message' => 'Profile picture updated successfully'
+                ]);
             }
 
+            throw new \Exception('No file uploaded');
+            
+        } catch (\Exception $e) {
             return response()->json([
-                'url' => asset('storage/'.$path),
-                'message' => 'Profile picture updated successfully'
-            ]);
+                'message' => $e->getMessage()
+            ], 400);
         }
-
-        throw new \Exception('No file uploaded');
-        
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => $e->getMessage()
-        ], 400);
     }
-}
     
     public function updateSkills(Request $request)
     {
