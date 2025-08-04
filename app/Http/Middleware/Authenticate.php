@@ -9,7 +9,6 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
         if (! $request->expectsJson()) {
-            // Check if the route is admin-related
             if ($request->is('admin*')) {
                 return route('admin.login');
             }
@@ -19,7 +18,10 @@ class Authenticate extends Middleware
             if ($request->is('intern*')) {
                 return route('intern.login');
             }
-            return route('login'); // Default for other routes
+            if ($request->is('hte*')) {
+                return route('hte.login');
+            }
+            return route('login');
         }
-    }
+}
 }
