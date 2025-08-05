@@ -1,3 +1,1 @@
-# OJT-CMS
-
-### A Web-Based Internship Coordination and Management Platform
+<h1 align="center">OJT-CMS</h1>
