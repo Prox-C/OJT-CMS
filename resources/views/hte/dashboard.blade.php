@@ -1,5 +1,5 @@
 {{-- resources/views/dashboard.blade.php --}}
-@extends('layouts.intern')
+@extends('layouts.hte')
 
 @section('title', 'HTE | Home')
 
