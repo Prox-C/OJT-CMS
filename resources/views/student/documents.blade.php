@@ -63,10 +63,10 @@
                                 </td>
                                 <td class="text-center align-middle">
                                     @if($document)
-                                        <span class="badge bg-success-subtle text-success p-2">Submitted</span><br>
+                                        <span class="badge bg-success-subtle text-success py-2 px-3 rounded-4 w-100">Submitted</span><br>
                                         <small>{{ $document->created_at->format('Y-m-d') }}</small>
                                     @else
-                                        <span class="badge bg-danger-subtle text-danger py-2 px-3 rounded-pill">Missing</span>
+                                        <span class="badge bg-danger-subtle text-danger py-2 px-3 rounded-pill w-100">Missing</span>
                                     @endif
                                 </td>
                                 <td class="text-center align-middle">
@@ -199,7 +199,7 @@ $(document).ready(function() {
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 success: function() {
                     // Update status column
-                    row.find('td:eq(2)').html('<span class="badge bg-danger-subtle text-danger p-2">Missing</span>');
+                    row.find('td:eq(2)').html('<span class="badge bg-danger-subtle text-danger px-2 py-3 w-100">Missing</span>');
                     
                     // Replace action buttons with new upload button
                     row.find('td:eq(3)').html(`

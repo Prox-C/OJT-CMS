@@ -137,7 +137,7 @@ $(document).ready(function() {
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 success: function() {
                     // Update status column
-                    row.find('td:eq(2)').html('<span class="badge bg-danger-subtle text-danger p-2">Missing</span>');
+                    row.find('td:eq(2)').html('<span class="badge bg-danger-subtle text-danger py-2 px-3 w-100 rounded-pill">Missing</span>');
                     
                     // Replace action buttons with new upload button
                     row.find('td:eq(3)').html(`
