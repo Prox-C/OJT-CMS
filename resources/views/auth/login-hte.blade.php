@@ -16,16 +16,6 @@
             <h3>OJT-CMS</h3>
             <p class="text-muted mb-5">Host Training Establishment Portal</p>
 
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <form method="POST" action="{{ route('hte.authenticate') }}" class="w-100">
                 @csrf
                 <div class="form-floating mb-3">
