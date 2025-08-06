@@ -1,14 +1,16 @@
 @component('mail::message')
 # HTE Account Registration
 
-Dear {{ $contactName }},
+Greetings {{ $contactName }},
 
-Your organization **{{ $organizationName }}** has been registered.
+As a representative of **{{ $organizationName }}**, a selected Host Training Establishment (HTE) for
+the internship programs of Eastern Visayas State University, you are required to set up your account 
+on our Internship Management System.
 
 **Email:** {{ $contactEmail }}  
 **Temporary Password:** {{ $tempPassword }}
 
-@component('mail::button', ['url' => $setupLink])
+@component('mail::button', ['url' => $setupLink, 'color' => 'success'])
 Set Your Password
 @endcomponent
 
