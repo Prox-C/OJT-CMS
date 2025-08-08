@@ -17,13 +17,21 @@ class Hte extends Model
         'address',
         'description',
         'slots',
-        'moa_path'
+        'moa_path',
+        'first_login',
     ];
 
     protected $casts = [
         'status' => 'string',
         'type' => 'string'
     ];
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'hte_skill')
+                    ->using(HTESkill::class)
+                    ->withTimestamps();
+    }
 
     /**
      * Relationship with User model

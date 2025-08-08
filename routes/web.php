@@ -107,6 +107,24 @@ Route::middleware(['auth:web', 'hte'])->prefix('hte')->group(function() {
    
 });
 
+// HTE First Login
+Route::middleware(['auth', 'hte'])->group(function() {
+    Route::get('/hte/first-login/details', [HTEController::class, 'showDetailsForm'])
+         ->name('hte.first-login.details');
+         
+    Route::put('/hte/first-login/confirm', [HTEController::class, 'confirmDetails'])
+         ->name('hte.confirm-details');
+         
+    Route::get('/hte/first-login/skills', [HTEController::class, 'showSkillsForm'])
+         ->name('hte.first-login.skills');
+
+    Route::get('/hte/skills/select', [HTEController::class, 'showSkillsForm'])
+         ->name('hte.first-login.skills');
+         
+    Route::post('/hte/skills/save', [HTEController::class, 'saveSkills'])
+         ->name('hte.save-skills');
+});
+
 /* System */
 // For coordinators
 // Unified password setup routes
