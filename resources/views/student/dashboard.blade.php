@@ -12,7 +12,7 @@
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item fw-medium">Student</li>
+          <li class="breadcrumb-item fw-medium">Intern</li>
           <li class="breadcrumb-item active text-muted">Dashboard</li>
         </ol>
       </div>
@@ -27,7 +27,7 @@
       <div class="col-lg-4 col-md-6 col-12">
         <div class="small-box bg-danger">
           <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-            <h2 class="fw-medium">Pending</h2>
+            <h2 class="fw-medium text-capitalize">{{ $status }}</h2>
             <p>Status</p>
           </div>
           <div class="infobox-icon">
@@ -42,7 +42,7 @@
           <!-- small card -->
           <div class="small-box bg-info"> 
               <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-                  <h2 class="fw-medium">0 out of 8</h2>
+                  <h2 class="fw-medium">{{ $documentCount }} out of 8</h2>
                   <p>Requirements</p>
               </div>
               <div class="infobox-icon">

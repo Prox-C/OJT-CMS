@@ -20,6 +20,6 @@
 
 </div>
 
-@include('layouts.partials.scripts') {{-- Extract scripts to a separate file --}}
+@include('layouts.partials.scripts_i') {{-- Extract scripts to a separate file --}}
 </body>
 </html>
