@@ -113,8 +113,9 @@ class CoordinatorController extends Controller
 
     // HTE Methods
     public function htes() {
-        return view('coordinator.htes');
-    } 
+        $htes = Hte::all(); // Get all HTEs regardless of status
+        return view('coordinator.htes', compact('htes'));
+    }
 
     public function newHTE() {
         return view('coordinator.new-hte');
