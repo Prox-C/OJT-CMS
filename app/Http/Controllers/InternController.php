@@ -17,7 +17,26 @@ class InternController extends Controller
             return redirect()->route('intern.skills.select');
         }
         
-        return view('student.dashboard');
+        $intern = auth()->user()->intern;
+        $documentCount = $intern->documents()->count(); // Assuming you have a documents relationship
+        
+        return view('student.dashboard', [
+            'status' => $intern->status,
+            'documentCount' => $documentCount
+        ]);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,incomplete'
+        ]);
+
+        auth()->user()->intern->update([
+            'status' => $request->status
+        ]);
+
+        return response()->json(['message' => 'Status updated successfully']);
     }
 
     public function profile()
