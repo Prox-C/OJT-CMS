@@ -256,3 +256,50 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<script>
+$(document).ready(function() {
+    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+    
+    const updateSelectionCount = () => {
+        const selected = $('.skill-checkbox:checked').length;
+        $('#selectedCount').text(selected);
+        $('#submitBtn').prop('disabled', selected < 5);
+    };
+
+    $('.skill-checkbox').change(updateSelectionCount);
+    updateSelectionCount();
+
+    $('#skillsForm').submit(function(e) {
+        e.preventDefault();
+        
+        if ($('.skill-checkbox:checked').length < 5) {
+            alert('Please select at least 5 skills');
+            return;
+        }
+
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                }
+            },
+            error: function(xhr) {
+                // Completely commented out error handling
+                // if (xhr.status !== 419) {
+                //     toastr.error(xhr.responseJSON?.message || 'Error saving skills');
+                // }
+                
+                // Optional: You might want to keep this for debugging
+                console.log('Error occurred:', xhr.status, xhr.responseText);
+            }
+        });
+    });
+});
+</script>
