@@ -31,4 +31,11 @@ class Skill extends Model
     {
         return $this->belongsToMany(Intern::class, 'student_skill', 'skills_id', 'intern_id');
     }
+
+    public function htes()
+    {
+        return $this->belongsToMany(HTE::class, 'hte_skill')
+                    ->using(HTESkill::class)
+                    ->withTimestamps();
+    }
 }
