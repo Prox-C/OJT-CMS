@@ -19,7 +19,7 @@ class Department extends Model
 
     public function interns()
     {
-        return $this->hasMany(Intern::class, 'dept_id');
+        return $this->hasMany(Intern::class, 'dept_id', 'dept_id');
     }
 
     public function coordinators()

@@ -28,8 +28,7 @@ class Hte extends Model
 
     public function skills()
     {
-        return $this->belongsToMany(Skill::class, 'hte_skill')
-                    ->using(HTESkill::class)
+        return $this->belongsToMany(Skill::class, 'hte_skill', 'hte_id', 'skill_id')
                     ->withTimestamps();
     }
 

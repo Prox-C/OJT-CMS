@@ -58,7 +58,13 @@
                       @forelse ($interns as $intern)
                       <tr>
                           <td class="align-middle">{{ $intern->student_id }}</td>
-                          <td class="align-middle">{{ $intern->user->fname }} {{ $intern->user->lname }}</td>
+                          <td class="align-middle">
+                              <img src="{{ asset('storage/' . $intern->user->pic) }}" 
+                                  alt="Profile Picture" 
+                                  class="rounded-circle me-2 table-pfp" 
+                                  width="30" height="30">
+                              {{ $intern->user->fname }} {{ $intern->user->lname }}
+                          </td>                          
                           <td class="align-middle">{{ $intern->department->dept_name ?? 'N/A' }}</td>
                           <td class="align-middle text-center">{{ $intern->year_level }}{{ strtoupper($intern->section) }}</td>
                           <td class="align-middle text-center">

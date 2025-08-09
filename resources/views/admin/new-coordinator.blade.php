@@ -64,7 +64,7 @@
                     <div class="form-group">
                         <label for="email">Email Address <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="email" name="email" 
-                            placeholder="e.g. bonifacio.salvador@evsu.edu.ph" required>
+                            placeholder="e.g. juan.delacruz@evsu.edu.ph" required>
                     </div>
                 </div>
                 
@@ -92,8 +92,8 @@
                     <div class="form-group">
                         <label for="can_add_hte">HTE Privilege <span class="text-danger">*</span></label>
                         <select class="form-control" id="can_add_hte" name="can_add_hte" required>
-                            <option value="1">Allowed</option>
                             <option value="0" selected>Not Allowed</option>
+                            <option value="1">Allowed</option>
                         </select>
                     </div>
                 </div>

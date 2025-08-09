@@ -14,6 +14,26 @@
 
 
 <style>
+
+    .info-box {
+        border-left: 4px solid #007bff;
+    }
+
+    .table-actions {
+        white-space: nowrap;
+    }
+
+    .badge {
+        font-size: 0.85em;
+        padding: 0.35em 0.65em;
+    }
+
+    .table-pfp {
+        position: relative;
+        top: -2px;
+    }
+
+
   .current-page {
       background-color: #8f1010 !important;
       color: #fff !important;

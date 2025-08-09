@@ -81,6 +81,14 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::get('/htes/create', [CoordinatorController::class, 'newHTE'])->name('coordinator.new_h');
     Route::post('/htes', [CoordinatorController::class, 'registerHTE'])->name('coordinator.register_h');
 
+    Route::get('/htes/{id}', [CoordinatorController::class, 'showHTE'])->name('coordinator.hte.show');
+
+    // For future implementation
+    Route::get('/htes/{id}/edit', [CoordinatorController::class, 'editHTE'])->name('coordinator.hte.edit');
+    Route::delete('/htes/{id}', [CoordinatorController::class, 'destroyHTE'])->name('coordinator.hte.destroy');
+
+    Route::get('/deploy', [CoordinatorController::class, 'deploy'])->name('coordinator.deploy');
+
 });
 
 // Protected intern routes

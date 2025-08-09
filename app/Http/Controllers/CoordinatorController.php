@@ -196,4 +196,14 @@ class CoordinatorController extends Controller
         return redirect()->route('coordinator.htes')
             ->with('success', 'HTE registered successfully. Activation email sent.');
     }
+
+public function showHTE($id)
+{
+    $hte = Hte::with(['user', 'skills', 'skills.department'])
+        ->findOrFail($id);
+    
+    $canManage = auth()->user()->coordinator->can_add_hte == 1;
+    
+    return view('coordinator.hte_show', compact('hte', 'canManage'));
+}
 }
