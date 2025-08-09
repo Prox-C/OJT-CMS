@@ -58,18 +58,20 @@ $(document).ready(function() {
             const documentType = row.data('document-type');
             
             // Show loading state
-            $(this).html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
+            const deleteBtn = $(this);
+            deleteBtn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
             
             $.ajax({
                 url: '{{ route("intern.docs.delete") }}',
                 method: 'DELETE',
                 data: { id: documentId },
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                success: function() {
-                    // Update status column
-                    row.find('td:eq(2)').html('<span class="badge bg-danger-subtle text-danger py-2 px-3 w-100 rounded-pill">Missing</span>');
+                success: function(response) {
+                    // Update the row
+                    row.find('td:eq(2)').html(`
+                        <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill w-100">Missing</span>
+                    `);
                     
-                    // Replace action buttons with new upload button
                     row.find('td:eq(3)').html(`
                         <button class="btn btn-sm btn-success upload-document w-100" 
                                 data-type="${documentType}">
@@ -78,25 +80,34 @@ $(document).ready(function() {
                         </button>
                     `);
                     
-                    updateCounter();
-                    updateInternStatus();
-                    initializeDocumentHandlers();
+                    // Get current count before updating
+                    const currentCount = parseInt($('#documentCounter').text());
+                    $('#documentCounter').text(currentCount - 1);
+                    updateStatusBadge(currentCount - 1);
                     
-                    toastr.success('Document removed successfully');
+                    toastr.success(response.message);
+                    
+                    if (response.new_status === 'incomplete') {
+                        toastr.info('Status changed to Incomplete');
+                    }
+                    
+                    initializeDocumentHandlers();
                 },
                 error: function(xhr) {
                     toastr.error('Error removing document: ' + (xhr.responseJSON?.message || 'Unknown error'));
-                    $(this).html('<span>Delete</span><i class="fas fa-trash"></i>').prop('disabled', false);
+                    deleteBtn.html('<span>Delete</span><i class="fas fa-trash"></i>').prop('disabled', false);
                 }
             });
         });
     }
 
-    // Form Submission
+    // Form Submission - No page refresh
     $('#uploadForm').submit(function(e) {
         e.preventDefault();
         const formData = new FormData(this);
         const submitBtn = $(this).find('button[type="submit"]');
+        const uploadBtn = $(`button[data-type="${$('#documentType').val()}"]`);
+        const row = uploadBtn.closest('tr');
         
         submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Uploading...');
         
@@ -109,9 +120,40 @@ $(document).ready(function() {
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             success: function(response) {
                 $('#uploadModal').modal('hide');
-                updateInternStatus();
-                toastr.success('Document uploaded successfully');
-                location.reload();
+                
+                // Update the row
+                row.find('td:eq(2)').html(`
+                    <span class="badge bg-success-subtle text-success py-2 px-3 rounded-pill w-100">Submitted</span>
+                    <br>
+                    <small>${response.created_at}</small>
+                `);
+                
+                row.find('td:eq(3)').html(`
+                    <button class="btn btn-sm btn-primary view-document w-100 mb-2" 
+                            data-url="${response.file_url}">
+                        <span>View</span>
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger remove-document w-100" 
+                            data-id="${response.document_id}">
+                        <span>Delete</span>
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `);
+                
+                // Get current count before updating
+                const currentCount = parseInt($('#documentCounter').text());
+                $('#documentCounter').text(currentCount + 1);
+                updateStatusBadge(currentCount + 1);
+                
+                toastr.success(response.message);
+                
+                if (response.new_status === 'pending') {
+                    toastr.success('All documents submitted! Status changed to Pending');
+                }
+                
+                initializeDocumentHandlers();
+                submitBtn.prop('disabled', false).html('<i class="fas fa-upload mr-1"></i> Upload');
             },
             error: function(xhr) {
                 toastr.error(xhr.responseJSON?.message || 'Error uploading document');
@@ -120,29 +162,22 @@ $(document).ready(function() {
         });
     });
 
-    function updateCounter() {
-        const count = $('span.badge-success-subtle').length;
-        $('#documentCounter').text(count);
-        return count;
-    }
-
-    function updateInternStatus() {
-        const submittedCount = updateCounter();
+    function updateStatusBadge(count) {
+        const badge = $('#statusBadge');
+        const icon = badge.find('i');
+        const statusText = $('#statusText');
         
-        $.ajax({
-            url: '{{ route("intern.update-status") }}',
-            method: 'POST',
-            data: { 
-                status: submittedCount >= 8 ? 'pending' : 'incomplete',
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                // Status updated silently (no toastr notification)
-            },
-            error: function(xhr) {
-                console.error('Error updating status:', xhr.responseJSON?.message || 'Unknown error');
-            }
-        });
+        if (count >= 8) {
+            badge.removeClass('bg-warning-subtle text-warning')
+                 .addClass('bg-success-subtle text-success');
+            icon.removeClass('fa-question').addClass('fa-check');
+            statusText.text('Complete');
+        } else {
+            badge.removeClass('bg-success-subtle text-success')
+                 .addClass('bg-warning-subtle text-warning');
+            icon.removeClass('fa-check').addClass('fa-question');
+            statusText.text('Incomplete');
+        }
     }
 });
 </script>

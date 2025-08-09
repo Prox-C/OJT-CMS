@@ -27,9 +27,27 @@
                 <!-- Document Counter -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="mb-0">
-                        <span class="badge bg-secondary-subtle text-dark py-2 px-3">
-                            <i class="fas fa-file-upload mr-1"></i>
-                            <span id="documentCounter">{{ $documents->count() }}</span>/8 Documents Submitted
+                        <span id="statusBadge" class="badge py-2 px-3 
+                            @if($documents->count() >= 8)
+                                bg-success-subtle text-success
+                            @else
+                                bg-warning-subtle text-warning
+                            @endif">
+                            <i class="fas 
+                                @if($documents->count() >= 8)
+                                    fa-check
+                                @else
+                                    fa-question
+                                @endif 
+                                mr-1"></i>
+                            <span id="statusText">
+                                @if($documents->count() >= 8)
+                                    Complete
+                                @else
+                                    Incomplete
+                                @endif
+                            </span>
+                            (<span id="documentCounter">{{ $documents->count() }}</span>/8)
                         </span>
                     </h5>
                 </div>

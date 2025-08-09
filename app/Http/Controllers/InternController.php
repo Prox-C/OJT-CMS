@@ -26,18 +26,28 @@ class InternController extends Controller
         ]);
     }
 
-    public function updateStatus(Request $request)
-    {
-        $request->validate([
-            'status' => 'required|in:pending,incomplete'
-        ]);
-
-        auth()->user()->intern->update([
-            'status' => $request->status
-        ]);
-
-        return response()->json(['message' => 'Status updated successfully']);
+    public function updateStatus(Request $request) {
+        $request->validate(['status' => 'required|in:pending,incomplete']);
+        
+        auth()->user()->intern->update(['status' => $request->status]);
+        
+        return response()->json(['message' => 'Status updated']);
     }
+
+    public function checkDocuments()
+    {
+        $documentCount = auth()->user()->intern->documents()->count();
+        return response()->json(['documentCount' => $documentCount]);
+    }
+
+public function checkDocumentsComplete()
+{
+    $count = auth()->user()->intern->documents()->count();
+    return response()->json([
+        'complete' => $count === 8,
+        'count' => $count
+    ]);
+}
 
     public function profile()
     {
@@ -185,42 +195,64 @@ class InternController extends Controller
         return view('student.documents', compact('documents'));
     }
 
-    public function uploadDocument(Request $request)
-    {
-        $request->validate([
-            'type' => 'required|in:' . implode(',', array_keys(InternDocument::typeLabels())),
-            'document' => 'required|file|mimes:pdf|max:5120'
-        ]);
+public function uploadDocument(Request $request)
+{
+    $request->validate([
+        'type' => 'required|in:' . implode(',', array_keys(InternDocument::typeLabels())),
+        'document' => 'required|file|mimes:pdf|max:5120'
+    ]);
 
-        $intern = auth()->user()->intern;
-        
-        // Delete existing if any
-        $intern->documents()->where('type', $request->type)->delete();
+    $intern = auth()->user()->intern;
+    
+    // Delete existing if any
+    $intern->documents()->where('type', $request->type)->delete();
 
-        // Store new document
-        $path = $request->file('document')->store('intern-documents', 'public');
-        
-        $intern->documents()->create([
-            'type' => $request->type,
-            'file_path' => $path,
-            'original_name' => $request->file('document')->getClientOriginalName()
-        ]);
+    // Store new document
+    $path = $request->file('document')->store('intern-documents', 'public');
+    
+    $document = $intern->documents()->create([
+        'type' => $request->type,
+        'file_path' => $path,
+        'original_name' => $request->file('document')->getClientOriginalName()
+    ]);
 
-        return response()->json(['message' => 'Document uploaded successfully']);
+    // Check if this was the 8th document
+    $isComplete = $intern->documents()->count() === 8;
+    if ($isComplete) {
+        $intern->update(['status' => 'pending']);
     }
 
-    public function deleteDocument(Request $request)
-    {
-        $document = InternDocument::findOrFail($request->id);
-        
-        // Verify ownership
-        if ($document->intern_id !== auth()->user()->intern->id) {
-            abort(403);
-        }
+    return response()->json([
+        'message' => 'Document uploaded successfully',
+        'file_url' => Storage::url($path),
+        'document_id' => $document->id,
+        'new_status' => $isComplete ? 'pending' : null,
+        'created_at' => $document->created_at->format('Y-m-d')
+    ]);
+}
 
-        Storage::delete($document->file_path);
-        $document->delete();
-
-        return response()->json(['message' => 'Document removed']);
+public function deleteDocument(Request $request)
+{
+    $document = InternDocument::findOrFail($request->id);
+    $intern = auth()->user()->intern;
+    
+    // Verify ownership
+    if ($document->intern_id !== $intern->id) {
+        abort(403);
     }
+
+    // Check if we're deleting from a complete state
+    $wasComplete = $intern->documents()->count() === 8;
+    
+    Storage::delete($document->file_path);
+    $document->delete();
+
+    // Always set to incomplete when deleting
+    $intern->update(['status' => 'incomplete']);
+
+    return response()->json([
+        'message' => 'Document removed',
+        'new_status' => $wasComplete ? 'incomplete' : null
+    ]);
+}
 }
