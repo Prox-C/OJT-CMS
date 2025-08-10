@@ -1,14 +1,24 @@
 <!-- jQuery -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
 
+<!-- JQueryKnobCharts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-knob/1.2.13/jquery.knob.min.js"></script>
+
 <!-- Bootstrap 4 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.full.min.js"></script>
 
 <!-- AdminLTE App -->
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
-<!-- JS -->
+<!-- Toastr -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+
+
 
 <!-- Custom Scripts -->
 
@@ -312,6 +322,110 @@ $(document).ready(function() {
         // Resize the iframe to fit content
         const iframe = $('#moaPreviewFrame');
         iframe.height(iframe.parent().height());
+    });
+});
+</script>
+
+<!-- Coordinator: Recommended Interns -->
+<script>
+$(document).ready(function() {
+    // Initialize Select2
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: 'Select HTE',
+    });
+
+function createKnobDisplay(value, color) {
+    const angle = value * 3.6; // % to degrees
+    return `
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="knob-container">
+            <div class="knob-display">
+                <div class="knob-bg" style="
+                    background: conic-gradient(${color} ${angle}deg, #e9ecef 0);
+                ">
+                    <div class="knob-center">${value}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+
+
+
+    // Rest of your existing HTE selection change handler...
+    $('#hteSelect').change(function() {
+        const hteId = $(this).val();
+        const requiredSkills = $(this).find(':selected').data('skills');
+        
+        if (!hteId) {
+            $('#internsTable tbody').html('<tr><td colspan="7" class="text-center text-muted">Select an HTE to view recommended interns</td></tr>');
+            return;
+        }
+
+        // Loading state
+        $('#internsTable tbody').html('<tr><td colspan="7" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading recommendations...</td></tr>');
+
+        $.ajax({
+            url: '{{ route("coordinator.getRecommendedInterns") }}',
+            method: 'POST',
+            data: {
+                hte_id: hteId,
+                required_skills: requiredSkills,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success && response.interns.length > 0) {
+                    let html = '';
+                    response.interns.forEach((intern, index) => {
+                        const isIncomplete = intern.status === 'incomplete';
+                        const statusClass = intern.status === 'pending' ? 'text-warning bg-warning-subtle' : 
+                                         intern.status === 'endorsed' ? 'text-success' : 'text-danger bg-danger-subtle';
+                        
+                        // Determine color based on percentage
+                        let knobColor = intern.match_percentage >= 70 ? '#198754' :
+                                      intern.match_percentage >= 40 ? '#ffc107' :
+                                      '#dc3545';
+                        
+                        html += `
+                        <tr ${isIncomplete ? 'class="table-light-gray"' : ''}>
+                            <td class="align-middle text-center">${index + 1}</td>
+                            <td class="align-middle">${intern.fname} ${intern.lname}</td>
+                            <td class="align-middle">${intern.department}</td>
+                            <td class="align-middle"><span class="badge px-3 py-2 w-100 rounded-pill ${statusClass}">${intern.status.toUpperCase()}</span></td>
+                            <td class="align-middle small text-muted">${intern.matching_skills.join(', ') || 'None'}</td>
+                            <td class="align-middle">
+                                ${createKnobDisplay(intern.match_percentage, knobColor)}
+                            </td>
+                            <td class="align-middle">
+                                <button class="btn btn-sm btn-primary endorse-btn" 
+                                        data-intern-id="${intern.id}" 
+                                        data-hte-id="${hteId}"
+                                        ${isIncomplete ? 'disabled' : ''}>
+                                    <i class="fas fa-paper-plane"></i> Endorse
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                    });
+
+                    $('#internsTable tbody').html(html);
+
+                } else {
+                    $('#internsTable tbody').html('<tr><td colspan="7" class="text-center">No interns found matching the required skills.</td></tr>');
+                }
+            },
+            error: function(xhr, status, error) {
+                let errorMsg = 'Error loading data. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                $('#internsTable tbody').html(`<tr><td colspan="7" class="text-center text-danger">${errorMsg}</td></tr>`);
+            }
+        });
     });
 });
 </script>

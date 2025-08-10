@@ -88,6 +88,7 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::delete('/htes/{id}', [CoordinatorController::class, 'destroyHTE'])->name('coordinator.hte.destroy');
 
     Route::get('/deploy', [CoordinatorController::class, 'deploy'])->name('coordinator.deploy');
+    Route::post('/get-recommended-interns', [CoordinatorController::class, 'getRecommendedInterns'])->name('coordinator.getRecommendedInterns');
 
 });
 
@@ -102,8 +103,8 @@ Route::middleware(['auth:web', 'intern'])->prefix('intern')->group(function() {
     Route::post('/docs/upload', [InternController::class, 'uploadDocument'])->name('intern.docs.upload');
     Route::delete('/docs/delete', [InternController::class, 'deleteDocument'])->name('intern.docs.delete');
     Route::post('/update-status', [InternController::class, 'updateStatus'])->name('intern.update-status');
-    Route::get('/check-documents', [InternController::class, 'checkDocumentsComplete'])
-        ->name('intern.check-documents');
+    Route::get('/check-documents', [InternController::class, 'checkDocumentsComplete'])->name('intern.check-documents');
+
     Route::get('/profile', [InternController::class, 'profile'])->name('intern.profile');
     Route::put('/profile', [InternController::class, 'updateProfile'])->name('intern.profile.update');
     Route::post('/profile/picture', [InternController::class, 'updateProfilePicture'])->name('intern.profile.picture');
