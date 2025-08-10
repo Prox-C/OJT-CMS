@@ -42,7 +42,7 @@
           <!-- small card -->
           <div class="small-box bg-info"> 
               <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-                  <h2 class="fw-medium">Active</h2>
+                  <h2 class="fw-medium">{{ $moaStatus }}</h2>
                   <p>MOA</p>
               </div>
               <div class="infobox-icon">

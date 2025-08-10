@@ -91,171 +91,6 @@ $(document).on('submit', '#addDepartmentForm', function(e) {
 });
 </script>
 
-<!-- Document handling scripts -->
-<script>
-$(document).ready(function() {
-    // Initialize all event handlers
-    initializeDocumentHandlers();
-
-    function initializeDocumentHandlers() {
-        // Document Preview
-        $(document).off('click', '.view-document').on('click', '.view-document', function() {
-            const url = $(this).data('url');
-            const title = $(this).closest('tr').find('td:first').text();
-            
-            $('#documentTitle').text(title);
-            $('#documentFrame').attr('src', url);
-            $('#downloadLink').attr('href', url);
-            $('#documentModal').modal('show');
-        });
-
-        // Document Upload Init
-        $(document).off('click', '.upload-document').on('click', '.upload-document', function() {
-            const type = $(this).data('type');
-            const title = $(this).closest('tr').find('td:first').text();
-            
-            $('#documentType').val(type);
-            $('#uploadModal .modal-title').text('Upload: ' + title);
-            $('#uploadModal').modal('show');
-        });
-
-        // Document Removal - This will work 100%
-        $(document).off('click', '.remove-document').on('click', '.remove-document', function() {
-            if (!confirm('Are you sure you want to remove this document?')) return;
-            
-            const documentId = $(this).data('id');
-            const row = $(this).closest('tr');
-            const documentType = row.data('document-type');
-            
-            // Show loading state
-            $(this).html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
-            
-            $.ajax({
-                url: '{{ route("intern.docs.delete") }}',
-                method: 'DELETE',
-                data: { id: documentId },
-                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                success: function() {
-                    // Update status column
-                    row.find('td:eq(2)').html('<span class="badge bg-danger-subtle text-danger py-2 px-3 w-100 rounded-pill">Missing</span>');
-                    
-                    // Replace action buttons with new upload button
-                    row.find('td:eq(3)').html(`
-                        <button class="btn btn-sm btn-success upload-document w-100" 
-                                data-type="${documentType}">
-                            <span>Upload</span>
-                            <i class="fas fa-upload"></i>
-                        </button>
-                    `);
-                    
-                    updateCounter();
-                    initializeDocumentHandlers(); // Rebind events
-                },
-                error: function(xhr) {
-                    alert('Error removing document: ' + (xhr.responseJSON?.message || 'Unknown error'));
-                    $(this).html('<span>Delete</span><i class="fas fa-trash"></i>').prop('disabled', false);
-                }
-            });
-        });
-    }
-
-    // Form Submission
-    $('#uploadForm').submit(function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const submitBtn = $(this).find('button[type="submit"]');
-        
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Uploading...');
-        
-        $.ajax({
-            url: '{{ route("intern.docs.upload") }}',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function(response) {
-                $('#uploadModal').modal('hide');
-                location.reload();
-            },
-            error: function(xhr) {
-                alert(xhr.responseJSON?.message || 'Error uploading document');
-                submitBtn.prop('disabled', false).html('<i class="fas fa-upload mr-1"></i> Upload');
-            }
-        });
-    });
-
-    function updateCounter() {
-        const count = $('span.badge-success-subtle').length;
-        $('#documentCounter').text(count);
-    }
-});
-</script>
-
-<!-- Profile Management -->
-<script>
-$(document).ready(function() {
-    // Profile Picture Upload
-    $('#profileUpload').change(function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        if (file.size > 2 * 1024 * 1024) {
-            alert('File size must be less than 2MB');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('profile_pic', file);
-        formData.append('_token', '{{ csrf_token() }}');
-
-        $.ajax({
-            url: '{{ route("intern.profile.picture") }}',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                $('#profileImage').attr('src', response.url);
-                toastr.success('Profile picture updated successfully');
-            },
-            error: function(xhr) {
-                toastr.error(xhr.responseJSON.message || 'Error uploading picture');
-            }
-        });
-    });
-
-    $('#skillsForm').submit(function(e) {
-        e.preventDefault();
-        const form = $(this);
-        
-        $.ajax({
-            url: form.attr('action'),
-            method: 'POST', // This will be converted to PUT by @method('PUT')
-            data: form.serialize(),
-            success: function(response) {
-                if (response.success) {
-                    // Update the skills display
-                    $('#skillsBadges').html(
-                        response.skills.map(skill => 
-                            `<span class="badge bg-primary py-2 px-3 mr-2 mb-2">
-                                <i class="fas fa-check-circle mr-1"></i> ${skill}
-                            </span>`
-                        ).join('')
-                    );
-                    $('#skillsModal').modal('hide');
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-            error: function(xhr) {
-                toastr.error(xhr.responseJSON?.message || 'Error updating skills');
-            }
-        });
-    });
-});
-</script>
 
 <script>
 $(document).ready(function() {
@@ -303,3 +138,169 @@ $(document).ready(function() {
     });
 });
 </script>
+
+
+<!-- MOA Handling -->
+<script>
+$(document).ready(function() {
+    // Initialize Bootstrap custom file input
+    if (typeof bsCustomFileInput !== 'undefined') {
+        bsCustomFileInput.init();
+    }
+
+    // Initialize MOA handlers once
+    initializeMoaHandlers();
+
+    function initializeMoaHandlers() {
+        // Show selected file name - using event delegation
+        $(document).off('change', '.custom-file-input').on('change', '.custom-file-input', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName);
+        });
+
+        // MOA Upload Form Submission - using event delegation with proper cleanup
+        $(document).off('submit', '#moaUploadForm').on('submit', '#moaUploadForm', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            let submitBtn = $('#uploadBtn');
+            
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Uploading...');
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                success: function(response) {
+                    toastr.success(response.message);
+                    // Update UI without refresh
+                    $('.card-body').html(`
+                        <div class="w-100">
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                ${response.message}
+                            </div>
+                            
+                            <div class="embed-responsive embed-responsive-16by9 mb-3">
+                                <iframe src="${response.file_url}" 
+                                        class="embed-responsive-item"
+                                        style="border: 1px solid #eee;"
+                                        frameborder="0"></iframe>
+                            </div>
+                            
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="${response.file_url}" 
+                                   class="btn btn-primary" 
+                                   target="_blank">
+                                    <i class="fas fa-download mr-1"></i> Download MOA
+                                </a>
+                                
+                                <button class="btn btn-danger" 
+                                        id="removeMoaBtn"
+                                        data-url="{{ route('hte.moa.delete') }}">
+                                    <i class="fas fa-trash-alt mr-1"></i> Remove MOA
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                    initializeMoaHandlers();
+                },
+                error: function(xhr) {
+                    let errorMsg = xhr.responseJSON?.message || 'Error uploading MOA';
+                    toastr.error(errorMsg);
+                    submitBtn.prop('disabled', false).html('<i class="fas fa-upload mr-1"></i> Upload MOA');
+                }
+            });
+        });
+
+        // MOA Removal - using event delegation with proper cleanup
+        $(document).off('click', '#removeMoaBtn').on('click', '#removeMoaBtn', function(e) {
+            e.stopImmediatePropagation(); // Prevent multiple handlers from firing
+            
+            if (!confirm('Are you sure you want to remove your MOA? This action cannot be undone.')) {
+                return;
+            }
+            
+            let btn = $(this);
+            let originalText = btn.html();
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Removing...');
+            
+            $.ajax({
+                url: btn.data('url'),
+                method: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                headers: { 
+                    'Accept': 'application/json'
+                },
+                success: function(response) {
+                    toastr.success(response.message);
+                    // Update UI without refresh
+                    $('.card-body').html(`
+                        <div class="d-flex flex-column align-items-center justify-content-center py-4">
+                            <div class="alert alert-warning text-center mb-4 w-100">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                ${response.message}
+                            </div>
+                            
+                            <form id="moaUploadForm" 
+                                  action="{{ route('hte.moa.upload') }}" 
+                                  method="POST" 
+                                  enctype="multipart/form-data"
+                                  class="w-100"
+                                  style="max-width: 500px;">
+                                @csrf
+                                
+                                <div class="form-group">
+                                    <div class="custom-file">
+                                        <input type="file" 
+                                               class="custom-file-input" 
+                                               id="moaFile" 
+                                               name="moa_file"
+                                               accept=".pdf"
+                                               required>
+                                        <label class="custom-file-label" for="moaFile">Choose PDF file (max 5MB)</label>
+                                    </div>
+                                    <small class="form-text text-muted text-center">
+                                        Please upload a signed copy of the Memorandum of Agreement in PDF format.
+                                    </small>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <button type="submit" 
+                                            class="btn btn-success btn-lg"
+                                            id="uploadBtn">
+                                        <i class="fas fa-upload mr-1"></i> Upload MOA
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    `);
+                    
+                    // Reinitialize Bootstrap custom file input
+                    if (typeof bsCustomFileInput !== 'undefined') {
+                        bsCustomFileInput.init();
+                    }
+                    
+                    // Reinitialize event handlers
+                    initializeMoaHandlers();
+                },
+                error: function(xhr) {
+                    let errorMsg = xhr.responseJSON?.message || 'Error removing MOA';
+                    if (xhr.status === 419) {
+                        errorMsg = 'Session expired. Please refresh the page and try again.';
+                        location.reload();
+                    }
+                    toastr.error(errorMsg);
+                    btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+    }
+});
+</script>
+

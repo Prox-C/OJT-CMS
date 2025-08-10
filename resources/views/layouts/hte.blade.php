@@ -14,7 +14,7 @@
   @include('layouts.partials.navbar_h')
   @include('layouts.partials.sidebar_h')
 
-  <div class="content-wrapper p-3">
+  <div class="content-wrapper p-3 d-flex flex-column">
     @yield('content')
   </div>
 
