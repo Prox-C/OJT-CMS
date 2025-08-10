@@ -52,19 +52,19 @@
               <tr>
                 <th width="10%">HTE ID</th>
                 <th>Name</th>
-                <th>Email</th>
+                <th>Representative</th>
                 <th>Industry</th>
                 <th>Slots</th>
-                <th>MOA Status</th>
+                <th width="10%">MOA Status</th>
                 <th style="white-space: nowrap; width: 12%">Actions</th>
               </tr>
             </thead>
             <tbody>
               @foreach($htes as $hte)
               <tr>
-                <td>{{ date('Y') }}-{{ str_pad($hte->id, 5, '0', STR_PAD_LEFT) }}</td>
+                <td>HTE-{{ str_pad($hte->id, 3, '0', STR_PAD_LEFT) }}</td>
                 <td>{{ $hte->organization_name }}</td>
-                <td>{{ $hte->user->email ?? 'N/A' }}</td>
+                <td>{{ $hte->user->fname}}  {{ $hte->user->lname}}</td>
                 <td class="text-capitalize">{{ $hte->type }}</td>
                 <td class="align-middle text-center text-medium text-success">
                   0/{{ $hte->slots }}

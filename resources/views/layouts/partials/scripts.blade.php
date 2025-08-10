@@ -91,7 +91,7 @@ $(document).on('submit', '#addDepartmentForm', function(e) {
 });
 </script>
 
-
+<!-- HTE: Skill Selection -->
 <script>
 $(document).ready(function() {
     const csrfToken = $('meta[name="csrf-token"]').attr('content');
@@ -140,7 +140,7 @@ $(document).ready(function() {
 </script>
 
 
-<!-- MOA Handling -->
+<!-- HTE: MOA Handling -->
 <script>
 $(document).ready(function() {
     // Initialize Bootstrap custom file input
@@ -304,3 +304,14 @@ $(document).ready(function() {
 });
 </script>
 
+<!-- Coordinator: HTE Preview -->
+<script>
+$(document).ready(function() {
+    // Enhance MOA preview modal
+    $('#moaPreviewModal').on('shown.bs.modal', function() {
+        // Resize the iframe to fit content
+        const iframe = $('#moaPreviewFrame');
+        iframe.height(iframe.parent().height());
+    });
+});
+</script>
