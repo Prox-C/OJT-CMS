@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
+use import;
+
 use App\Models\Hte;
+
 use App\Models\User;
-
 use App\Models\Intern;
-
 use App\Mail\HteSetupMail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Mail\InternSetupMail;
+use App\Imports\InternsImport;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
-
+use Maatwebsite\Excel\Facades\Excel;
 
 class CoordinatorController extends Controller
 {
@@ -196,6 +199,44 @@ class CoordinatorController extends Controller
         return redirect()->route('coordinator.htes')
             ->with('success', 'HTE registered successfully. Activation email sent.');
     }
+
+public function showImportForm()
+{
+    return view('coordinator.interns.import');
+}
+
+public function importInterns(Request $request)
+{
+    $request->validate([
+        'import_file' => 'required|file|mimes:xlsx,xls,csv',
+        'coordinator_id' => 'required|exists:coordinators,id',
+        'dept_id' => 'required|exists:departments,dept_id'
+    ]);
+
+    try {
+        $import = new InternsImport(
+            $request->coordinator_id,
+            $request->dept_id
+        );
+        
+        \Maatwebsite\Excel\Facades\Excel::import($import, $request->file('import_file'));
+        
+        return response()->json([
+            'success' => true,
+            'success_count' => $import->getSuccessCount(),
+            'fail_count' => $import->getFailCount(),
+            'failures' => $import->getFailures()
+        ]);
+        
+    } catch (\Exception $e) {
+        Log::error('Import error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error during import: ' . $e->getMessage(),
+            'error_details' => $e->getTraceAsString()
+        ], 500);
+    }
+}
 
     public function showHTE($id)
     {

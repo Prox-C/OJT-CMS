@@ -55,7 +55,7 @@ class AdminController extends Controller
             'fname' => $validated['fname'],
             'lname' => $validated['lname'],
             'contact' => $validated['contact'],
-            'pic' => $request->pic,
+            'pic' => 'profile-pictures/profile.jpg',
             'temp_password' => true
         ]);
 

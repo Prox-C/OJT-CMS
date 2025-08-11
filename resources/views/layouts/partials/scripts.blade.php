@@ -336,22 +336,22 @@ $(document).ready(function() {
         placeholder: 'Select HTE',
     });
 
-function createKnobDisplay(value, color) {
-    const angle = value * 3.6; // % to degrees
-    return `
-    <div class="d-flex justify-content-center align-items-center">
-        <div class="knob-container">
-            <div class="knob-display">
-                <div class="knob-bg" style="
-                    background: conic-gradient(${color} ${angle}deg, #e9ecef 0);
-                ">
-                    <div class="knob-center">${value}%</div>
+    function createKnobDisplay(value, color) {
+        const angle = value * 3.6; // % to degrees
+        return `
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="knob-container">
+                <div class="knob-display">
+                    <div class="knob-bg" style="
+                        background: conic-gradient(${color} ${angle}deg, #e9ecef 0);
+                    ">
+                        <div class="knob-center">${value}%</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    `;
-}
+        `;
+    }
 
 
 
@@ -427,5 +427,109 @@ function createKnobDisplay(value, color) {
             }
         });
     });
+});
+</script>
+
+<!-- Coordinator: Intern Import -->
+<script>
+// Import form handling
+$('#importForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    const form = $(this);
+    const submitBtn = $('#importSubmit');
+    const progress = $('#importProgress');
+    const results = $('#importResults');
+    const spinner = progress.find('.spinner-border'); // Get the spinner element
+    
+    // Show progress, hide results
+    progress.removeClass('d-none');
+    results.addClass('d-none');
+    submitBtn.prop('disabled', true);
+    
+    // Prepare form data
+    const formData = new FormData(this);
+    
+    // AJAX request
+    $.ajax({
+        url: form.attr('action'),
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        xhr: function() {
+            const xhr = new window.XMLHttpRequest();
+            xhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    $('.progress-bar').css('width', percent + '%');
+                }
+            });
+            return xhr;
+        },
+        success: function(response) {
+            if (response.success) {
+                // Update results display
+                $('#successCount').text(response.success_count);
+                $('#failCount').text(response.fail_count);
+                
+                if (response.failures.length > 0) {
+                    const failBody = $('#failDetailsBody');
+                    failBody.empty();
+                    
+                    response.failures.forEach(failure => {
+                        failBody.append(`
+                            <tr>
+                                <td>${failure.row}</td>
+                                <td>${failure.student_id || 'N/A'}</td>
+                                <td>${failure.name || 'N/A'}</td>
+                                <td>${failure.errors.join('<br>')}</td>
+                            </tr>
+                        `);
+                    });
+                    
+                    $('#failDetails').removeClass('d-none');
+                } else {
+                    $('#failDetails').addClass('d-none');
+                }
+                
+                // Show results and hide spinner
+                spinner.addClass('d-none'); // Hide the spinner
+                $('#importResults').removeClass('d-none');
+                
+                // Refresh the interns table via AJAX without reloading the page
+                if (response.success_count > 0) {
+                    $.get(window.location.href, function(data) {
+                        const newTable = $(data).find('#internsTable').html();
+                        $('#internsTable').html(newTable);
+                    });
+                }
+            }
+        },
+        error: function(xhr) {
+            let errorMsg = 'An error occurred during import.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            alert(errorMsg);
+        },
+        complete: function() {
+            submitBtn.prop('disabled', false);
+            $('#progressText').text('Import completed');
+            $('.progress-bar').removeClass('progress-bar-animated');
+            spinner.addClass('d-none'); // Ensure spinner is hidden when complete
+        }
+    });
+});
+
+// Reset modal when closed
+$('#importModal').on('hidden.bs.modal', function() {
+    $('#importForm')[0].reset();
+    $('#importProgress').addClass('d-none');
+    $('#importResults').addClass('d-none');
+    $('.progress-bar').css('width', '0%').addClass('progress-bar-animated');
+    $('#progressText').text('Processing import...');
+    // Show spinner again when modal is reopened
+    $('#importProgress').find('.spinner-border').removeClass('d-none');
 });
 </script>

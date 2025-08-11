@@ -5,10 +5,10 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-white text-dark">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Select Required Skills</h4>
-                        <span class="badge bg-light text-dark">
+                        <span class="badge bg-secondary-subtle text-dark">
                             Selected: <span id="selectedCount">0</span>/5 minimum
                         </span>
                     </div>

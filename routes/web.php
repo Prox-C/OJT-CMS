@@ -76,6 +76,7 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::get('/interns', [CoordinatorController::class, 'showInterns'])->name('coordinator.interns');
     Route::get('/interns/create', [CoordinatorController::class, 'newIntern'])->name('coordinator.new_i');
     Route::post('/interns', [CoordinatorController::class, 'registerIntern'])->name('coordinator.register_i');
+    Route::post('/interns/import', [CoordinatorController::class, 'importInterns'])->name('coordinator.import_interns');
 
     Route::get('/htes', [CoordinatorController::class, 'htes'])->name('coordinator.htes');
     Route::get('/htes/create', [CoordinatorController::class, 'newHTE'])->name('coordinator.new_h');

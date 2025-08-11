@@ -29,12 +29,15 @@
                   <input type="search" class="form-control form-control-sm" placeholder="Search...">
               </div>
               <div class="d-flex flex-grow-1 justify-content-end p-0">
-                  <button class="btn btn-outline-success btn-sm d-flex mr-2">
+                  <a class="btn btn-outline-success btn-sm d-flex mr-2" data-toggle="modal" data-target="#importModal">
                       <span class="d-none d-sm-inline mr-1">
                           Import
                       </span>
-                      <svg xmlns="http://www.w3.org/2000/svg" class="table-cta-icon" viewBox="0 0 256 256"><path d="M200,24H72A16,16,0,0,0,56,40V64H40A16,16,0,0,0,24,80v96a16,16,0,0,0,16,16H56v24a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V40A16,16,0,0,0,200,24ZM72,160a8,8,0,0,1-6.15-13.12L81.59,128,65.85,109.12a8,8,0,0,1,12.3-10.24L92,115.5l13.85-16.62a8,8,0,1,1,12.3,10.24L102.41,128l15.74,18.88a8,8,0,0,1-12.3,10.24L92,140.5,78.15,157.12A8,8,0,0,1,72,160Zm56,56H72V192h56Zm0-152H72V40h56Zm72,152H144V192a16,16,0,0,0,16-16v-8h40Zm0-64H160V104h40Zm0-64H160V80a16,16,0,0,0-16-16V40h56Z"></path></svg>                
-                  </button>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="table-cta-icon" viewBox="0 0 256 256">
+                          <path d="M200,24H72A16,16,0,0,0,56,40V64H40A16,16,0,0,0,24,80v96a16,16,0,0,0,16,16H56v24a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V40A16,16,0,0,0,200,24ZM72,160a8,8,0,0,1-6.15-13.12L81.59,128,65.85,109.12a8,8,0,0,1,12.3-10.24L92,115.5l13.85-16.62a8,8,0,1,1,12.3,10.24L102.41,128l15.74,18.88a8,8,0,0,1-12.3,10.24L92,140.5,78.15,157.12A8,8,0,0,1,72,160Zm56,56H72V192h56Zm0-152H72V40h56Zm72,152H144V192a16,16,0,0,0,16-16v-8h40Zm0-64H160V104h40Zm0-64H160V80a16,16,0,0,0-16-16V40h56Z"></path>
+                      </svg>                
+                  </a>
+
                   <a href="{{ route('coordinator.new_i') }}" class="btn btn-primary btn-sm d-flex">
                       <span>Register</span>
                   </a>
@@ -110,5 +113,85 @@
         </div>
 
   </div>
+  <!-- Import Modal -->
+  <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content rounded-3 overflow-hidden">
+              <div class="modal-header bg-white text-dark">
+                  <h5 class="modal-title" id="importModalLabel">Import Interns</h5>
+                  <button type="button" class="close text-muted" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <form id="importForm" action="{{ route('coordinator.import_interns') }}" method="POST" enctype="multipart/form-data">
+                  @csrf
+                  <input type="hidden" name="coordinator_id" value="{{ auth()->user()->coordinator->id }}">
+                  <input type="hidden" name="dept_id" value="{{ auth()->user()->coordinator->dept_id }}">
+                  
+                  <div class="modal-body">
+                      <div class="mb-3">
+                          <label for="importFile" class="form-label">Excel File</label>
+                          <input class="form-control" type="file" id="importFile" name="import_file" accept=".xlsx,.xls,.csv" required>
+                          <div class="form-text">Download the <a href="{{ asset('templates/intern_import_template.xlsx') }}" download>import template</a> for reference</div>
+                      </div>
+                      
+                      <div class="alert bg-success-subtle">
+                          <strong>File Requirements:</strong>
+                          <ul class="mb-0">
+                              <li>File must be in Excel format (.xlsx, .xls, or .csv)</li>
+                              <li>First row should contain headers matching the template</li>
+                              <li>Required fields: First Name, Last Name, Email, Contact, Student ID, Birthdate, Year Level, Section, Academic Year, Semester</li>
+                          </ul>
+                      </div>
+                      
+                      <div id="importProgress" class="d-none">
+                          <div class="progress mb-3">
+                              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                          </div>
+                          <div class="text-center">
+                              <div class="spinner-border text-primary" role="status">
+                                  <span class="sr-only">Loading...</span>
+                              </div>
+                              <p class="mt-2 mb-0" id="progressText">Processing import...</p>
+                          </div>
+                      </div>
+                      
+                      <div id="importResults" class="d-none mt-3">
+                          <h5>Import Summary</h5>
+                          <div class="alert alert-success">
+                              <strong>Successfully registered:</strong> <span id="successCount">0</span> interns
+                          </div>
+                          <div class="alert alert-danger">
+                              <strong>Failed to register:</strong> <span id="failCount">0</span> interns
+                          </div>
+                          
+                          <div id="failDetails" class="d-none">
+                              <h6>Error Details:</h6>
+                              <div class="table-responsive">
+                                  <table class="table table-sm table-bordered">
+                                      <thead>
+                                          <tr>
+                                              <th>Row</th>
+                                              <th>Student ID</th>
+                                              <th>Name</th>
+                                              <th>Error</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="failDetailsBody"></tbody>
+                                  </table>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <div class="modal-footer">
+                      <button type="submit" id="importSubmit" class="btn btn-success">Import</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+
 </section>
 @endsection
