@@ -35,6 +35,10 @@ class HteController extends Controller
         ]);
     }
 
+    public function interns(){
+        return view('hte.interns');
+    }
+
     public function showDetailsForm()
     {
         $hte = Auth::user()->hte;

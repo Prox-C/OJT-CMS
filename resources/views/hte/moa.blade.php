@@ -63,7 +63,7 @@
               <div class="d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="alert alert-warning text-center mb-4 w-100">
                   <i class="fas fa-exclamation-circle mr-2"></i>
-                  You haven't submitted your Memorandum of Agreement yet.
+                  Action Required: Upload a signed copy of the Memorandum of Agreement to recieve endorsements.
                 </div>
                 
                 <form id="moaUploadForm" 
@@ -85,7 +85,7 @@
                       <label class="custom-file-label" for="moaFile">Choose PDF file (max 5MB)</label>
                     </div>
                     <small class="form-text text-muted text-center">
-                      Please upload a signed copy of the Memorandum of Agreement in PDF format.
+                      Please upload in PDF format.
                     </small>
                   </div>
                   
