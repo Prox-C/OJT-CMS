@@ -195,64 +195,72 @@ public function checkDocumentsComplete()
         return view('student.documents', compact('documents'));
     }
 
-public function uploadDocument(Request $request)
-{
-    $request->validate([
-        'type' => 'required|in:' . implode(',', array_keys(InternDocument::typeLabels())),
-        'document' => 'required|file|mimes:pdf|max:5120'
-    ]);
+    public function uploadDocument(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:' . implode(',', array_keys(InternDocument::typeLabels())),
+            'document' => 'required|file|mimes:pdf|max:5120'
+        ]);
 
-    $intern = auth()->user()->intern;
-    
-    // Delete existing if any
-    $intern->documents()->where('type', $request->type)->delete();
+        $intern = auth()->user()->intern;
+        
+        // Delete existing if any
+        $intern->documents()->where('type', $request->type)->delete();
 
-    // Store new document
-    $path = $request->file('document')->store('intern-documents', 'public');
-    
-    $document = $intern->documents()->create([
-        'type' => $request->type,
-        'file_path' => $path,
-        'original_name' => $request->file('document')->getClientOriginalName()
-    ]);
+        // Store new document
+        $path = $request->file('document')->store('intern-documents', 'public');
+        
+        $document = $intern->documents()->create([
+            'type' => $request->type,
+            'file_path' => $path,
+            'original_name' => $request->file('document')->getClientOriginalName()
+        ]);
 
-    // Check if this was the 8th document
-    $isComplete = $intern->documents()->count() === 8;
-    if ($isComplete) {
-        $intern->update(['status' => 'pending']);
+        // Check if this was the 8th document
+        $isComplete = $intern->documents()->count() === 8;
+        if ($isComplete) {
+            $intern->update(['status' => 'pending']);
+        }
+
+        return response()->json([
+            'message' => 'Document uploaded successfully',
+            'file_url' => Storage::url($path),
+            'document_id' => $document->id,
+            'new_status' => $isComplete ? 'pending' : null,
+            'created_at' => $document->created_at->format('Y-m-d')
+        ]);
     }
 
-    return response()->json([
-        'message' => 'Document uploaded successfully',
-        'file_url' => Storage::url($path),
-        'document_id' => $document->id,
-        'new_status' => $isComplete ? 'pending' : null,
-        'created_at' => $document->created_at->format('Y-m-d')
-    ]);
-}
+    public function deleteDocument(Request $request)
+    {
+        $document = InternDocument::findOrFail($request->id);
+        $intern = auth()->user()->intern;
+        
+        // Verify ownership
+        if ($document->intern_id !== $intern->id) {
+            abort(403);
+        }
 
-public function deleteDocument(Request $request)
-{
-    $document = InternDocument::findOrFail($request->id);
-    $intern = auth()->user()->intern;
-    
-    // Verify ownership
-    if ($document->intern_id !== $intern->id) {
-        abort(403);
+        // Check if we're deleting from a complete state
+        $wasComplete = $intern->documents()->count() === 8;
+        
+        Storage::delete($document->file_path);
+        $document->delete();
+
+        // Always set to incomplete when deleting
+        $intern->update(['status' => 'incomplete']);
+
+        return response()->json([
+            'message' => 'Document removed',
+            'new_status' => $wasComplete ? 'incomplete' : null
+        ]);
     }
 
-    // Check if we're deleting from a complete state
-    $wasComplete = $intern->documents()->count() === 8;
-    
-    Storage::delete($document->file_path);
-    $document->delete();
+    public function reports(){
+        return view('student.reports');
+    }
 
-    // Always set to incomplete when deleting
-    $intern->update(['status' => 'incomplete']);
-
-    return response()->json([
-        'message' => 'Document removed',
-        'new_status' => $wasComplete ? 'incomplete' : null
-    ]);
-}
+    public function schedule(){
+        return view('student.schedule');
+    }
 }

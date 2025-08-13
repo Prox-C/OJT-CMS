@@ -17,6 +17,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 
+@if(session('success'))
+<script>
+    // Only show if this isn't a back/forward navigation
+    if (performance.navigation.type !== 2) {
+        $(function() {
+            toastr.success("{{ session('success') }}");
+        });
+    }
+</script>
+@endif
+
+@if(Session::has('error'))
+    <script>
+        $(document).ready(function() {
+            toastr.error("{{ Session::get('error') }}");
+        });
+    </script>
+@endif
+
 
 
 

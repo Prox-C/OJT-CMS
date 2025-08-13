@@ -77,6 +77,8 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::get('/interns/create', [CoordinatorController::class, 'newIntern'])->name('coordinator.new_i');
     Route::post('/interns', [CoordinatorController::class, 'registerIntern'])->name('coordinator.register_i');
     Route::post('/interns/import', [CoordinatorController::class, 'importInterns'])->name('coordinator.import_interns');
+    Route::get('/interns/{id}', [CoordinatorController::class, 'showIntern'])->name('coordinator.intern.show');
+
 
     Route::get('/htes', [CoordinatorController::class, 'htes'])->name('coordinator.htes');
     Route::get('/htes/create', [CoordinatorController::class, 'newHTE'])->name('coordinator.new_h');
@@ -111,6 +113,8 @@ Route::middleware(['auth:web', 'intern'])->prefix('intern')->group(function() {
     Route::post('/profile/picture', [InternController::class, 'updateProfilePicture'])->name('intern.profile.picture');
     Route::put('/profile/skills', [InternController::class, 'updateSkills'])->name('intern.skills.update');
    
+    Route::get('/reports', [InternController::class, 'reports'])->name('intern.reports');
+    Route::get('/schedule', [InternController::class, 'schedule'])->name('intern.reports');
 });
 
 // Protected HTE routes

@@ -12,7 +12,7 @@
 <body style="background: #900303;">
     <div class="container-fluid p-md-0 p-lg-5 d-flex justify-content-center align-items-center flex-column w-100" style="height: 100vh;">
         <div class="card rounded-4 p-5 d-flex flex-column align-items-center justify-content-center col-12 col-sm-8 col-md-6 col-lg-5" style="background: #fff;">
-            <img class="mb-4" src="{{ asset('assets/images/EVSU_Official_Logo.png') }}" alt="" height="100" width="100">
+            <img class="mb-4" src="{{ asset('assets/images/ojt-cms logo.png') }}" alt="" height="120" style="position: relative; right: 4px">
             <h3>OJT-CMS</h3>
             <p class="text-muted mb-5">Host Training Establishment Portal</p>
 
@@ -49,14 +49,14 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <!-- <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
                         <label class="form-check-label text-muted" for="remember">
                             Remember Me
                         </label>
                     </div>
-                </div>
+                </div> -->
                 <button type="submit" class="btn w-100 btn-gold rounded-4 mt-4 text-white mb-3 py-3">
                     Login
                 </button>

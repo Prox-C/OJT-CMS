@@ -83,7 +83,7 @@
                               <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100">{{ ucfirst($intern->status) }}</span>
                           </td>
                           <td class="text-center px-2 align-middle" style="white-space: nowrap;">
-                              <a href="#" class="btn btn-primary btn-sm">
+                              <a href="{{ route('coordinator.intern.show', $intern->id) }}" class="btn btn-primary btn-sm">
                                   <span class="d-none d-sm-inline">View</span>
                                   <svg xmlns="http://www.w3.org/2000/svg" class="table-action-icon" viewBox="0 0 256 256"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208ZM90.34,165.66a8,8,0,0,1,0-11.32L140.69,104H112a8,8,0,0,1,0-16h48a8,8,0,0,1,8,8v48a8,8,0,0,1-16,0V115.31l-50.34,50.35a8,8,0,0,1-11.32,0Z"></path></svg>                              </a>
                               <a href="#" class="btn btn-danger btn-sm">

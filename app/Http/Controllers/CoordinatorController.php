@@ -20,10 +20,20 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
-class CoordinatorController extends Controller
-{
+    class CoordinatorController extends Controller
+    {
     public function dashboard() {
-        return view('coordinator.dashboard');
+        // Get the currently logged-in coordinator
+        $coordinator = auth()->user()->coordinator;
+        
+        // Count students added by this coordinator
+        $myStudentsCount = Intern::where('coordinator_id', $coordinator->id)->count();
+        $totalHtesCount = Hte::count();
+        
+        return view('coordinator.dashboard', [
+            'myStudentsCount' => $myStudentsCount,
+            'totalHtesCount' => $totalHtesCount
+        ]);
     }
 
     // Intern Methods
@@ -32,9 +42,10 @@ class CoordinatorController extends Controller
         // Get the authenticated user's coordinator ID
         $coordinatorId = auth()->user()->coordinator->id;
         
-        // Filter interns by the coordinator's ID
+        // Filter interns by the coordinator's ID, ordered by newest first
         $interns = Intern::with(['user', 'department'])
                     ->where('coordinator_id', $coordinatorId)
+                    ->orderBy('created_at', 'desc')
                     ->get();
 
         return view('coordinator.interns', compact('interns'));
@@ -70,7 +81,6 @@ class CoordinatorController extends Controller
             'fname' => $validated['first_name'],
             'lname' => $validated['last_name'],
             'contact' => $validated['contact'],
-            'birthdate' => $validated['birthdate'],
             'pic' => 'profile-pictures/profile.jpg', // Default profile picture
             'temp_password' => true,
             'username' => $validated['student_id']
@@ -81,6 +91,7 @@ class CoordinatorController extends Controller
             'student_id' => $validated['student_id'],
             'user_id' => $user->id,
             'dept_id' => $validated['dept_id'],
+            'birthdate' => $validated['birthdate'],
             'coordinator_id' => auth()->user()->coordinator->id, // Set from logged-in coordinator
             'year_level' => $validated['year_level'],
             'section' => $validated['section'],
@@ -113,6 +124,16 @@ class CoordinatorController extends Controller
         return redirect()->route('coordinator.interns')
             ->with('success', 'Intern registered successfully. Activation email sent.');
     }
+
+public function showIntern($id)
+{
+    $intern = Intern::with(['user', 'department', 'skills', 'coordinator.user'])
+        ->findOrFail($id);
+    
+    return view('coordinator.intern_show', compact('intern'));
+}
+
+    
 
     // HTE Methods
     public function htes() {

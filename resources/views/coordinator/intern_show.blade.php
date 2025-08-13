@@ -1,0 +1,164 @@
+@extends('layouts.coordinator')
+
+@section('title', 'Intern Details')
+
+@section('content')
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-white text-dark">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-user-graduate mr-2"></i>
+                        {{ $intern->user->fname }} {{ $intern->user->lname }} - Intern Details
+                    </h3>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Intern Profile Section -->
+                        <div class="col-md-4 d-flex flex-column">
+                            <div class="text-center mb-4">
+                                <img src="{{ asset('storage/' . $intern->user->pic) }}" 
+                                     class="img-thumbnail rounded-circle" 
+                                     style="width: 200px; height: 200px; object-fit: cover;"
+                                     alt="Intern Profile Picture">
+                            </div>
+                            
+                            <div class="border p-3 rounded bg-light flex-grow-1 mt-0">
+                                <h5 class="mb-3"><i class="fas fa-info-circle mr-2"></i>Academic Information</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <strong>Status:</strong> 
+                                        <span class="badge badge-{{ 
+                                            $intern->status == 'endorsed' ? 'success' : 
+                                            ($intern->status == 'pending' ? 'warning' : 'danger') 
+                                        }}">
+                                            {{ ucfirst($intern->status) }}
+                                        </span>
+                                    </li>
+                                    <li class="mb-2"><strong>Student ID:</strong> {{ $intern->student_id }}</li>
+                                    <li class="mb-2"><strong>Program:</strong> {{ $intern->department->dept_name }}</li>
+                                    <li class="mb-2"><strong>Year Level:</strong> {{ $intern->year_level }}</li>
+                                    <li class="mb-2"><strong>Section:</strong> {{ strtoupper($intern->section) }}</li>
+                                    <li class="mb-2"><strong>Academic Year:</strong> {{ $intern->academic_year }}</li>
+                                    <li class="mb-2"><strong>Semester:</strong> {{ $intern->semester }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Contact & Details Section -->
+                        <div class="col-md-8">
+                            <div class="border p-3 rounded my-3 mt-lg-0 bg-light">
+                                <h5 class="mb-3"><i class="fas fa-user-circle mr-2"></i>Personal Information</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Full Name:</strong><br>
+                                        {{ $intern->user->fname }} {{ $intern->user->lname }}</p>
+                                        
+                                        <p><strong>Birthdate:</strong><br>
+                                        {{ $intern->birthdate ? \Carbon\Carbon::parse($intern->birthdate)->format('F j, Y') : 'N/A' }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Age:</strong><br>
+                                        {{ $intern->birthdate ? \Carbon\Carbon::parse($intern->birthdate)->age . ' years old' : 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="border p-3 rounded my-3 bg-light">
+                                <h5 class="mb-3"><i class="fas fa-address-card mr-2"></i>Contact Information</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Email:</strong><br>
+                                        {{ $intern->user->email }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Contact Number:</strong><br>
+                                        {{ $intern->user->contact ?? 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Skills Section -->
+                            <div class="border p-3 rounded mb-3 bg-light">
+                                <h5 class="mb-3"><i class="fas fa-tasks mr-2"></i>Skills</h5>
+                                @if($intern->skills->count() > 0)
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach($intern->skills as $skill)
+                                            <span class="badge bg-primary-subtle text-dark py-2 px-3 rounded-pill">{{ $skill->name }}</span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-muted">No skills recorded</p>
+                                @endif
+                            </div>
+                            
+                            <!-- Coordinator Info -->
+                            <div class="border p-3 rounded bg-light">
+                                <h5 class="mb-3"><i class="fas fa-chalkboard-teacher mr-2"></i>Assigned Coordinator</h5>
+                                @if($intern->coordinator)
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <img src="{{ asset('storage/' . $intern->coordinator->user->pic) }}" 
+                                                 class="img-thumbnail rounded-circle mr-3" 
+                                                 style="width: 50px; height: 50px; object-fit: cover;"
+                                                 alt="Coordinator Profile Picture">
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-0">{{ $intern->coordinator->user->fname }} {{ $intern->coordinator->user->lname }}</h6>
+                                            <p class="mb-0 text-muted">{{ $intern->coordinator->faculty_id }}</p>
+                                        </div>
+                                    </div>
+                                @else
+                                    <p class="text-muted">No coordinator assigned</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-right bg-light p-3 rounded">
+                            <a href="" class="btn btn-primary mr-2 text-white">
+                               <span class="text-white"><i class="fas fa-edit mr-1"></i> Update Info</span> 
+                            </a>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#removeModal">
+                                <i class="fas fa-user-minus mr-1"></i> Remove Intern
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</div>
+
+<!-- Remove Modal -->
+<div class="modal fade" id="removeModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirm Removal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to remove this intern from the system? This action cannot be undone.</p>
+                <p class="text-danger"><strong>Warning:</strong> All associated internship records will also be removed.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form action="" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Confirm Removal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

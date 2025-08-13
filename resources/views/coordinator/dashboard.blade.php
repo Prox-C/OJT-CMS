@@ -24,10 +24,10 @@
   <div class="container-fluid">
     <div class="row">
       {{-- Interns Card --}}
-      <div class="col-lg-4 col-md-6 col-12">
+      <div class="col-lg-6 col-md-6 col-12">
         <div class="small-box bg-danger">
           <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-            <h2 class="fw-medium">216</h2>
+            <h2 class="fw-medium">{{ $myStudentsCount }}</h2>
             <p>Student Interns</p>
           </div>
           <div class="infobox-icon">
@@ -38,11 +38,11 @@
       </div>
 
       <!-- HTEs -->
-      <div class="col-lg-4 col-md-6 col-12">
+      <div class="col-lg-6 col-md-6 col-12">
           <!-- small card -->
           <div class="small-box bg-info"> 
               <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-                  <h2 class="fw-medium">35</h2>
+                  <h2 class="fw-medium">{{ $totalHtesCount }}</h2>
                   <p>Partner Companies</p>
               </div>
               <div class="infobox-icon">

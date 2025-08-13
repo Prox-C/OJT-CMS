@@ -10,8 +10,6 @@
 <!-- JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
 <script>
     toastr.options = {
         "closeButton": true,
@@ -246,4 +244,5 @@ $(document).ready(function() {
     });
 });
 </script>
+
 
