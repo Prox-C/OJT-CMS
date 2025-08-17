@@ -1,3 +1,6 @@
+<!-- Phosphour Icons -->
+<script src="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2"></script>
+
 <!-- jQuery -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
 
@@ -9,6 +12,10 @@
 
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.full.min.js"></script>
+
+<!-- DataTable JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
 
 <!-- AdminLTE App -->
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
@@ -386,7 +393,7 @@ $(document).ready(function() {
         }
 
         // Loading state
-        $('#internsTable tbody').html('<tr><td colspan="7" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading recommendations...</td></tr>');
+        $('#internsTable tbody').html('<tr><td colspan="7" class="text-center text-muted"><i class="fas fa-spinner fa-spin"></i> Loading recommendations...</td></tr>');
 
         $.ajax({
             url: '{{ route("coordinator.getRecommendedInterns") }}',
@@ -452,6 +459,7 @@ $(document).ready(function() {
 <!-- Coordinator: Intern Import -->
 <script>
 // Import form handling
+// Import form handling
 $('#importForm').on('submit', function(e) {
     e.preventDefault();
     
@@ -459,7 +467,7 @@ $('#importForm').on('submit', function(e) {
     const submitBtn = $('#importSubmit');
     const progress = $('#importProgress');
     const results = $('#importResults');
-    const spinner = progress.find('.spinner-border'); // Get the spinner element
+    const spinner = progress.find('.spinner-border');
     
     // Show progress, hide results
     progress.removeClass('d-none');
@@ -513,16 +521,27 @@ $('#importForm').on('submit', function(e) {
                 }
                 
                 // Show results and hide spinner
-                spinner.addClass('d-none'); // Hide the spinner
-                $('#importResults').removeClass('d-none');
+                spinner.addClass('d-none');
+                results.removeClass('d-none');
                 
-                // Refresh the interns table via AJAX without reloading the page
-                if (response.success_count > 0) {
-                    $.get(window.location.href, function(data) {
-                        const newTable = $(data).find('#internsTable').html();
-                        $('#internsTable').html(newTable);
+                // Remove Close button
+                $('.modal-footer .btn-secondary').remove();
+                
+                // Change Import button to Complete button
+                submitBtn
+                    .removeClass('btn-success')
+                    .addClass('btn-primary')
+                    .html('Complete')
+                    .prop('disabled', false) // Make sure button is enabled
+                    .off('click') // Remove previous click handlers
+                    .on('click', function() {
+                        // Show success message if any interns were imported
+                        if (response.success_count > 0) {
+                            sessionStorage.setItem('importSuccess', response.success_count);
+                        }
+                        // Refresh page
+                        window.location.reload();
                     });
-                }
             }
         },
         error: function(xhr) {
@@ -531,16 +550,24 @@ $('#importForm').on('submit', function(e) {
                 errorMsg = xhr.responseJSON.message;
             }
             alert(errorMsg);
+            submitBtn.prop('disabled', false);
         },
         complete: function() {
-            submitBtn.prop('disabled', false);
             $('#progressText').text('Import completed');
             $('.progress-bar').removeClass('progress-bar-animated');
-            spinner.addClass('d-none'); // Ensure spinner is hidden when complete
+            spinner.addClass('d-none');
         }
     });
 });
 
+// Show success message after page reload if needed
+$(document).ready(function() {
+    const importedCount = sessionStorage.getItem('importSuccess');
+    if (importedCount) {
+        toastr.success(`${importedCount} interns imported successfully`);
+        sessionStorage.removeItem('importSuccess');
+    }
+});
 // Reset modal when closed
 $('#importModal').on('hidden.bs.modal', function() {
     $('#importForm')[0].reset();
@@ -548,7 +575,63 @@ $('#importModal').on('hidden.bs.modal', function() {
     $('#importResults').addClass('d-none');
     $('.progress-bar').css('width', '0%').addClass('progress-bar-animated');
     $('#progressText').text('Processing import...');
-    // Show spinner again when modal is reopened
     $('#importProgress').find('.spinner-border').removeClass('d-none');
+    
+    // Reset button to original state
+    $('#importSubmit')
+        .removeClass('btn-primary')
+        .addClass('btn-success')
+        .html('Import')
+        .off('click')
+        .prop('disabled', false);
+});
+
+// Show success message after page reload if needed
+$(document).ready(function() {
+    const importedCount = sessionStorage.getItem('importSuccess');
+    if (importedCount) {
+        toastr.success(`${importedCount} interns imported successfully`);
+        sessionStorage.removeItem('importSuccess');
+    }
 });
 </script>
+
+<!-- Coordinator: Intern Management Table -->
+<script>
+    $(document).ready(function() {
+        // Show loading overlay initially
+        $('#tableLoadingOverlay').show();
+        
+        // Initialize DataTable
+        var table = $('#internsTable').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "language": {
+                "emptyTable": "No intern data found.",
+                "search": "_INPUT_",
+                "searchPlaceholder": "Search...",
+                "lengthMenu": "Show _MENU_ entries",
+                "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                "paginate": {
+                    "previous": "«",
+                    "next": "»"
+                }
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": [5] }
+            ],
+            "initComplete": function() {
+                // Hide loading overlay when table is fully initialized
+                $('#tableLoadingOverlay').fadeOut();
+            }
+        });
+    });
+</script>
+
+
+

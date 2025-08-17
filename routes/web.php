@@ -114,7 +114,7 @@ Route::middleware(['auth:web', 'intern'])->prefix('intern')->group(function() {
     Route::put('/profile/skills', [InternController::class, 'updateSkills'])->name('intern.skills.update');
    
     Route::get('/reports', [InternController::class, 'reports'])->name('intern.reports');
-    Route::get('/schedule', [InternController::class, 'schedule'])->name('intern.reports');
+    Route::get('/schedule', [InternController::class, 'schedule'])->name('intern.schedule');
 });
 
 // Protected HTE routes

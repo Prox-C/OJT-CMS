@@ -72,12 +72,12 @@
                             <div class="border p-3 rounded bg-light flex-grow-1 mt-0">
                                 <h5 class="mb-3"><i class="fas fa-info-circle mr-2"></i>Basic Information</h5>
                                 <ul class="list-unstyled">
-                                    <li class="mb-2">
+                                    <!-- <li class="mb-2">
                                         <strong>Status:</strong> 
                                         <span class="badge badge-{{ $hte->status == 'active' ? 'success' : 'primary' }}">
                                             {{ ucfirst($hte->status) }}
                                         </span>
-                                    </li>
+                                    </li> -->
                                     <li class="mb-2"><strong>Type:</strong> {{ ucfirst($hte->type) }}</li>
                                     <li class="mb-2"><strong>Available Slots:</strong> {{ $hte->slots }}</li>
                                     <li class="mb-2 align-middle"><strong>MOA:</strong>
@@ -117,7 +117,7 @@
                             
                             <!-- Skills Section -->
                             <div class="border p-3 rounded mb-3 bg-light">
-                                <h5 class="mb-3"><i class="fas fa-tasks mr-2"></i>Required Skills</h5>
+                                <h5 class="mb-3"><i class="fas fa-tasks mr-2"></i>Preferred Skills</h5>
                                 @if($hte->skills->count() > 0)
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach($hte->skills as $skill)
@@ -159,10 +159,10 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card shadow">
-                <div class="card-header bg-info text-white">
+                <div class="card-header bg-white text-white">
                     <h3 class="card-title mb-0">
                         <i class="fas fa-users mr-2"></i>
-                        Deployed Interns
+                        Endorsements
                     </h3>
                 </div>
                 <div class="card-body">

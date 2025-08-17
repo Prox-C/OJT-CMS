@@ -16,14 +16,14 @@
 
 <body class="bg-light">
     <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden rounded-3">
             <!-- Header -->
             <div class="bg-main p-6 text-center">
                 <h1 class="text-2xl font-bold text-white">
                     <i class="fas fa-tools mr-2"></i> Select Your Skills
                 </h1>
                 <p class="mt-1 text-indigo-100">
-                    Choose at least 3 skills relevant to your department
+                    Choose at least 3 skills relevant to your program.
                 </p>
             </div>
             
@@ -31,7 +31,7 @@
             <form method="POST" action="{{ route('intern.skills.store') }}" class="p-6 space-y-6">
                 @csrf
                 
-                <div class="space-y-4 max-h-80 overflow-y-auto pr-2 rounded-5">
+                <div class="space-y-4 max-h-80 overflow-y-auto pr-2">
                     @foreach($skills as $skill)
                     <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 border border-gray-200 transition-all cursor-pointer">
                         <input type="checkbox" name="skills[]" value="{{ $skill->skill_id }}" 

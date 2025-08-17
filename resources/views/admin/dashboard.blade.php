@@ -27,7 +27,7 @@
       <div class="col-lg-4 col-md-6 col-12">
         <div class="small-box bg-danger">
           <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-            <h2 class="fw-medium">68</h2>
+            <h2 class="fw-medium">1</h2>
             <p>Coordinators</p>
           </div>
           <div class="infobox-icon">
@@ -41,7 +41,7 @@
           <!-- small card -->
           <div class="small-box bg-info"> 
               <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-                  <h2 class="fw-medium">24</h2>
+                  <h2 class="fw-medium">3</h2>
                   <p>Departments</p>
               </div>
               <div class="infobox-icon">
@@ -56,7 +56,7 @@
       <div class="col-lg-4 col-md-6 col-12">
           <div class="small-box bg-success"> 
               <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-                  <h2 class="fw-medium">146</h2>
+                  <h2 class="fw-medium">45</h2>
                   <p>Skills</p>
               </div>
               <div class="infobox-icon">

@@ -30,9 +30,9 @@
                                 <ul class="list-unstyled">
                                     <li class="mb-2">
                                         <strong>Status:</strong> 
-                                        <span class="badge badge-{{ 
+                                        <span class="badge py-2 px-3 rounded-pill bg-{{ 
                                             $intern->status == 'endorsed' ? 'success' : 
-                                            ($intern->status == 'pending' ? 'warning' : 'danger') 
+                                            ($intern->status == 'pending' ? 'warning-subtle text-warning' : 'danger-subtle text-danger') 
                                         }}">
                                             {{ ucfirst($intern->status) }}
                                         </span>

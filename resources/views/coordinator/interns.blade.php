@@ -25,9 +25,6 @@
         <div class="container-fluid">
           <div class="card">
               <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-              <div class="flex-grow-1" style="max-width: 220px;">
-                  <input type="search" class="form-control form-control-sm" placeholder="Search...">
-              </div>
               <div class="d-flex flex-grow-1 justify-content-end p-0">
                   <a class="btn btn-outline-success btn-sm d-flex mr-2" data-toggle="modal" data-target="#importModal">
                       <span class="d-none d-sm-inline mr-1">
@@ -45,70 +42,82 @@
               </div>      
 
 
-              <div class="card-body table-responsive p-0">
-              <table class="table table-bordered text-nowrap mb-0">
-                  <thead class="table-light">
-                  <tr>
-                      <th width="10%">Student ID</th>
-                      <th>Name</th>
-                      <th>Program</th>
-                      <th width="5%">Section</th>
-                      <th width="5%">Status</th>
-                      <th style="white-space: nowrap; width: 12%">Actions</th>
-                  </tr>
-                  </thead>
+            <div class="card-body table-responsive px-3 py-0">
+                <div id="tableLoadingOverlay" 
+                    style="position: absolute; 
+                            width: 100%; 
+                            height: 100%; 
+                            background: rgba(255,255,255,0.85); 
+                            display: flex; 
+                            flex-direction: column;
+                            justify-content: center; 
+                            align-items: center; 
+                            z-index: 1000;
+                            gap: 1rem;">
+                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                    <span class="text-primary">Loading intern data...</span>
+                </div>
+                <table id="internsTable" class="table table-bordered text-nowrap mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th width="10%">Student ID</th>
+                        <th>Name</th>
+                        <th>Program</th>
+                        <th width="5%">Section</th>
+                        <th width="5%">Status</th>
+                        <th width="3%">Actions</th>
+                    </tr>
+                    </thead>
                     <tbody>
-                      @forelse ($interns as $intern)
-                      <tr>
-                          <td class="align-middle">{{ $intern->student_id }}</td>
-                          <td class="align-middle">
-                              <img src="{{ asset('storage/' . $intern->user->pic) }}" 
-                                  alt="Profile Picture" 
-                                  class="rounded-circle me-2 table-pfp" 
-                                  width="30" height="30">
-                              {{ $intern->user->fname }} {{ $intern->user->lname }}
-                          </td>                          
-                          <td class="align-middle">{{ $intern->department->dept_name ?? 'N/A' }}</td>
-                          <td class="align-middle text-center">{{ $intern->year_level }}{{ strtoupper($intern->section) }}</td>
-                          <td class="align-middle text-center">
-                              @php
-                                  $status = strtolower($intern->status);
-                                  $badgeClass = match($status) {
-                                      'incomplete' => 'bg-danger-subtle text-danger',
-                                      'pending' => 'bg-warning-subtle text-warning',
-                                      'endorsed' => 'bg-success-subtle text-success',
-                                      default => 'bg-secondary'
-                                  };
-                              @endphp
-                              <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100">{{ ucfirst($intern->status) }}</span>
-                          </td>
-                          <td class="text-center px-2 align-middle" style="white-space: nowrap;">
-                              <a href="{{ route('coordinator.intern.show', $intern->id) }}" class="btn btn-primary btn-sm">
-                                  <span class="d-none d-sm-inline">View</span>
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="table-action-icon" viewBox="0 0 256 256"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208ZM90.34,165.66a8,8,0,0,1,0-11.32L140.69,104H112a8,8,0,0,1,0-16h48a8,8,0,0,1,8,8v48a8,8,0,0,1-16,0V115.31l-50.34,50.35a8,8,0,0,1-11.32,0Z"></path></svg>                              </a>
-                              <a href="#" class="btn btn-danger btn-sm">
-                                  <span class="d-none d-sm-inline">Remove</span>
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="table-action-icon" viewBox="0 0 256 256"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path></svg>                              </a>
-                          </td>
-                      </tr>
-                      @empty
-                      <tr>
-                          <td colspan="6" class="text-center text-muted">No intern data found.</td>
-                      </tr>
-                      @endforelse
+                        @forelse ($interns as $intern)
+                        <tr>
+                            <td class="align-middle">{{ $intern->student_id }}</td>
+                            <td class="align-middle">
+                                <img src="{{ asset('storage/' . $intern->user->pic) }}" 
+                                    alt="Profile Picture" 
+                                    class="rounded-circle me-2 table-pfp" 
+                                    width="30" height="30">
+                                {{ $intern->user->lname }}, {{ $intern->user->fname }} 
+                            </td>                          
+                            <td class="align-middle">{{ $intern->department->dept_name ?? 'N/A' }}</td>
+                            <td class="align-middle text-center">{{ $intern->year_level }}{{ strtoupper($intern->section) }}</td>
+                            <td class="align-middle text-center">
+                                @php
+                                    $status = strtolower($intern->status);
+                                    $badgeClass = match($status) {
+                                        'incomplete' => 'bg-danger-subtle text-danger',
+                                        'pending' => 'bg-warning-subtle text-warning',
+                                        'endorsed' => 'bg-success-subtle text-success',
+                                        default => 'bg-secondary'
+                                    };
+                                @endphp
+                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100">{{ ucfirst($intern->status) }}</span>
+                            </td>
+                            <td class="text-center px-2 align-middle">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="actionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="ph-fill ph-gear custom-icons-i"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionDropdown">
+                                        <a class="dropdown-item" href="{{ route('coordinator.intern.show', $intern->id) }}">
+                                            <i class="ph-fill ph-eye custom-icons-i mr-2"></i>View
+                                        </a>
+                                        <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
+                                            <i class="ph-fill ph-trash custom-icons-i mr-2"></i>Unregister
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No intern data found.</td>
+                        </tr>
+                        @endforelse
                     </tbody>     
-              </table>
-              </div>
+                </table>
+            </div>
 
-              <div class="card-footer clearfix">
-              <ul class="pagination pagination-sm m-0 float-end">
-                  <li class="page-item"><a class="page-link" href="#">«</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">»</a></li>
-              </ul>
-              </div>
           </div>
         </div>
 
