@@ -55,12 +55,12 @@
                             z-index: 1000;
                             gap: 1rem;">
                     <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
-                    <span class="text-primary">Loading intern data...</span>
+                    <span class="text-primary">Loading interns...</span>
                 </div>
-                <table id="internsTable" class="table table-bordered text-nowrap mb-0">
+                <table id="internsTable" class="table table-bordered mb-0">
                     <thead class="table-light">
                     <tr>
-                        <th width="10%">Student ID</th>
+                        <th width="15%">Student ID</th>
                         <th>Name</th>
                         <th>Program</th>
                         <th width="5%">Section</th>

@@ -459,7 +459,6 @@ $(document).ready(function() {
 <!-- Coordinator: Intern Import -->
 <script>
 // Import form handling
-// Import form handling
 $('#importForm').on('submit', function(e) {
     e.preventDefault();
     
@@ -632,6 +631,44 @@ $(document).ready(function() {
         });
     });
 </script>
+
+<!-- Coordinator HTE Management Table -->
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        $('#htesTable').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "language": {
+                "emptyTable": "No HTE data found.",
+                "search": "_INPUT_",
+                "searchPlaceholder": "Search...",
+                "lengthMenu": "Show _MENU_ entries",
+                "info": "Showing _START_ to _END_ of _TOTAL_ HTEs",
+                "paginate": {
+                    "previous": "«",
+                    "next": "»"
+                }
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": [6] } // Disable sorting for Actions column
+            ],
+            "initComplete": function() {
+                // Hide loading overlay when table is ready
+                $('#tableLoadingOverlay').fadeOut();
+            }
+        });
+        
+        // Remove the manual search input
+        $('.card-header input[type="search"]').parent().remove();
+    });
+</script>
+
 
 
 

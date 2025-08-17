@@ -147,8 +147,18 @@
         padding-top: 0.5rem;
     }
 
-    #internsTable thead th {
+    #htesTable_wrapper .row:first-child {
+        padding-top: 1rem;
+    }
+
+    #htesTable_wrapper .row:last-child {
+        padding-bottom: 1rem;
+        padding-top: 0.5rem;
+    }
+
+    #internsTable, #htesTable thead th {
         border-right: 1px solid #dee2e6 !important;
     }
+
 
 </style>
