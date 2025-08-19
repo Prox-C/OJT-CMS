@@ -14,7 +14,7 @@
             height: 100%;
             cursor: pointer;
             border: none;
-            border-radius: 15px;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         .login-card:hover {
@@ -42,7 +42,7 @@
     <div class="container-fluid p-md-0 p-lg-5 d-flex justify-content-center align-items-center flex-column w-100" style="height: 100vh;">
         <div class="row w-100 h-100 align-items-center">
             <!-- Logo Column -->
-            <div class="col-lg-6 d-flex justify-content-center align-items-center mb-5 mb-lg-0">
+            <div class="col-lg-5 d-flex justify-content-center align-items-center mb-5 mb-lg-0">
                 <div class="logo-container text-center p-4">
                     <!-- Replace with your actual logo -->
                     <img src="{{ asset('assets/images/ojtcms_logo2.png') }}" alt="System Logo" class="logo-img">
@@ -51,7 +51,7 @@
             </div>
             
             <!-- Login Cards Column -->
-            <div class="col-lg-6">
+            <div class="col-lg-7">
                 <div class="row g-4">
                     <!-- Intern Card -->
                     <div class="col-md-6 col-12">
@@ -59,7 +59,7 @@
                             <div class="card login-card bg-white text-center p-4">
                                 <div class="card-body">
                                     <div class="card-icon text-primary">
-                                        <i class="fas fa-user-graduate"></i>
+                                        <i class="ph-fill ph-graduation-cap bg-primary-subtle p-3 rounded-5"></i>
                                     </div>
                                     <h3 class="card-title">Intern</h3>
                                     <p class="card-text">Login to access your internship dashboard</p>
@@ -74,7 +74,7 @@
                             <div class="card login-card bg-white text-center p-4">
                                 <div class="card-body">
                                     <div class="card-icon text-success">
-                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <i class="ph-fill ph-chalkboard-teacher bg-success-subtle p-3 rounded-5"></i>
                                     </div>
                                     <h3 class="card-title">Coordinator</h3>
                                     <p class="card-text">Manage interns and internship programs</p>
@@ -89,7 +89,7 @@
                             <div class="card login-card bg-white text-center p-4">
                                 <div class="card-body">
                                     <div class="card-icon text-warning">
-                                        <i class="fas fa-building"></i>
+                                        <i class="ph-fill ph-building-apartment bg-warning-subtle p-3 rounded-5"></i>
                                     </div>
                                     <h3 class="card-title">HTE</h3>
                                     <p class="card-text">Host Training Establishment portal</p>
@@ -104,7 +104,7 @@
                             <div class="card login-card bg-white text-center p-4">
                                 <div class="card-body">
                                     <div class="card-icon text-danger">
-                                        <i class="fas fa-user-shield"></i>
+                                        <i class="ph-fill ph-shield-checkered bg-danger-subtle p-3 rounded-5"></i>
                                     </div>
                                     <h3 class="card-title">Admin</h3>
                                     <p class="card-text">System administration portal</p>
@@ -121,5 +121,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Font Awesome for icons (optional) -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Phosphour Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2"></script>
 </body>
 </html>
