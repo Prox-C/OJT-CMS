@@ -9,7 +9,7 @@
             <div class="card shadow">
                 <div class="card-header bg-white text-dark">
                     <h3 class="card-title mb-0">
-                        <i class="fas fa-user-graduate mr-2"></i>
+                        <i class="ph-fill ph-student details-icons-i"></i>
                         {{ $intern->user->fname }} {{ $intern->user->lname }} - Intern Details
                     </h3>
                 </div>
@@ -26,7 +26,7 @@
                             </div>
                             
                             <div class="border p-3 rounded bg-light flex-grow-1 mt-0">
-                                <h5 class="mb-3"><i class="fas fa-info-circle mr-2"></i>Academic Information</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-info details-icons-i mr-2"></i>Academic Information</h5>
                                 <ul class="list-unstyled">
                                     <li class="mb-2">
                                         <strong>Status:</strong> 
@@ -50,7 +50,7 @@
                         <!-- Contact & Details Section -->
                         <div class="col-md-8">
                             <div class="border p-3 rounded my-3 mt-lg-0 bg-light">
-                                <h5 class="mb-3"><i class="fas fa-user-circle mr-2"></i>Personal Information</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-person details-icons-i mr-2"></i>Personal Information</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p><strong>Full Name:</strong><br>
@@ -67,7 +67,7 @@
                             </div>
                             
                             <div class="border p-3 rounded my-3 bg-light">
-                                <h5 class="mb-3"><i class="fas fa-address-card mr-2"></i>Contact Information</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-identification-card details-icons-i mr-2"></i>Contact Information</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p><strong>Email:</strong><br>
@@ -82,7 +82,7 @@
                             
                             <!-- Skills Section -->
                             <div class="border p-3 rounded mb-3 bg-light">
-                                <h5 class="mb-3"><i class="fas fa-tasks mr-2"></i>Skills</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-certificate details-icons-i mr-2"></i>Skills</h5>
                                 @if($intern->skills->count() > 0)
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach($intern->skills as $skill)
@@ -96,7 +96,7 @@
                             
                             <!-- Coordinator Info -->
                             <div class="border p-3 rounded bg-light">
-                                <h5 class="mb-3"><i class="fas fa-chalkboard-teacher mr-2"></i>Assigned Coordinator</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-graduation-cap details-icons-i mr-2"></i>Coordinator</h5>
                                 @if($intern->coordinator)
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
@@ -105,9 +105,9 @@
                                                  style="width: 50px; height: 50px; object-fit: cover;"
                                                  alt="Coordinator Profile Picture">
                                         </div>
-                                        <div class="flex-grow-1 ms-3">
+                                        <div class="flex-grow-1">
                                             <h6 class="mb-0">{{ $intern->coordinator->user->fname }} {{ $intern->coordinator->user->lname }}</h6>
-                                            <p class="mb-0 text-muted">{{ $intern->coordinator->faculty_id }}</p>
+                                            <p class="mb-0 text-muted">{{ $intern->coordinator->department->dept_name }} Department</p>
                                         </div>
                                     </div>
                                 @else

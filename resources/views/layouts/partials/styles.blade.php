@@ -23,6 +23,12 @@
 
 
 <style>
+    .nav-link-i {
+        font-size: 22px;
+        position: relative;
+        top: 2.5px;
+    }
+
     .card-body {
         position: relative; /* Needed for absolute positioning of overlay */
     }
@@ -35,6 +41,12 @@
         font-size: 1.2rem;
         position: relative;
         top: 2px;
+    }
+
+    .details-icons-i {
+        font-size: 1.4rem;
+        position: relative;
+        top: 2.5px;
     }
 
     .info-box {

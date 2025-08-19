@@ -31,10 +31,8 @@
           @if($canManageHTEs)
           <div class="d-flex flex-grow-1 justify-content-end p-0">
             <button class="btn btn-outline-success btn-sm d-flex mr-2" id="importBtn">
-              <span class="d-none d-sm-inline mr-1">Import</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="table-cta-icon" viewBox="0 0 256 256">
-                <path d="M200,24H72A16,16,0,0,0,56,40V64H40A16,16,0,0,0,24,80v96a16,16,0,0,0,16,16H56v24a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V40A16,16,0,0,0,200,24ZM72,160a8,8,0,0,1-6.15-13.12L81.59,128,65.85,109.12a8,8,0,0,1,12.3-10.24L92,115.5l13.85-16.62a8,8,0,1,1,12.3,10.24L102.41,128l15.74,18.88a8,8,0,0,1-12.3,10.24L92,140.5,78.15,157.12A8,8,0,0,1,72,160Zm56,56H72V192h56Zm0-152H72V40h56Zm72,152H144V192a16,16,0,0,0,16-16v-8h40Zm0-64H160V104h40Zm0-64H160V80a16,16,0,0,0-16-16V40h56Z"></path>
-              </svg>                
+              <span class="d-none d-sm-inline mr-1 fw-medium">Import</span>
+              <i class="ph-fill ph-microsoft-excel-logo custom-icons-i"></i>              
             </button>
             <a href="{{ route('coordinator.new_h') }}" class="btn btn-primary btn-sm d-flex" id="registerBtn">
               <span>Register</span>
@@ -62,10 +60,9 @@
           <table id="htesTable" class="table table-bordered mb-0">
             <thead class="table-light">
               <tr>
-                <th width="10%">HTE ID</th>
+                <th width="11%">HTE ID</th>
                 <th>Name</th>
                 <th>Representative</th>
-                <th>Industry</th>
                 <th>Slots</th>
                 <th width="10%">MOA Status</th>
                 <th width="3%">Actions</th>
@@ -77,7 +74,6 @@
                 <td>HTE-{{ str_pad($hte->id, 3, '0', STR_PAD_LEFT) }}</td>
                 <td>{{ $hte->organization_name }}</td>
                 <td>{{ $hte->user->fname}}  {{ $hte->user->lname}}</td>
-                <td class="text-capitalize">{{ $hte->type }}</td>
                 <td class="align-middle text-center text-medium text-success">
                   0/{{ $hte->slots }}
                 </td>

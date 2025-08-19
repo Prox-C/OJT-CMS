@@ -54,15 +54,15 @@
                             align-items: center; 
                             z-index: 1000;
                             gap: 1rem;">
-                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
-                    <span class="text-primary">Loading interns...</span>
+                    <i class="ph-bold ph-arrows-clockwise fa-spin fs-3 text-primary"></i>
+                    <span class="text-primary">Loading interns . . .</span>
                 </div>
                 <table id="internsTable" class="table table-bordered mb-0">
                     <thead class="table-light">
                     <tr>
                         <th width="15%">Student ID</th>
                         <th>Name</th>
-                        <th>Program</th>
+                        <th>Department</th>
                         <th width="5%">Section</th>
                         <th width="5%">Status</th>
                         <th width="3%">Actions</th>
@@ -91,16 +91,19 @@
                                         default => 'bg-secondary'
                                     };
                                 @endphp
-                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100">{{ ucfirst($intern->status) }}</span>
+                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100" style="font-size: 0.7rem;">{{ ucfirst($intern->status) }}</span>
                             </td>
                             <td class="text-center px-2 align-middle">
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="actionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="ph-fill ph-gear custom-icons-i"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionDropdown">
-                                        <a class="dropdown-item" href="{{ route('coordinator.intern.show', $intern->id) }}">
+                                    <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="actionDropdown">
+                                        <a class="dropdown-item text-dark" href="{{ route('coordinator.intern.show', $intern->id) }}">
                                             <i class="ph-fill ph-eye custom-icons-i mr-2"></i>View
+                                        </a>
+                                        <a class="dropdown-item text-dark border-top border-bottom border-lightgray" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
+                                            <i class="ph-fill ph-wrench custom-icons-i mr-2"></i>Update
                                         </a>
                                         <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
                                             <i class="ph-fill ph-trash custom-icons-i mr-2"></i>Unregister
@@ -127,7 +130,7 @@
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content rounded-3 overflow-hidden">
               <div class="modal-header bg-white text-dark">
-                  <h5 class="modal-title" id="importModalLabel">Import Interns</h5>
+                  <h5 class="modal-title" id="importModalLabel"><i class="ph-fill ph-download custom-icons-i mr-1"></i>Import Interns</h5>
                   <button type="button" class="close text-muted" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                   </button>

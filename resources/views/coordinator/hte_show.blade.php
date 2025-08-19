@@ -53,7 +53,7 @@
             <div class="card shadow">
                 <div class="card-header bg-white text-dark">
                     <h3 class="card-title mb-0">
-                        <i class="fas fa-building mr-2"></i>
+                        <i class="ph ph-building-apartment details-icons-i mr-2"></i>
                         {{ $hte->organization_name }} - Details
                     </h3>
                 </div>
@@ -70,7 +70,7 @@
                             </div>
                             
                             <div class="border p-3 rounded bg-light flex-grow-1 mt-0">
-                                <h5 class="mb-3"><i class="fas fa-info-circle mr-2"></i>Basic Information</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-info details-icons-i mr-2"></i>Basic Information</h5>
                                 <ul class="list-unstyled">
                                     <!-- <li class="mb-2">
                                         <strong>Status:</strong> 
@@ -78,6 +78,7 @@
                                             {{ ucfirst($hte->status) }}
                                         </span>
                                     </li> -->
+                                    <li class="mb-2"><strong>ID:</strong> HTE-{{ str_pad($hte->id, 3, '0', STR_PAD_LEFT) }}</li>
                                     <li class="mb-2"><strong>Type:</strong> {{ ucfirst($hte->type) }}</li>
                                     <li class="mb-2"><strong>Available Slots:</strong> {{ $hte->slots }}</li>
                                     <li class="mb-2 align-middle"><strong>MOA:</strong>
@@ -96,7 +97,7 @@
                         <!-- Contact & Details Section -->
                         <div class="col-md-8">
                             <div class="border p-3 rounded my-3 mt-lg-0 bg-light">
-                                <h5 class="mb-3"><i class="fas fa-address-card mr-2"></i>Contact Information</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-identification-card details-icons-i mr-2"></i>Contact Information</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p><strong>Contact Person:</strong><br>
@@ -117,7 +118,7 @@
                             
                             <!-- Skills Section -->
                             <div class="border p-3 rounded mb-3 bg-light">
-                                <h5 class="mb-3"><i class="fas fa-tasks mr-2"></i>Preferred Skills</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-list-checks details-icons-i mr-2"></i>Preferred Skills</h5>
                                 @if($hte->skills->count() > 0)
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach($hte->skills as $skill)
@@ -131,7 +132,7 @@
                             
                             <!-- Description -->
                             <div class="border p-3 rounded bg-light">
-                                <h5 class="mb-3"><i class="fas fa-align-left mr-2"></i>Organization Description</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-text-align-left details-icons-i mr-2"></i></i>Description</h5>
                                 <p>{{ $hte->description ?? 'No description provided' }}</p>
                             </div>
                         </div>
