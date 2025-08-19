@@ -27,7 +27,7 @@
               <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
               <div class="d-flex flex-grow-1 justify-content-end p-0">
                   <a class="btn btn-outline-success btn-sm d-flex mr-2" data-toggle="modal" data-target="#importModal">
-                      <span class="d-none d-sm-inline mr-1">
+                      <span class="d-none d-sm-inline fw-medium mr-1">
                           Import
                       </span>
                       <svg xmlns="http://www.w3.org/2000/svg" class="table-cta-icon" viewBox="0 0 256 256">
@@ -36,7 +36,7 @@
                   </a>
 
                   <a href="{{ route('coordinator.new_i') }}" class="btn btn-primary btn-sm d-flex">
-                      <span>Register</span>
+                      <span class="fw-medium">Register</span>
                   </a>
               </div>
               </div>      
@@ -99,14 +99,14 @@
                                         <i class="ph-fill ph-gear custom-icons-i"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="actionDropdown">
-                                        <a class="dropdown-item text-dark" href="{{ route('coordinator.intern.show', $intern->id) }}">
-                                            <i class="ph-fill ph-eye custom-icons-i mr-2"></i>View
+                                        <a class="dropdown-item" href="{{ route('coordinator.intern.show', $intern->id) }}">
+                                            <i class="ph ph-eye custom-icons-i mr-2"></i>View
                                         </a>
-                                        <a class="dropdown-item text-dark border-top border-bottom border-lightgray" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
-                                            <i class="ph-fill ph-wrench custom-icons-i mr-2"></i>Update
+                                        <a class="dropdown-item border-top border-bottom border-lightgray" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
+                                            <i class="ph ph-wrench custom-icons-i mr-2"></i>Update
                                         </a>
                                         <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
-                                            <i class="ph-fill ph-trash custom-icons-i mr-2"></i>Unregister
+                                            <i class="ph ph-trash custom-icons-i mr-2"></i>Unregister
                                         </a>
                                     </div>
                                 </div>
@@ -129,7 +129,7 @@
   <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content rounded-3 overflow-hidden">
-              <div class="modal-header bg-white text-dark">
+              <div class="modal-header bg-light text-dark">
                   <h5 class="modal-title" id="importModalLabel"><i class="ph-fill ph-download custom-icons-i mr-1"></i>Import Interns</h5>
                   <button type="button" class="close text-muted" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
@@ -196,7 +196,7 @@
                       </div>
                   </div>
                   
-                  <div class="modal-footer">
+                  <div class="modal-footer bg-light">
                       <button type="submit" id="importSubmit" class="btn btn-success">Import</button>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                   </div>

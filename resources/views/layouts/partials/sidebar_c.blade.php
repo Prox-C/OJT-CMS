@@ -30,7 +30,7 @@
 
           <li class="nav-item">
             <a href="{{route('coordinator.interns')}}" class="nav-link {{ Request::is('coordinator/interns*') ? 'current-page' : '' }}">
-              <i class="ph{{ Request::is('coordinator/interns*') ? '-fill' : '' }} ph-identification-badge nav-link-i "></i>                
+              <i class="ph{{ Request::is('coordinator/interns*') ? '-fill' : '' }} ph-graduation-cap nav-link-i "></i>                
               <p>Interns</p>
             </a>
           </li>

@@ -54,8 +54,8 @@
             align-items: center; 
             z-index: 1000;
             gap: 1rem;">
-            <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
-            <span class="text-primary">Loading HTEs...</span>
+            <i class="ph-bold ph-arrows-clockwise fa-spin fs-3 text-primary"></i>
+            <span class="text-primary">Loading HTEs . . .</span>
           </div>
           <table id="htesTable" class="table table-bordered mb-0">
             <thead class="table-light">
@@ -89,16 +89,19 @@
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="actionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="ph-fill ph-gear custom-icons-i"></i>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionDropdown">
+                        <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="actionDropdown">
                             <!-- View Option -->
                             <a class="dropdown-item" href="{{ route('coordinator.hte.show', $hte->id) }}">
-                                <i class="ph-fill ph-eye custom-icons-i mr-2"></i>View
+                                <i class="ph ph-eye custom-icons-i mr-2"></i>View
                             </a>
                             
                             <!-- Unregister Option (conditionally visible) -->
                             @if($canManageHTEs)
+                            <a class="dropdown-item border-top border-bottom border-lightgray" href="#" data-toggle="modal" data-target="#unregisterModal{{ $hte->id }}">
+                                <i class="ph ph-wrench custom-icons-i mr-2"></i>Update
+                            </a>
                             <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#unregisterModal{{ $hte->id }}">
-                                <i class="ph-fill ph-trash custom-icons-i mr-2"></i>Unregister
+                                <i class="ph ph-trash custom-icons-i mr-2"></i>Unregister
                             </a>
                             @endif
                         </div>

@@ -143,10 +143,10 @@
                     <div class="row mt-4">
                         <div class="col-md-12 text-right bg-light p-3 rounded">
                             <a href="{{ route('coordinator.hte.edit', $hte->id) }}" class="btn btn-primary mr-2 text-white">
-                               <span class="text-white"><i class="fas fa-edit mr-1"></i> Update Info</span> 
+                               <span class="text-white"><i class="ph-fill ph-wrench custom-icons-i mr-2"></i>Update Info</span> 
                             </a>
                             <button class="btn btn-danger" data-toggle="modal" data-target="#unregisterModal">
-                                <i class="fas fa-trash-alt mr-1"></i> Unregister HTE
+                                <i class="ph-fill ph-trash custom-icons-i mr-2"></i>Unregister HTE
                             </button>
                         </div>
                     </div>
@@ -162,7 +162,7 @@
             <div class="card shadow">
                 <div class="card-header bg-white text-white">
                     <h3 class="card-title mb-0">
-                        <i class="fas fa-users mr-2"></i>
+                        <i class="ph-fill ph-user-list custom-icons-i mr-2"></i>
                         Endorsements
                     </h3>
                 </div>

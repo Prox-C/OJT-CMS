@@ -9,8 +9,8 @@
             <div class="card shadow">
                 <div class="card-header bg-white text-dark">
                     <h3 class="card-title mb-0">
-                        <i class="ph-fill ph-student details-icons-i"></i>
-                        {{ $intern->user->fname }} {{ $intern->user->lname }} - Intern Details
+                        <i class="ph ph-graduation-cap details-icons-i mr-2"></i>
+                        Intern Details
                     </h3>
                 </div>
                 
@@ -96,7 +96,7 @@
                             
                             <!-- Coordinator Info -->
                             <div class="border p-3 rounded bg-light">
-                                <h5 class="mb-3"><i class="ph-fill ph-graduation-cap details-icons-i mr-2"></i>Coordinator</h5>
+                                <h5 class="mb-3"><i class="ph-fill ph-chalkboard-teacher details-icons-i mr-2"></i>Coordinator</h5>
                                 @if($intern->coordinator)
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
@@ -120,11 +120,11 @@
                     <!-- Action Buttons -->
                     <div class="row mt-4">
                         <div class="col-md-12 text-right bg-light p-3 rounded">
-                            <a href="" class="btn btn-primary mr-2 text-white">
-                               <span class="text-white"><i class="fas fa-edit mr-1"></i> Update Info</span> 
+                            <a href="" class="btn btn-primary fw-medium mr-2">
+                               <span class="text-white"><i class="ph-fill ph-wrench custom-icons-i mr-2"></i></i>Update Info</span> 
                             </a>
-                            <button class="btn btn-danger" data-toggle="modal" data-target="#removeModal">
-                                <i class="fas fa-user-minus mr-1"></i> Remove Intern
+                            <button class="btn btn-danger fw-medium" data-toggle="modal" data-target="#removeModal">
+                                <i class="ph-fill ph-trash custom-icons-i mr-2"></i>Unregister Intern
                             </button>
                         </div>
                     </div>
@@ -140,17 +140,17 @@
 <div class="modal fade" id="removeModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Confirm Removal</h5>
+            <div class="modal-header bg-light text-white">
+                <h5 class="modal-title">Confirm Account Deletion</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to remove this intern from the system? This action cannot be undone.</p>
+                <p>Are you sure you want to unregister <strong>{{ $intern->user->fname }} {{ $intern->user->lname }}</strong>? This action cannot be undone.</p>
                 <p class="text-danger"><strong>Warning:</strong> All associated internship records will also be removed.</p>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 <form action="" method="POST">
                     @csrf
