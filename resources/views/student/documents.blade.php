@@ -33,11 +33,11 @@
                             @else
                                 bg-warning-subtle text-warning
                             @endif">
-                            <i class="fas 
+                            <i class="ph-fill custom-icons-i
                                 @if($documents->count() >= 8)
-                                    fa-check
+                                    ph-seal-check
                                 @else
-                                    fa-question
+                                    ph-seal-question
                                 @endif 
                                 mr-1"></i>
                             <span id="statusText">
@@ -59,7 +59,7 @@
                                 <th width="45%">Document Name</th>
                                 <th width="">Description</th>
                                 <th width="10%">Status</th>
-                                <th width="13%">Action</th>
+                                <th width="13%" style="white-space: no-wrap;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,29 +81,29 @@
                                 </td>
                                 <td class="text-center align-middle">
                                     @if($document)
-                                        <span class="badge bg-success-subtle text-success py-2 px-3 rounded-4 w-100">Submitted</span><br>
+                                        <span class="badge bg-success-subtle text-success py-2 px-3 rounded-4 w-100 status-badge">Submitted</span><br>
                                         <small>{{ $document->created_at->format('Y-m-d') }}</small>
                                     @else
-                                        <span class="badge bg-danger-subtle text-danger py-2 px-3 rounded-pill w-100">Missing</span>
+                                        <span class="badge bg-danger-subtle text-danger py-2 px-3 rounded-pill w-100 status-badge">Missing</span>
                                     @endif
                                 </td>
                                 <td class="text-center align-middle">
                                     @if($document)
-                                        <button class="btn btn-sm btn-primary view-document w-100 mb-2" 
+                                        <button class="btn btn-sm btn-outline-primary view-document w-100 mb-2 fw-medium" 
                                                 data-url="{{ Storage::url($document->file_path) }}">
+                                            <i class="ph ph-eye custom-icons-i"></i>
                                             <span>View</span>
-                                            <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-danger remove-document w-100" 
+                                        <button class="btn btn-sm btn-outline-danger remove-document w-100 fw-medium" 
                                                 data-id="{{ $document->id }}">
+                                            <i class="ph ph-trash custom-icons-i"></i>
                                             <span>Delete</span>
-                                            <i class="fas fa-trash"></i>
                                         </button>
                                     @else
-                                        <button class="btn btn-sm btn-success upload-document w-100" 
+                                        <button class="btn btn-sm btn-outline-success upload-document w-100 fw-medium" 
                                                 data-type="{{ $type }}">
+                                            <i class="ph-fill ph-upload custom-icons-i"></i>
                                             <span>Upload</span>
-                                            <i class="fas fa-upload"></i>
                                         </button>
                                     @endif
                                 </td>
@@ -131,10 +131,10 @@
                 <iframe id="documentFrame" src="" style="width:100%; height:70vh;" frameborder="0"></iframe>
             </div>
             <div class="modal-footer">
-                <a id="downloadLink" href="#" class="btn btn-primary">
-                    <i class="fas fa-download mr-1"></i> Download
+                <a id="downloadLink" href="#" class="btn btn-primary fw-medium">
+                    <i class="ph-fill ph-download custom-icons-i mr-1"></i>Download
                 </a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary fw-medium" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -142,9 +142,9 @@
 
 <!-- Document Upload Modal -->
 <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-light">
                 <h5 class="modal-title">Upload Document</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -156,14 +156,14 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="documentFile">Select PDF File (max 5MB)</label>
-                        <input type="file" class="form-control-file" id="documentFile" name="document" accept=".pdf" required>
+                        <input type="file" class="form-control" id="documentFile" name="document" accept=".pdf" required>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-upload mr-1"></i> Upload
+                <div class="modal-footer bg-light">
+                    <button type="submit" class="btn btn-success fw-medium">
+                        <i class="ph-fill ph-upload custom-icons-i mr-1"></i>Upload
                     </button>
+                    <button type="button" class="btn btn-secondary fw-medium" data-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>

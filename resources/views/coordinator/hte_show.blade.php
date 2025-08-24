@@ -84,7 +84,7 @@
                                     <li class="mb-2 align-middle"><strong>MOA:</strong>
                                         @if($hte->moa_path)
                                             <button class="btn btn-sm btn-outline-primary ml-2" data-toggle="modal" data-target="#moaPreviewModal">
-                                                <i class="fas fa-eye mr-1"></i> Preview
+                                                <i class="ph-fill ph-eye custom-icons-i mr-1"></i>View
                                             </button>
                                         @else
                                             <span class="small badge bg-danger-subtle text-danger py-1 px-3 rounded-pill" style="font-size: 14px">Missing</span>
@@ -193,22 +193,25 @@
 <div class="modal fade" id="unregisterModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Confirm Unregistration</h5>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title">
+                    <i class="ph-bold ph-warning details-icons-i mr-1"></i>
+                    Confirm Account Deletion
+                </h5>                
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to unregister this HTE? This action cannot be undone.</p>
-                <p class="text-danger"><strong>Warning:</strong> Any ongoing internships will be affected.</p>
+                <p>Are you sure you want to unregister <strong>{{ $hte->organization_name}}</strong>? This action cannot be undone.</p>
+                <p class="text-danger small"><strong>WARNING:</strong> Any ongoing internships will be affected.</p>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 <form action="{{ route('coordinator.hte.destroy', $hte->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Confirm Unregister</button>
+                    <button type="submit" class="btn btn-danger">Unregister</button>
                 </form>
             </div>
         </div>

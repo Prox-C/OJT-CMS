@@ -78,6 +78,8 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::post('/interns', [CoordinatorController::class, 'registerIntern'])->name('coordinator.register_i');
     Route::post('/interns/import', [CoordinatorController::class, 'importInterns'])->name('coordinator.import_interns');
     Route::get('/interns/{id}', [CoordinatorController::class, 'showIntern'])->name('coordinator.intern.show');
+    Route::delete('/interns/{id}', [CoordinatorController::class, 'destroyIntern'])->name('coordinator.intern.destroy');
+
 
 
     Route::get('/htes', [CoordinatorController::class, 'htes'])->name('coordinator.htes');

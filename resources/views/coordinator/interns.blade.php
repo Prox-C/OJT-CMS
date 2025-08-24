@@ -8,7 +8,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="page-header">MANAGE INTERNS</h1>
+        <h1 class="page-header">STUDENT INTERNS</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -26,7 +26,7 @@
           <div class="card">
               <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
               <div class="d-flex flex-grow-1 justify-content-end p-0">
-                  <a class="btn btn-outline-success btn-sm d-flex mr-2" data-toggle="modal" data-target="#importModal">
+                  <a class="btn btn-outline-success d-flex mr-2" data-toggle="modal" data-target="#importModal">
                       <span class="d-none d-sm-inline fw-medium mr-1">
                           Import
                       </span>
@@ -35,7 +35,7 @@
                       </svg>                
                   </a>
 
-                  <a href="{{ route('coordinator.new_i') }}" class="btn btn-primary btn-sm d-flex">
+                  <a href="{{ route('coordinator.new_i') }}" class="btn btn-primary d-flex">
                       <span class="fw-medium">Register</span>
                   </a>
               </div>
@@ -91,7 +91,7 @@
                                         default => 'bg-secondary'
                                     };
                                 @endphp
-                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100" style="font-size: 0.7rem;">{{ ucfirst($intern->status) }}</span>
+                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100 status-badge">{{ ucfirst($intern->status) }}</span>
                             </td>
                             <td class="text-center px-2 align-middle">
                                 <div class="dropdown">
@@ -99,15 +99,44 @@
                                         <i class="ph-fill ph-gear custom-icons-i"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="actionDropdown">
-                                        <a class="dropdown-item" href="{{ route('coordinator.intern.show', $intern->id) }}">
+                                        <a class="dropdown-item btn btn-outline-light text-dark" href="{{ route('coordinator.intern.show', $intern->id) }}">
                                             <i class="ph ph-eye custom-icons-i mr-2"></i>View
                                         </a>
-                                        <a class="dropdown-item border-top border-bottom border-lightgray" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
+                                        <a class="dropdown-item border-top border-bottom border-lightgray btn btn-outline-light text-dark" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
                                             <i class="ph ph-wrench custom-icons-i mr-2"></i>Update
                                         </a>
-                                        <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
+                                        <a class="dropdown-item btn btn-outline-light text-danger" href="#" data-toggle="modal" data-target="#removeModal{{ $intern->id }}">
                                             <i class="ph ph-trash custom-icons-i mr-2"></i>Unregister
                                         </a>
+                                    </div>
+                                </div>
+
+                                <!-- Remove Modal -->
+                                <div class="modal fade" id="removeModal{{ $intern->id }}" tabindex="-1" role="dialog">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-light text-white">
+                                                <h5 class="modal-title">
+                                                    <i class="ph-bold ph-warning details-icons-i mr-1"></i>
+                                                    Confirm Account Deletion
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="text-left">Are you sure you want to unregister <strong>{{ $intern->user->fname }} {{ $intern->user->lname }}</strong>? This action cannot be undone.</p>
+                                                <p class="text-danger small text-left"><strong>WARNING:</strong> All associated internship records will also be removed.</p>
+                                            </div>
+                                            <div class="modal-footer bg-light">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <form action="{{ route('coordinator.intern.destroy', $intern->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger fw-medium">Unregister</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </td>

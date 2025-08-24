@@ -30,11 +30,11 @@
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
           @if($canManageHTEs)
           <div class="d-flex flex-grow-1 justify-content-end p-0">
-            <button class="btn btn-outline-success btn-sm d-flex mr-2" id="importBtn">
+            <button class="btn btn-outline-success d-flex mr-2" id="importBtn">
               <span class="d-none d-sm-inline mr-1 fw-medium">Import</span>
               <i class="ph-fill ph-microsoft-excel-logo custom-icons-i"></i>              
             </button>
-            <a href="{{ route('coordinator.new_h') }}" class="btn btn-primary btn-sm d-flex" id="registerBtn">
+            <a href="{{ route('coordinator.new_h') }}" class="btn btn-primary d-flex" id="registerBtn">
               <span>Register</span>
             </a>
           </div>
@@ -91,19 +91,47 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="actionDropdown">
                             <!-- View Option -->
-                            <a class="dropdown-item" href="{{ route('coordinator.hte.show', $hte->id) }}">
+                            <a class="dropdown-item btn btn-outline-light text-dark" href="{{ route('coordinator.hte.show', $hte->id) }}">
                                 <i class="ph ph-eye custom-icons-i mr-2"></i>View
                             </a>
                             
                             <!-- Unregister Option (conditionally visible) -->
                             @if($canManageHTEs)
-                            <a class="dropdown-item border-top border-bottom border-lightgray" href="#" data-toggle="modal" data-target="#unregisterModal{{ $hte->id }}">
+                            <a class="dropdown-item border-top border-bottom border-lightgray btn btn-outline-light text-dark" href="#" data-toggle="modal" data-target="#unregisterModal{{ $hte->id }}">
                                 <i class="ph ph-wrench custom-icons-i mr-2"></i>Update
                             </a>
-                            <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#unregisterModal{{ $hte->id }}">
+                            <a class="dropdown-item btn btn-outline-light text-danger" href="#" data-toggle="modal" data-target="#unregisterHTE{{ $hte->id }}">
                                 <i class="ph ph-trash custom-icons-i mr-2"></i>Unregister
                             </a>
                             @endif
+                        </div>
+                    </div>
+                    <!-- Unregister Confirmation Modal -->
+                     <div class="modal fade" id="unregisterHTE{{ $hte->id }}" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-light">
+                                    <h5 class="modal-title">
+                                        <i class="ph-bold ph-warning details-icons-i mr-1"></i>
+                                        Confirm Account Deletion
+                                    </h5>                
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-left">Are you sure you want to unregister <strong>{{ $hte->organization_name}}</strong>? This action cannot be undone.</p>
+                                    <p class="text-danger small text-left"><strong>WARNING:</strong> Any ongoing internships will be affected.</p>
+                                </div>
+                                <div class="modal-footer bg-light">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form action="{{ route('coordinator.hte.destroy', $hte->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">Unregister</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </td>

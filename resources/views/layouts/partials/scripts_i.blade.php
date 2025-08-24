@@ -69,14 +69,14 @@ $(document).ready(function() {
                 success: function(response) {
                     // Update the row
                     row.find('td:eq(2)').html(`
-                        <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill w-100">Missing</span>
+                        <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill w-100 status-badge">Missing</span>
                     `);
                     
                     row.find('td:eq(3)').html(`
-                        <button class="btn btn-sm btn-success upload-document w-100" 
+                        <button class="btn btn-sm btn-outline-success upload-document w-100" 
                                 data-type="${documentType}">
+                            <i class="ph-fill ph-upload custom-icons-i"></i>
                             <span>Upload</span>
-                            <i class="fas fa-upload"></i>
                         </button>
                     `);
                     

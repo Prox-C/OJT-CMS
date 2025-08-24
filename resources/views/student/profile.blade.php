@@ -112,12 +112,21 @@
                         </div>
                     </div>
 
+                    <div class="card-footer d-flex justify-content-end bg-white">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ph-fill ph-floppy-disk-back custom-icons-i mr-1"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
                     <!-- Skills Section -->
                     <div class="card mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">My Skills</h5>
-                            <button type="button" class="btn btn-sm btn-primary ml-auto" data-toggle="modal" data-target="#skillsModal">
-                                <i class="fas fa-edit mr-1"></i> Manage Skills
+                            <button type="button" class="btn btn-sm btn-outline-primary ml-auto" data-toggle="modal" data-target="#skillsModal">
+                                <i class="ph-fill ph-gear-six custom-icons-i mr-1"></i>Manage Skills
                             </button>
                         </div>
                         <div class="card-body">
@@ -136,15 +145,6 @@
                             @endif
                         </div>
                     </div>
-
-                    <div class="card-footer d-flex justify-content-end bg-white">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save mr-1"></i> Save Changes
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 </section>
 
@@ -182,10 +182,10 @@
                 </div>
                 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save mr-1"></i> Save Skills
+                        <i class="ph-fill ph-floppy-disk-back custom-icons-i mr-1"></i> Save Skills
                     </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>

@@ -23,6 +23,9 @@
 
 
 <style>
+    .status-badge {
+        font-size: 0.7rem !important;
+    }
     .nav-link-i {
         font-size: 22px;
         position: relative;
@@ -101,9 +104,9 @@
 
     .table-cta-icon {
         fill: currentColor;
-        height: 18px;
+        height: 1.2rem;
         position: relative;
-        top: 1px;
+        top: 2px;
     }
 
     .table-action-icon {
@@ -112,6 +115,7 @@
         position: relative;
         top: -1px;
     }
+
     /* SKILL KNOBS */
     .knob-container {
         position: relative;

@@ -141,21 +141,24 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-light text-white">
-                <h5 class="modal-title">Confirm Account Deletion</h5>
+                <h5 class="modal-title">
+                    <i class="ph-bold ph-warning details-icons-i mr-1"></i>
+                    Confirm Account Deletion
+                </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to unregister <strong>{{ $intern->user->fname }} {{ $intern->user->lname }}</strong>? This action cannot be undone.</p>
-                <p class="text-danger"><strong>Warning:</strong> All associated internship records will also be removed.</p>
+                <p class="text-danger small"><strong>WARNING:</strong> All associated internship records will also be removed.</p>
             </div>
             <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <form action="" method="POST">
+                <form action="{{ route('coordinator.intern.destroy', $intern->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Confirm Removal</button>
+                    <button type="submit" class="btn btn-danger fw-medium">Unregister</button>
                 </form>
             </div>
         </div>

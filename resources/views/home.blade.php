@@ -46,7 +46,7 @@
                 <div class="logo-container text-center p-4">
                     <!-- Replace with your actual logo -->
                     <img src="{{ asset('assets/images/ojtcms_logo2.png') }}" alt="System Logo" class="logo-img">
-                    <h1 class="text-white mt-4">Student Internship Portal</h1>
+                    <h1 class="text-white mt-4">OJT Coordination & Management System</h1>
                 </div>
             </div>
             
@@ -77,7 +77,7 @@
                                         <i class="ph-fill ph-chalkboard-teacher bg-success-subtle p-3 rounded-5"></i>
                                     </div>
                                     <h3 class="card-title">Coordinator</h3>
-                                    <p class="card-text">Manage interns and internship programs</p>
+                                    <p class="card-text">Manage interns and HTEs</p>
                                 </div>
                             </div>
                         </a>

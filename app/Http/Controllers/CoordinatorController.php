@@ -125,13 +125,44 @@ use Maatwebsite\Excel\Facades\Excel;
             ->with('success', 'Intern registered successfully. Activation email sent.');
     }
 
-public function showIntern($id)
-{
-    $intern = Intern::with(['user', 'department', 'skills', 'coordinator.user'])
-        ->findOrFail($id);
-    
-    return view('coordinator.intern_show', compact('intern'));
-}
+    public function showIntern($id)
+    {
+        $intern = Intern::with(['user', 'department', 'skills', 'coordinator.user'])
+            ->findOrFail($id);
+        
+        return view('coordinator.intern_show', compact('intern'));
+    }
+
+    public function destroyIntern($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $intern = Intern::findOrFail($id);
+            $userId = $intern->user_id;
+            
+            $intern->delete();
+
+            // Check if user exists in other tables
+            $userStillHasRoles = DB::table('admins')->where('user_id', $userId)->exists()
+                || DB::table('coordinators')->where('user_id', $userId)->exists()
+                || DB::table('htes')->where('user_id', $userId)->exists();
+
+            if (!$userStillHasRoles) {
+                User::destroy($userId);
+            }
+
+            DB::commit();
+
+            return redirect()->route('coordinator.interns')
+                ->with('success', 'Intern deleted successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('coordinator.interns')
+                ->with('error', 'Failed to delete intern: ' . $e->getMessage());
+        }
+    }
 
     
 
@@ -221,44 +252,6 @@ public function showIntern($id)
             ->with('success', 'HTE registered successfully. Activation email sent.');
     }
 
-public function showImportForm()
-{
-    return view('coordinator.interns.import');
-}
-
-public function importInterns(Request $request)
-{
-    $request->validate([
-        'import_file' => 'required|file|mimes:xlsx,xls,csv',
-        'coordinator_id' => 'required|exists:coordinators,id',
-        'dept_id' => 'required|exists:departments,dept_id'
-    ]);
-
-    try {
-        $import = new InternsImport(
-            $request->coordinator_id,
-            $request->dept_id
-        );
-        
-        \Maatwebsite\Excel\Facades\Excel::import($import, $request->file('import_file'));
-        
-        return response()->json([
-            'success' => true,
-            'success_count' => $import->getSuccessCount(),
-            'fail_count' => $import->getFailCount(),
-            'failures' => $import->getFailures()
-        ]);
-        
-    } catch (\Exception $e) {
-        Log::error('Import error: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Error during import: ' . $e->getMessage(),
-            'error_details' => $e->getTraceAsString()
-        ], 500);
-    }
-}
-
     public function showHTE($id)
     {
         $hte = Hte::with(['user', 'skills', 'skills.department'])
@@ -268,6 +261,98 @@ public function importInterns(Request $request)
         
         return view('coordinator.hte_show', compact('hte', 'canManage'));
     }
+
+    public function destroyHTE($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Find the HTE
+            $hte = HTE::findOrFail($id);
+
+            // Store user ID for later check
+            $userId = $hte->user_id;
+
+            // Delete the HTE record (cascade will handle related records like hte_skill)
+            $hte->delete();
+
+            // Check if user has other roles
+            $hasOtherRoles = DB::table('admins')
+                ->where('user_id', $userId)
+                ->orWhereExists(function ($query) use ($userId) {
+                    $query->select(DB::raw(1))
+                          ->from('coordinators')
+                          ->where('user_id', $userId);
+                })
+                ->orWhereExists(function ($query) use ($userId) {
+                    $query->select(DB::raw(1))
+                          ->from('interns')
+                          ->where('user_id', $userId);
+                })
+                ->exists();
+
+            // Delete user only if they don't have other roles
+            if (!$hasOtherRoles) {
+                User::where('id', $userId)->delete();
+            }
+
+            DB::commit();
+
+            return redirect()->route('coordinator.htes')
+                ->with('success', 'HTE account unregistered successfully.');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
+            Log::error('HTE not found: ' . $e->getMessage());
+            return redirect()->route('coordinator.htes')
+                ->with('error', 'HTE account not found.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting HTE: ' . $e->getMessage());
+            return redirect()->route('coordinator.htes')
+                ->with('error', 'An error occurred while unregistering the HTE: ' . $e->getMessage());
+        }
+    }
+
+    public function showImportForm()
+    {
+        return view('coordinator.interns.import');
+    }
+
+    public function importInterns(Request $request)
+    {
+        $request->validate([
+            'import_file' => 'required|file|mimes:xlsx,xls,csv',
+            'coordinator_id' => 'required|exists:coordinators,id',
+            'dept_id' => 'required|exists:departments,dept_id'
+        ]);
+
+        try {
+            $import = new InternsImport(
+                $request->coordinator_id,
+                $request->dept_id
+            );
+            
+            \Maatwebsite\Excel\Facades\Excel::import($import, $request->file('import_file'));
+            
+            return response()->json([
+                'success' => true,
+                'success_count' => $import->getSuccessCount(),
+                'fail_count' => $import->getFailCount(),
+                'failures' => $import->getFailures()
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Import error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error during import: ' . $e->getMessage(),
+                'error_details' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
 
     public function deploy() {
         $htes = \App\Models\HTE::with('skills')->get();
