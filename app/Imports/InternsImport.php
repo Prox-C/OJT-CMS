@@ -77,7 +77,7 @@ class InternsImport implements ToCollection, WithHeadingRow
                 'year_level' => $data['year_level'],
                 'academic_year' => $data['academic_year'],
                 'semester' => $data['semester'],
-                'status' => 'incomplete',
+                'status' => 'pending requirements',
                 'first_login' => 1
             ]);
 

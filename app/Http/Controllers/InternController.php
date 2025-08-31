@@ -219,14 +219,14 @@ public function checkDocumentsComplete()
         // Check if this was the 8th document
         $isComplete = $intern->documents()->count() === 8;
         if ($isComplete) {
-            $intern->update(['status' => 'pending']);
+            $intern->update(['status' => 'ready for deployment']);
         }
 
         return response()->json([
             'message' => 'Document uploaded successfully',
             'file_url' => Storage::url($path),
             'document_id' => $document->id,
-            'new_status' => $isComplete ? 'pending' : null,
+            'new_status' => $isComplete ? 'ready for deployment' : null,
             'created_at' => $document->created_at->format('Y-m-d')
         ]);
     }
@@ -248,11 +248,11 @@ public function checkDocumentsComplete()
         $document->delete();
 
         // Always set to incomplete when deleting
-        $intern->update(['status' => 'incomplete']);
+        $intern->update(['status' => 'pending requirements']);
 
         return response()->json([
             'message' => 'Document removed',
-            'new_status' => $wasComplete ? 'incomplete' : null
+            'new_status' => $wasComplete ? 'pending requirements' : null
         ]);
     }
 

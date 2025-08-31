@@ -89,18 +89,25 @@
                                 </td>
                                 <td class="text-center align-middle">
                                     @if($document)
-                                        <button class="btn btn-sm btn-outline-primary view-document w-100 mb-2 fw-medium" 
-                                                data-url="{{ Storage::url($document->file_path) }}">
-                                            <i class="ph ph-eye custom-icons-i"></i>
-                                            <span>View</span>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="actionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="ph-fill ph-gear custom-icons-i"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-outline-danger remove-document w-100 fw-medium" 
-                                                data-id="{{ $document->id }}">
-                                            <i class="ph ph-trash custom-icons-i"></i>
-                                            <span>Delete</span>
-                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right py-0 overflow-hidden" aria-labelledby="actionDropdown">
+                                            <button class="dropdown-item btn btn-outline-light view-document w-100 fw-medium border-bottom border-lightgray btn-flat text-dark py-2" 
+                                                    data-url="{{ Storage::url($document->file_path) }}">
+                                                <i class="ph ph-eye custom-icons-i"></i>
+                                                <span>View</span>
+                                            </button>
+                                            <button class="dropdown-item btn btn-outline-light remove-document w-100 fw-medium btn-flat text-danger py-2" 
+                                                    data-id="{{ $document->id }}">
+                                                <i class="ph ph-trash custom-icons-i"></i>
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
                                     @else
-                                        <button class="btn btn-sm btn-outline-success upload-document w-100 fw-medium" 
+                                        <button class="btn btn-sm btn-outline-success upload-document fw-medium" 
                                                 data-type="{{ $type }}">
                                             <i class="ph-fill ph-upload custom-icons-i"></i>
                                             <span>Upload</span>

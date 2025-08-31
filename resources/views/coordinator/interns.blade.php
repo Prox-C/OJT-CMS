@@ -61,8 +61,7 @@
                     <thead class="table-light">
                     <tr>
                         <th width="15%">Student ID</th>
-                        <th>Name</th>
-                        <th>Department</th>
+                        <th style="white-space: no-wrap">Name</th>
                         <th width="5%">Section</th>
                         <th width="5%">Status</th>
                         <th width="3%">Actions</th>
@@ -79,14 +78,13 @@
                                     width="30" height="30">
                                 {{ $intern->user->lname }}, {{ $intern->user->fname }} 
                             </td>                          
-                            <td class="align-middle">{{ $intern->department->dept_name ?? 'N/A' }}</td>
-                            <td class="align-middle text-center">{{ $intern->year_level }}{{ strtoupper($intern->section) }}</td>
+                            <td class="align-middle text-center">BS{{ $intern->department->short_name ?? 'N/A' }} {{ $intern->year_level }}{{ strtoupper($intern->section) }}</td>
                             <td class="align-middle text-center">
                                 @php
                                     $status = strtolower($intern->status);
                                     $badgeClass = match($status) {
-                                        'incomplete' => 'bg-danger-subtle text-danger',
-                                        'pending' => 'bg-warning-subtle text-warning',
+                                        'pending requirements' => 'bg-danger-subtle text-danger',
+                                        'ready for deployment' => 'bg-warning-subtle text-warning',
                                         'endorsed' => 'bg-success-subtle text-success',
                                         default => 'bg-secondary'
                                     };
@@ -102,7 +100,7 @@
                                         <a class="dropdown-item btn btn-outline-light text-dark" href="{{ route('coordinator.intern.show', $intern->id) }}">
                                             <i class="ph ph-eye custom-icons-i mr-2"></i>View
                                         </a>
-                                        <a class="dropdown-item border-top border-bottom border-lightgray btn btn-outline-light text-dark" href="#" data-toggle="modal" data-target="#unregisterModal{{ $intern->id }}">
+                                        <a class="dropdown-item border-top border-bottom border-lightgray btn btn-outline-light text-dark" href="{{ route('coordinator.edit_i', $intern->id) }}">
                                             <i class="ph ph-wrench custom-icons-i mr-2"></i>Update
                                         </a>
                                         <a class="dropdown-item btn btn-outline-light text-danger" href="#" data-toggle="modal" data-target="#removeModal{{ $intern->id }}">

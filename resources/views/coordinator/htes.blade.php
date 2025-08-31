@@ -97,7 +97,7 @@
                             
                             <!-- Unregister Option (conditionally visible) -->
                             @if($canManageHTEs)
-                            <a class="dropdown-item border-top border-bottom border-lightgray btn btn-outline-light text-dark" href="#" data-toggle="modal" data-target="#unregisterModal{{ $hte->id }}">
+                            <a class="dropdown-item border-top border-bottom border-lightgray btn btn-outline-light text-dark" href="{{ route('coordinator.edit_h', $hte->id) }}">
                                 <i class="ph ph-wrench custom-icons-i mr-2"></i>Update
                             </a>
                             <a class="dropdown-item btn btn-outline-light text-danger" href="#" data-toggle="modal" data-target="#unregisterHTE{{ $hte->id }}">

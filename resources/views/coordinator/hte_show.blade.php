@@ -142,7 +142,7 @@
                     @if($canManage)
                     <div class="row mt-4">
                         <div class="col-md-12 text-right bg-light p-3 rounded">
-                            <a href="{{ route('coordinator.hte.edit', $hte->id) }}" class="btn btn-primary mr-2 text-white">
+                            <a href="{{ route('coordinator.edit_h', $hte->id) }}" class="btn btn-primary mr-2 text-white">
                                <span class="text-white"><i class="ph-fill ph-wrench custom-icons-i mr-2"></i>Update Info</span> 
                             </a>
                             <button class="btn btn-danger" data-toggle="modal" data-target="#unregisterModal">

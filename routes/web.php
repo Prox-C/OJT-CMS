@@ -78,6 +78,8 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::post('/interns', [CoordinatorController::class, 'registerIntern'])->name('coordinator.register_i');
     Route::post('/interns/import', [CoordinatorController::class, 'importInterns'])->name('coordinator.import_interns');
     Route::get('/interns/{id}', [CoordinatorController::class, 'showIntern'])->name('coordinator.intern.show');
+    Route::get('/interns/edit/{id}', [CoordinatorController::class, 'editIntern'])->name('coordinator.edit_i');
+    Route::put('/interns/{id}', [CoordinatorController::class, 'updateIntern'])->name('coordinator.update_i');
     Route::delete('/interns/{id}', [CoordinatorController::class, 'destroyIntern'])->name('coordinator.intern.destroy');
 
 
@@ -86,7 +88,8 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::get('/htes/create', [CoordinatorController::class, 'newHTE'])->name('coordinator.new_h');
     Route::post('/htes', [CoordinatorController::class, 'registerHTE'])->name('coordinator.register_h');
     Route::get('/htes/{id}', [CoordinatorController::class, 'showHTE'])->name('coordinator.hte.show');
-    Route::get('/htes/{id}/edit', [CoordinatorController::class, 'editHTE'])->name('coordinator.hte.edit');
+    Route::get('/htes/edit/{id}', [CoordinatorController::class, 'editHte'])->name('coordinator.edit_h');
+    Route::put('/htes/{id}', [CoordinatorController::class, 'updateHte'])->name('coordinator.update_h');    
     Route::delete('/htes/{id}', [CoordinatorController::class, 'destroyHTE'])->name('coordinator.hte.destroy');
 
     Route::get('/deploy', [CoordinatorController::class, 'deploy'])->name('coordinator.deploy');

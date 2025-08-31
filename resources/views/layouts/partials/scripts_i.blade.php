@@ -87,9 +87,9 @@ $(document).ready(function() {
                     
                     toastr.success(response.message);
                     
-                    if (response.new_status === 'incomplete') {
-                        toastr.info('Status changed to Incomplete');
-                    }
+                    // if (response.new_status === 'pending requirements') {
+                    //     toastr.info('Status changed to Incomplete');
+                    // }
                     
                     initializeDocumentHandlers();
                 },
@@ -129,16 +129,23 @@ $(document).ready(function() {
                 `);
                 
                 row.find('td:eq(3)').html(`
-                    <button class="btn btn-sm btn-primary view-document w-100 mb-2" 
-                            data-url="${response.file_url}">
-                        <span>View</span>
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger remove-document w-100" 
-                            data-id="${response.document_id}">
-                        <span>Delete</span>
-                        <i class="fas fa-trash"></i>
-                    </button>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="actionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="ph-fill ph-gear custom-icons-i"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right py-0 overflow-hidden" aria-labelledby="actionDropdown">
+                                            <button class="dropdown-item btn btn-outline-light view-document w-100 fw-medium border-bottom border-lightgray btn-flat text-dark py-2 " 
+                                                    data-url="${response.file_url}">
+                                                <i class="ph ph-eye custom-icons-i"></i>
+                                                <span>View</span>
+                                            </button>
+                                            <button class="dropdown-item btn btn-outline-light remove-document w-100 fw-medium btn-flat text-danger py-2" 
+                                                    data-id="${response.document_id}">
+                                                <i class="ph ph-trash custom-icons-i"></i>
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
                 `);
                 
                 // Get current count before updating
@@ -148,9 +155,9 @@ $(document).ready(function() {
                 
                 toastr.success(response.message);
                 
-                if (response.new_status === 'pending') {
-                    toastr.success('All documents submitted! Status changed to Pending');
-                }
+                // if (response.new_status === 'ready for deployment') {
+                //     toastr.success('All documents submitted! Status changed to Pending');
+                // }
                 
                 initializeDocumentHandlers();
                 submitBtn.prop('disabled', false).html('<i class="fas fa-upload mr-1"></i> Upload');

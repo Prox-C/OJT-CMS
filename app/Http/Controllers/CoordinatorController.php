@@ -97,7 +97,7 @@ use Maatwebsite\Excel\Facades\Excel;
             'section' => $validated['section'],
             'academic_year' => $validated['academic_year'],
             'semester' => $validated['semester'],
-            'status' => 'incomplete', 
+            'status' => 'pending requirements' // Default status, 
         ]);
 
         // Generate activation token
@@ -131,6 +131,77 @@ use Maatwebsite\Excel\Facades\Excel;
             ->findOrFail($id);
         
         return view('coordinator.intern_show', compact('intern'));
+    }
+
+    public function editIntern($id)
+    {
+        // Get the intern with related user data
+        $intern = Intern::with('user')->findOrFail($id);
+        
+        // Check if the coordinator has permission to edit this intern
+        if (auth()->user()->coordinator->id !== $intern->coordinator_id) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        return view('coordinator.interns-edit', compact('intern'));
+    }
+
+    public function updateIntern(Request $request, $id)
+    {
+        // Find the intern
+        $intern = Intern::findOrFail($id);
+        
+        // Check if the coordinator has permission to edit this intern
+        if (auth()->user()->coordinator->id !== $intern->coordinator_id) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        // Validation rules (same as registration)
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'birthdate' => 'required|date',
+            'sex' => 'required|in:male,female',
+            'email' => 'required|email|unique:users,email,' . $intern->user_id,
+            'contact' => 'required|string|max:20',
+            'student_id' => 'required|regex:/^\d{4}-\d{5}$/|unique:interns,student_id,' . $id,
+            'academic_year' => 'required|regex:/^\d{4}-\d{4}$/',
+            'semester' => 'required|in:1st,2nd,midyear',
+            'year_level' => 'required|integer|between:1,4',
+            'section' => 'required|in:a,b,c,d,e,f',
+        ]);
+        
+        try {
+            DB::beginTransaction();
+            
+            // Update user information
+            $user = User::findOrFail($intern->user_id);
+            $user->update([
+                'fname' => $validated['first_name'],
+                'lname' => $validated['last_name'],
+                'email' => $validated['email'],
+                'contact' => $validated['contact'],
+            ]);
+            
+            // Update intern information
+            $intern->update([
+                'student_id' => $validated['student_id'],
+                'birthdate' => $validated['birthdate'],
+                'sex' => $validated['sex'],
+                'academic_year' => $validated['academic_year'],
+                'semester' => $validated['semester'],
+                'year_level' => $validated['year_level'],
+                'section' => $validated['section'],
+            ]);
+            
+            DB::commit();
+            
+            return redirect()->route('coordinator.interns')->with('success', 'Intern updated successfully.');
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to update intern: ' . $e->getMessage());
+        }
     }
 
     public function destroyIntern($id)
@@ -260,6 +331,63 @@ use Maatwebsite\Excel\Facades\Excel;
         $canManage = auth()->user()->coordinator->can_add_hte == 1;
         
         return view('coordinator.hte_show', compact('hte', 'canManage'));
+    }
+
+    public function editHte($id)
+    {
+        // Get the HTE with related user data
+        $hte = Hte::with('user')->findOrFail($id);
+        
+        return view('coordinator.htes-edit', compact('hte'));
+    }
+
+    public function updateHte(Request $request, $id)
+    {
+        // Find the HTE
+        $hte = Hte::findOrFail($id);
+        
+        // Validation rules (same as registration)
+        $validated = $request->validate([
+            'contact_first_name' => 'required|string|max:255',
+            'contact_last_name' => 'required|string|max:255',
+            'contact_email' => 'required|email|unique:users,email,' . $hte->user_id,
+            'contact_number' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
+            'organization_name' => 'required|string|max:255',
+            'organization_type' => 'required|in:private,government,ngo,educational,other',
+            'hte_status' => 'required|in:active,new',
+            'description' => 'nullable|string',
+        ]);
+        
+        try {
+            DB::beginTransaction();
+            
+            // Update user information
+            $user = User::findOrFail($hte->user_id);
+            $user->update([
+                'fname' => $validated['contact_first_name'],
+                'lname' => $validated['contact_last_name'],
+                'email' => $validated['contact_email'],
+                'contact' => $validated['contact_number'],
+            ]);
+            
+            // Update HTE information
+            $hte->update([
+                'organization_name' => $validated['organization_name'],
+                'type' => $validated['organization_type'],
+                'status' => $validated['hte_status'],
+                'address' => $validated['address'],
+                'description' => $validated['description'] ?? null,
+            ]);
+            
+            DB::commit();
+            
+            return redirect()->route('coordinator.htes')->with('success', 'HTE updated successfully.');
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to update HTE: ' . $e->getMessage());
+        }
     }
 
     public function destroyHTE($id)

@@ -622,7 +622,7 @@ $(document).ready(function() {
                 }
             },
             "columnDefs": [
-                { "orderable": false, "targets": [5] }
+                { "orderable": false, "targets": [4] }
             ],
             "initComplete": function() {
                 // Hide loading overlay when table is fully initialized

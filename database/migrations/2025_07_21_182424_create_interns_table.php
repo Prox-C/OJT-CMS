@@ -17,7 +17,7 @@ return new class extends Migration
             $table->tinyInteger('year_level')->unsigned()->between(1, 4);
             $table->string('academic_year');
             $table->enum('semester', ['1st', '2nd', 'Midyear']);
-            $table->enum('status', ['incomplete', 'pending', 'endorsed'])->default('incomplete');
+            $table->enum('status', ['pending requirements', 'ready for deployment', 'endorsed', 'deployed'])->default('pending requirements');
             $table->timestamps();
         });
     }
