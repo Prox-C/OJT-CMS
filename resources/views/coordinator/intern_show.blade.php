@@ -62,6 +62,9 @@
                                     <div class="col-md-6">
                                         <p><strong>Age:</strong><br>
                                         {{ $intern->birthdate ? \Carbon\Carbon::parse($intern->birthdate)->age . ' years old' : 'N/A' }}</p>
+
+                                        <p><strong>Sex:</strong><br>
+                                        <span style="text-transform: capitalize;">{{ $intern->user->sex }}</span></p>
                                     </div>
                                 </div>
                             </div>

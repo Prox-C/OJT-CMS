@@ -56,9 +56,17 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="birthdate" class="form-label">Birthdate*</label>
                         <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="sex" class="form-label">Sex*</label>
+                        <select class="form-select" id="sex" name="sex" required>
+                            <option class="d-none" value="" disabled selected>Select Sex</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
                     </div>
                 </div>
                 

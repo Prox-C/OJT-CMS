@@ -59,10 +59,11 @@ class InternsImport implements ToCollection, WithHeadingRow
                 'password' => Hash::make($tempPassword),
                 'fname' => $data['first_name'],
                 'lname' => $data['last_name'],
+                'sex' => $data['sex'],
                 'contact' => $data['contact'],
                 'pic' => 'profile-pictures/profile.jpg',
                 'temp_password' => true,
-                'username' => $data['email']
+                'username' => $data['email'],
             ]);
 
             // Create intern
@@ -113,6 +114,7 @@ class InternsImport implements ToCollection, WithHeadingRow
             'email' => $row['email'] ?? null,
             'contact' => $row['contact'] ?? $row['contact_number'] ?? null,
             'student_id' => $row['student_id'] ?? null,
+            'sex' => strtolower($row['sex'] ?? null),
             'birthdate' => $this->parseDate($row['birthdate'] ?? null),
             'year_level' => $row['year_level'] ?? null,
             'section' => strtolower($row['section'] ?? null),
@@ -152,6 +154,7 @@ class InternsImport implements ToCollection, WithHeadingRow
                 'regex:/^\d{4}-\d{5}$/',
                 Rule::unique('interns', 'student_id')
             ],
+            'sex' => 'required|in:male,female',
             'birthdate' => 'required|date',
             'year_level' => 'required|integer|between:1,4',
             'section' => 'required|in:a,b,c,d,e,f',

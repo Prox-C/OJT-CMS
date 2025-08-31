@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('fname');
             $table->string('lname');
+            $table->enum('sex', ['male', 'female']);
             $table->string('contact');
             $table->string('pic')->nullable()->comment('Profile picture path');
             $table->timestamps();
