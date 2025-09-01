@@ -123,7 +123,7 @@
                     <!-- Action Buttons -->
                     <div class="row mt-4">
                         <div class="col-md-12 text-right bg-light p-3 rounded">
-                            <a href="" class="btn btn-primary fw-medium mr-2">
+                            <a href="{{ route('coordinator.edit_i', $intern->id) }}" class="btn btn-primary fw-medium mr-2">
                                <span class="text-white"><i class="ph-fill ph-wrench custom-icons-i mr-2"></i></i>Update Info</span> 
                             </a>
                             <button class="btn btn-danger fw-medium" data-toggle="modal" data-target="#removeModal">
