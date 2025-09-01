@@ -89,7 +89,7 @@
                                         default => 'bg-secondary'
                                     };
                                 @endphp
-                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100 status-badge">{{ ucfirst($intern->status) }}</span>
+                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100">{{ ucfirst($intern->status) }}</span>
                             </td>
                             <td class="text-center px-2 align-middle">
                                 <div class="dropdown">

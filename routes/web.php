@@ -88,6 +88,7 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::get('/htes/create', [CoordinatorController::class, 'newHTE'])->name('coordinator.new_h');
     Route::post('/htes', [CoordinatorController::class, 'registerHTE'])->name('coordinator.register_h');
     Route::get('/htes/{id}', [CoordinatorController::class, 'showHTE'])->name('coordinator.hte.show');
+    Route::patch('/htes/{id}/toggle-moa-status', [CoordinatorController::class, 'toggleMoaStatus'])->name('coordinator.toggle_moa_status');
     Route::get('/htes/edit/{id}', [CoordinatorController::class, 'editHte'])->name('coordinator.edit_h');
     Route::put('/htes/{id}', [CoordinatorController::class, 'updateHte'])->name('coordinator.update_h');    
     Route::delete('/htes/{id}', [CoordinatorController::class, 'destroyHTE'])->name('coordinator.hte.destroy');

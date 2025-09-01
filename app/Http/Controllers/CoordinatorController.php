@@ -333,6 +333,21 @@ use Maatwebsite\Excel\Facades\Excel;
         return view('coordinator.hte_show', compact('hte', 'canManage'));
     }
 
+    public function toggleMoaStatus($id)
+    {
+        $hte = Hte::findOrFail($id);
+        
+        // Toggle the MOA status
+        $hte->moa_is_signed = $hte->moa_is_signed === 'yes' ? 'no' : 'yes';
+        $hte->save();
+        
+        return response()->json([
+            'success' => true,
+            'new_status' => $hte->moa_is_signed,
+            'message' => 'MOA status updated successfully'
+        ]);
+    }
+
     public function editHte($id)
     {
         // Get the HTE with related user data

@@ -77,12 +77,16 @@
                 <td class="align-middle text-center text-medium text-success">
                   0/{{ $hte->slots }}
                 </td>
-                <td class="text-center">
-                  @if($hte->moa_path)
-                    <span class="badge badge-sm bg-success-subtle text-success px-3 py-2 rounded-4 w-100">Submitted</span>
+                <td class="">
+                @if($hte->moa_path)
+                  @if($hte->moa_is_signed === 'yes')
+                    <span class="small badge bg-success-subtle text-success py-2 px-3 rounded-pill mr-2" style="font-size: 14px">Signed</span>
                   @else
-                    <span class="badge badge-sm bg-danger-subtle text-danger px-3 py-2 rounded-4 w-100">Missing</span>
+                    <span class="small badge bg-warning-subtle text-warning py-2 px-3 rounded-pill mr-2" style="font-size: 14px">Validation Required</span>
                   @endif
+                @else
+                  <span class="small badge bg-danger-subtle text-danger py-2 px-3 rounded-pill" style="font-size: 14px">Missing</span>
+                @endif
                 </td>
                 <td class="text-center px-2 align-middle">
                     <div class="dropdown">

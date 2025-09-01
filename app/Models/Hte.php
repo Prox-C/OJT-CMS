@@ -18,6 +18,7 @@ class Hte extends Model
         'description',
         'slots',
         'moa_path',
+        'moa_is_signed',
         'first_login',
     ];
 

@@ -343,11 +343,66 @@ $(document).ready(function() {
 <!-- Coordinator: HTE Preview -->
 <script>
 $(document).ready(function() {
-    // Enhance MOA preview modal
-    $('#moaPreviewModal').on('shown.bs.modal', function() {
-        // Resize the iframe to fit content
-        const iframe = $('#moaPreviewFrame');
-        iframe.height(iframe.parent().height());
+    // Toggle MOA status
+    $('#toggleMoaStatusBtn').click(function() {
+        const hteId = $(this).data('hte-id');
+        const button = $(this);
+        
+        // Correct URL construction
+        const url = '{{ route("coordinator.toggle_moa_status", ":id") }}'.replace(':id', hteId);
+        
+        $.ajax({
+            url: url,
+            type: 'PATCH',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Update modal button text and style
+                    if (response.new_status === 'yes') {
+                        // Update modal button
+                        button.removeClass('btn-primary').addClass('btn-warning');
+                        button.html('<i class="ph ph-x mr-1 custom-icons-i"></i> Mark as Unsigned');
+                        
+                        // Update status badge
+                        $('li:contains("Status:")').find('.badge')
+                            .removeClass('bg-warning-subtle text-warning')
+                            .addClass('bg-success-subtle text-success')
+                            .text('Signed');
+                            
+                        // Update MOA button
+                        $('li:contains("MOA:")').find('button')
+                            .removeClass('btn-outline-warning')
+                            .addClass('btn-outline-primary')
+                            .html('<i class="ph-fill ph-eye custom-icons-i mr-1"></i>View');
+                    } else {
+                        // Update modal button
+                        button.removeClass('btn-warning').addClass('btn-primary');
+                        button.html('<i class="ph ph-check mr-1 custom-icons-i"></i> Mark as Signed');
+                        
+                        // Update status badge
+                        $('li:contains("Status:")').find('.badge')
+                            .removeClass('bg-success-subtle text-success')
+                            .addClass('bg-warning-subtle text-warning')
+                            .text('Validation Required');
+                            
+                        // Update MOA button
+                        $('li:contains("MOA:")').find('button')
+                            .removeClass('btn-outline-primary')
+                            .addClass('btn-outline-warning')
+                            .html('<i class="ph ph-eye custom-icons-i mr-1"></i>Review');
+                    }
+                    
+                    // Show success message
+                    toastr.success('MOA status updated successfully');
+                }
+            },
+            error: function(xhr) {
+                console.error('Error updating MOA status:', xhr.responseText);
+                toastr.error('Error updating MOA status: ' + xhr.responseText);
+            }
+        });
     });
 });
 </script>

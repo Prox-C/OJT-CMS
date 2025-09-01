@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('slots')->default(0);
             $table->string('moa_path')->nullable();
+            $table->enum('moa_is_signed', ['yes', 'no'])->default('no');
             $table->timestamps();
             
             // Optional: Add index for frequently queried columns

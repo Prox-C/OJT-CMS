@@ -35,12 +35,20 @@
                 </div>
                 <div class="modal-footer bg-white">
                     @if($hte->moa_path)
-                    <a href="{{ Storage::url($hte->moa_path) }}" class="btn btn-success text-light" download>
+                    <a href="{{ Storage::url($hte->moa_path) }}" class="btn btn-success text-light mr-auto" download>
                         <span class="text-white">Download File</span>
                     </a>
+                    
+                    <!-- Toggle MOA Status Button -->
+                    <button type="button" class="btn {{ $hte->moa_is_signed === 'yes' ? 'btn-warning' : 'btn-primary' }}" 
+                            id="toggleMoaStatusBtn" data-hte-id="{{ $hte->id }}">
+                        <i class="ph custom-icons-i {{ $hte->moa_is_signed === 'yes' ? 'ph-x' : 'ph-check' }} mr-1"></i>
+                        {{ $hte->moa_is_signed === 'yes' ? 'Mark as Unsigned' : 'Mark as Signed' }}
+                    </button>
                     @endif
+                    
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <i class="fas fa-times mr-1"></i> Close
+                        Close
                     </button>
                 </div>
             </div>
@@ -72,22 +80,32 @@
                             <div class="border p-3 rounded bg-light flex-grow-1 mt-0">
                                 <h5 class="mb-3"><i class="ph-fill ph-info details-icons-i mr-2"></i>Basic Information</h5>
                                 <ul class="list-unstyled">
-                                    <!-- <li class="mb-2">
-                                        <strong>Status:</strong> 
-                                        <span class="badge badge-{{ $hte->status == 'active' ? 'success' : 'primary' }}">
-                                            {{ ucfirst($hte->status) }}
-                                        </span>
-                                    </li> -->
-                                    <li class="mb-2"><strong>ID:</strong> HTE-{{ str_pad($hte->id, 3, '0', STR_PAD_LEFT) }}</li>
+                                    <li class="mb-2 align-middle"><strong>Status:</strong>
+                                        @if($hte->moa_path)
+                                            @if($hte->moa_is_signed === 'yes')
+                                                <span class="small badge bg-success-subtle text-success py-2 px-3 rounded-pill mr-2" style="font-size: 14px">Signed</span>
+                                            @else
+                                                <span class="small badge bg-warning-subtle text-warning py-2 px-3 rounded-pill mr-2" style="font-size: 14px">Validation Required</span>
+                                            @endif
+                                        @else
+                                            <span class="small badge bg-danger-subtle text-danger py-2 px-3 rounded-pill" style="font-size: 14px">Missing</span>
+                                        @endif
+                                    </li>                                    <li class="mb-2"><strong>ID:</strong> HTE-{{ str_pad($hte->id, 3, '0', STR_PAD_LEFT) }}</li>
                                     <li class="mb-2"><strong>Type:</strong> {{ ucfirst($hte->type) }}</li>
                                     <li class="mb-2"><strong>Available Slots:</strong> {{ $hte->slots }}</li>
                                     <li class="mb-2 align-middle"><strong>MOA:</strong>
                                         @if($hte->moa_path)
-                                            <button class="btn btn-sm btn-outline-primary ml-2" data-toggle="modal" data-target="#moaPreviewModal">
-                                                <i class="ph-fill ph-eye custom-icons-i mr-1"></i>View
-                                            </button>
+                                            @if($hte->moa_is_signed === 'yes')
+                                                <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#moaPreviewModal">
+                                                    <i class="ph-fill ph-eye custom-icons-i mr-1"></i>View
+                                                </button>
+                                            @else
+                                                <button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#moaPreviewModal">
+                                                    <i class="ph-fill ph-eye custom-icons-i mr-1"></i>Review
+                                                </button>
+                                            @endif
                                         @else
-                                            <span class="small badge bg-danger-subtle text-danger py-1 px-3 rounded-pill" style="font-size: 14px">Missing</span>
+                                            <span class="text-muted fw-medium"><i>No file  uploaded.</i></span>
                                         @endif
                                     </li>
                                 </ul>
