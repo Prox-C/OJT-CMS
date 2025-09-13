@@ -184,8 +184,8 @@
                       </div>
                       
                       <div id="importProgress" class="d-none">
-                          <div class="progress mb-3">
-                              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                          <div class="progress mb-3 rounded-pill">
+                              <div class="progress-bar progress-bar-animated" role="progressbar" style="width: 0%"></div>
                           </div>
                           <div class="text-center">
                               <div class="spinner-border text-primary" role="status">
