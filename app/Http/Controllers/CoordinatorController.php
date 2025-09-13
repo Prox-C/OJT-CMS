@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Log;
 use import;
-
 use App\Models\Hte;
 
 use App\Models\User;
+
 use App\Models\Intern;
 use App\Mail\HteSetupMail;
+use App\Models\InternsHte;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Mail\InternSetupMail;
 use App\Imports\InternsImport;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -327,10 +328,15 @@ use Maatwebsite\Excel\Facades\Excel;
     {
         $hte = Hte::with(['user', 'skills', 'skills.department'])
             ->findOrFail($id);
-        
+
+        // Load interns endorsed for this HTE
+        $endorsedInterns = \App\Models\InternsHte::with('intern.department')
+            ->where('hte_id', $id)
+            ->get();
+
         $canManage = auth()->user()->coordinator->can_add_hte == 1;
-        
-        return view('coordinator.hte_show', compact('hte', 'canManage'));
+
+        return view('coordinator.hte_show', compact('hte', 'canManage', 'endorsedInterns'));
     }
 
     public function toggleMoaStatus($id)
@@ -458,6 +464,29 @@ use Maatwebsite\Excel\Facades\Excel;
         }
     }
 
+    public function removeEndorsement($id)
+    {
+        $endorsement = \App\Models\InternsHte::findOrFail($id);
+
+        // Optional: check if current user can manage this HTE
+        $canManage = auth()->user()->coordinator->can_add_hte == 1;
+        if (!$canManage) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Update intern status back to "ready for deployment"
+        $intern = $endorsement->intern;
+        if ($intern) {
+            $intern->status = 'ready for deployment';
+            $intern->save();
+        }
+
+        // Delete the endorsement record
+        $endorsement->delete();
+
+        return redirect()->back()->with('success', 'Intern endorsement removed successfully.');
+    }
+
     public function showImportForm()
     {
         return view('coordinator.interns.import');
@@ -498,7 +527,9 @@ use Maatwebsite\Excel\Facades\Excel;
 
 
     public function deploy() {
-        $htes = \App\Models\HTE::with('skills')->get();
+        $htes = \App\Models\HTE::with('skills')
+        ->where('moa_is_signed', 'yes')
+        ->get();
         return view('coordinator.deploy', compact('htes'));
     }
 
@@ -549,5 +580,56 @@ use Maatwebsite\Excel\Facades\Excel;
             'success' => true,
             'interns' => $sortedInterns
         ]);
+    }
+
+    public function batchEndorseInterns(Request $request)
+    {
+        $request->validate([
+            'hte_id' => 'required|exists:htes,id',
+            'intern_ids' => 'required|array|min:1',
+            'intern_ids.*' => 'exists:interns,id',
+        ]);
+        $hteId = $request->hte_id;
+        $internIds = $request->intern_ids;
+        // Filter interns that are "ready for deployment" and not already endorsed for this HTE
+        $readyInterns = \App\Models\Intern::whereIn('id', $internIds)
+            ->where('status', 'ready for deployment')
+            ->get();
+        if ($readyInterns->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No interns are eligible for endorsement.'
+            ], 422);
+        }
+        DB::beginTransaction();
+        try {
+            foreach ($readyInterns as $intern) {
+                // Check if already endorsed for this HTE
+                $exists = InternsHte::where('intern_id', $intern->id)
+                    ->where('hte_id', $hteId)
+                    ->exists();
+                if (!$exists) {
+                    InternsHte::create([
+                        'intern_id' => $intern->id,
+                        'hte_id' => $hteId,
+                        'status' => 'endorsed',
+                        'endorsed_at' => now(),
+                    ]);
+                    // Update intern status to 'endorsed'
+                    $intern->update(['status' => 'endorsed']);
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Selected interns have been successfully endorsed.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while endorsing interns.'
+            ], 500);
+        }
     }
 }

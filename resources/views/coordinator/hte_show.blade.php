@@ -187,7 +187,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
-                            <thead class="thead-light">
+                            <thead class="thead-light border-light-gray">
                                 <tr>
                                     <th>Student ID</th>
                                     <th>Name</th>
@@ -197,7 +197,37 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-
+                            <tbody>
+                                @forelse($endorsedInterns as $endorsement)
+                                    @php
+                                        $intern = $endorsement->intern;
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $intern->student_id ?? 'N/A' }}</td>
+                                        <td>{{ $intern->user->lname}}, {{ $intern->user->fname }}</td>
+                                        <td>{{ $intern->department->dept_name ?? 'N/A' }}</td>
+                                        <td>{{ $intern->year_level ?? 'N/A' }}</td>
+                                        <td>{{ ucfirst($endorsement->status) }}</td>
+                                        <td>
+                                            @if($canManage)
+                                            <form action="{{ route('coordinator.endorsement.remove', $endorsement->id) }}" method="POST" onsubmit="return confirm('Remove this intern endorsement?');" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="ph ph-trash"></i> Remove
+                                                </button>
+                                            </form>
+                                            @else
+                                            <span class="text-muted">No actions</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No endorsed interns found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
                         </table>
                     </div>
                 </div>
