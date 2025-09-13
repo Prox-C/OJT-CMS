@@ -22,6 +22,8 @@ class InternController extends Controller
         
         return view('student.dashboard', [
             'status' => $intern->status,
+            'semester' => $intern->semester,
+            'academic_year' => $intern->academic_year,
             'documentCount' => $documentCount
         ]);
     }

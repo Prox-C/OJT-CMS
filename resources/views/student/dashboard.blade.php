@@ -22,9 +22,24 @@
 
 <section class="content">
   <div class="container-fluid">
+    <div class="card p-3 d-flex flex-column justify-content-center">
+      <h5 class="align-middle w-100 d-flex justify-content-between align-items-center" style="position: relative; top: 4px">
+        <span class="text-muted">AY: {{$academic_year}}, {{$semester}} semester</span>
+        @php
+          $status = strtolower($status);
+          $badgeClass = match($status) {
+            'pending requirements' => 'bg-danger-subtle text-danger',
+            'ready for deployment' => 'bg-warning-subtle text-warning',
+            'endorsed' => 'bg-primary-subtle text-primary',
+            default => 'bg-secondary'
+          };
+        @endphp
+        <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill m-0">{{ ucfirst($status) }}</span>
+      </h5>
+    </div>
     <div class="row">
       {{-- Status Card --}}
-      <div class="col-lg-4 col-md-6 col-12">
+      <!-- <div class="col-lg-4 col-md-6 col-12">
         <div class="small-box bg-danger">
           <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
             <h2 class="fw-medium text-capitalize">{{ $status }}</h2>
@@ -35,7 +50,7 @@
           </div>
           <a href="{{route('intern.docs')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
-      </div>
+      </div> -->
 
       <!-- Docs -->
       <div class="col-lg-4 col-md-6 col-12">
