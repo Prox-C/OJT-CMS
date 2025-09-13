@@ -28,21 +28,26 @@
       <div class="card-body">
         <div class="form-group">
           <label>Host Training Establishment</label>
-          <select id="hteSelect" class="form-control select2 ">
+          <select id="hteSelect" class="form-control select2">
             <option value="" selected disabled>Select an HTE</option>
             @foreach($htes as $hte)
-              <option value="{{ $hte->id }}" data-skills="{{ $hte->skills->pluck('skill_id')->toJson() }}">
-                {{ $hte->organization_name }}
+              <option value="{{ $hte->id }}" data-skills="{{ $hte->skills->pluck('skill_id')->toJson() }}" data-slots="{{ $hte->slots }}">
+                {{ $hte->organization_name }} 
               </option>
             @endforeach
           </select>
+
+          <div id="slots-info" class="mt-2 text-muted"></div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-header bg-white">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h3 class="card-title">Top Candidates</h3>
+        <button id="endorseSelectedBtn" class="btn btn-primary ml-auto" style="display:none;">
+          <i class="fas fa-paper-plane"></i> Endorse Selected
+        </button>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -51,16 +56,15 @@
               <tr>
                 <th width="3%" class="text-center">#</th>
                 <th>Name</th>
-                <th>Department</th>
                 <th width="13%">Status</th>
                 <th>Matching Skills</th>
                 <th width="11%">Match %</th>
-                <th>Action</th>
+                <th width="7%" class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td colspan="7" class="text-center text-muted">Select an HTE to view recommended interns</td>
+                <td colspan="6" class="text-center text-muted">Select an HTE to view recommended interns</td>
               </tr>
             </tbody>
           </table>
@@ -72,5 +76,5 @@
 @endsection
 
 @section('scripts')
-
+<!-- The script will be provided separately -->
 @endsection

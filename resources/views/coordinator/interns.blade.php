@@ -79,17 +79,17 @@
                                 {{ $intern->user->lname }}, {{ $intern->user->fname }} 
                             </td>                          
                             <td class="align-middle text-center">BS{{ $intern->department->short_name ?? 'N/A' }} {{ $intern->year_level }}{{ strtoupper($intern->section) }}</td>
-                            <td class="align-middle text-center">
+                            <td class="align-middle">
                                 @php
                                     $status = strtolower($intern->status);
                                     $badgeClass = match($status) {
                                         'pending requirements' => 'bg-danger-subtle text-danger',
                                         'ready for deployment' => 'bg-warning-subtle text-warning',
-                                        'endorsed' => 'bg-success-subtle text-success',
+                                        'endorsed' => 'bg-primary-subtle text-primary',
                                         default => 'bg-secondary'
                                     };
                                 @endphp
-                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill w-100">{{ ucfirst($intern->status) }}</span>
+                                <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill">{{ ucfirst($intern->status) }}</span>
                             </td>
                             <td class="text-center px-2 align-middle">
                                 <div class="dropdown">

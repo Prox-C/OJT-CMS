@@ -31,7 +31,7 @@
                                     <li class="mb-2">
                                         <strong>Status:</strong> 
                                         <span class="badge py-2 px-3 rounded-pill status-badge bg-{{ 
-                                            $intern->status == 'endorsed' ? 'success' : 
+                                            $intern->status == 'endorsed' ? 'primary-subtle text-primary' : 
                                             ($intern->status == 'ready for deployment' ? 'warning-subtle text-warning' : 'danger-subtle text-danger') 
                                         }}">
                                             {{ ucfirst($intern->status) }}
@@ -110,7 +110,7 @@
                                         </div>
                                         <div class="flex-grow-1">
                                             <h6 class="mb-0">{{ $intern->coordinator->user->fname }} {{ $intern->coordinator->user->lname }}</h6>
-                                            <p class="mb-0 text-muted">{{ $intern->coordinator->department->dept_name }} Department</p>
+                                            <p class="mb-0 text-muted small">{{ $intern->coordinator->department->dept_name }} Department</p>
                                         </div>
                                     </div>
                                 @else
