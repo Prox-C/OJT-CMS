@@ -44,21 +44,21 @@
 
     <div class="card">
       <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h3 class="card-title">Top Candidates</h3>
+        <h3 class="card-title" id="internsTableHeader">Top Candidates</h3>
         <button id="endorseSelectedBtn" class="btn btn-primary ml-auto" style="display:none;">
           <i class="fas fa-paper-plane"></i> Endorse Selected
         </button>
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table id="internsTable" class="table table-bordered">
+          <table id="internsReccTable" class="table table-bordered">
             <thead class="thead-light">
               <tr>
-                <th width="3%" class="text-center">#</th>
+                <th>Student ID</th>
                 <th>Name</th>
-                <th width="13%">Status</th>
+                <th>Status</th>
                 <th>Matching Skills</th>
-                <th width="11%">Match %</th>
+                <th>Match %</th>
                 <th width="7%" class="text-center">Action</th>
               </tr>
             </thead>
@@ -76,5 +76,5 @@
 @endsection
 
 @section('scripts')
-<!-- The script will be provided separately -->
+
 @endsection

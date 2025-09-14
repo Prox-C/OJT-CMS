@@ -417,38 +417,62 @@
             placeholder: 'Select HTE',
         });
 
-        // Hide endorse button initially
         $('#endorseSelectedBtn').hide();
 
-        // When HTE is selected
+        let availableSlots = 0;
+        let maxSelectable = 0;
+        let currentEndorsedCount = 0;
+        let internsData = [];
+        let dataTableInstance = null;
+
         $('#hteSelect').change(function() {
             const selectedOption = $(this).find(':selected');
-            const slots = selectedOption.data('slots');
-
-            if (slots !== undefined) {
-                $('#slots-info').html(`
-                    <div class="">
-                        <i class="ph-fill ph-info custom-icons-i"></i>
-                        <em><strong>${slots} slot${slots !== 1 ? 's' : ''}</strong> available</em>
-                    </div>
-                `);
-            } else {
-                $('#slots-info').html('');
-            }
+            const totalSlots = selectedOption.data('slots') || 0;
 
             const hteId = $(this).val();
             const requiredSkills = selectedOption.data('skills');
 
             if (!hteId) {
-                $('#internsTable tbody').html('<tr><td colspan="6" class="text-center text-muted">Select an HTE to view recommended interns</td></tr>');
-                $('#slots-info').html('');
-                $('#endorseSelectedBtn').hide();
+                resetTable();
                 return;
             }
 
-            // Loading state
-            $('#internsTable tbody').html('<tr><td colspan="6" class="text-center text-muted"><i class="fas fa-spinner fa-spin"></i> Loading recommendations...</td></tr>');
+            $.ajax({
+                url: '{{ route("coordinator.getEndorsedCount") }}',
+                method: 'POST',
+                data: {
+                    hte_id: hteId,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(res) {
+                    currentEndorsedCount = res.count || 0;
+                    availableSlots = totalSlots - currentEndorsedCount;
+                    maxSelectable = availableSlots > 0 ? availableSlots : 0;
+
+                    $('#slots-info').html(`
+                        <div>
+                            <i class="ph-fill ph-info custom-icons-i"></i>
+                            <em><strong>${availableSlots}</strong> slot${availableSlots !== 1 ? 's' : ''} available</em>
+                        </div>
+                    `);
+
+                    if (availableSlots <= 0) {
+                        $('#slots-info').append('<div class="text-danger"><em>No slots available for this HTE.</em></div>');
+                    }
+
+                    loadRecommendedInterns(hteId, requiredSkills);
+                },
+                error: function() {
+                    $('#slots-info').html('<div class="text-danger">Failed to load slots info.</div>');
+                    resetTable();
+                }
+            });
+        });
+
+        function loadRecommendedInterns(hteId, requiredSkills) {
+            $('#internsReccTable tbody').html('<tr><td colspan="6" class="text-center text-muted"><i class="fas fa-spinner fa-spin"></i> Loading recommendations...</td></tr>');
             $('#endorseSelectedBtn').hide();
+            $('#internsTableHeader').text('Top Candidates');
 
             $.ajax({
                 url: '{{ route("coordinator.getRecommendedInterns") }}',
@@ -460,43 +484,10 @@
                 },
                 success: function(response) {
                     if (response.success && response.interns.length > 0) {
-                        let html = '';
-                        response.interns.forEach((intern, index) => {
-                            const isIncomplete = intern.status === 'pending requirements';
-                            const statusClass = intern.status === 'ready for deployment' ? 'text-warning bg-warning-subtle' : 
-                                            intern.status === 'endorsed' ? 'text-success' : 'text-danger bg-danger-subtle';
-
-                            // Determine color based on percentage
-                            let knobColor = intern.match_percentage >= 70 ? '#198754' :
-                                        intern.match_percentage >= 40 ? '#ffc107' :
-                                        '#dc3545';
-
-                            // Always show checkbox; disable if not "ready for deployment"
-                            const checkbox = `
-                                <div class="form-check">
-                                    <input class="form-check-input intern-checkbox" type="checkbox" 
-                                        id="checkbox-intern-${intern.id}" data-intern-id="${intern.id}"
-                                        ${intern.status === 'ready for deployment' ? '' : 'disabled'}>
-                                    <label class="form-check-label" for="checkbox-intern-${intern.id}"></label>
-                                </div>
-                            `;
-
-                            html += `
-                            <tr ${isIncomplete ? 'class="table-danger"' : ''}>
-                                <td class="align-middle text-center">${index + 1}</td>
-                                <td class="align-middle">${intern.fname} ${intern.lname}</td>
-                                <td class="align-middle"><span class="badge px-3 py-2 w-100 rounded-pill ${statusClass}">${intern.status.toUpperCase()}</span></td>
-                                <td class="align-middle small text-muted">${intern.matching_skills.join(', ') || 'None'}</td>
-                                <td class="align-middle">
-                                    ${createKnobDisplay(intern.match_percentage, knobColor)}
-                                </td>
-                                <td class="align-middle text-center">${checkbox}</td>
-                            </tr>
-                            `;
-                        });
-                        $('#internsTable tbody').html(html);
+                        internsData = response.interns;
+                        renderInternsTable(internsData);
                     } else {
-                        $('#internsTable tbody').html('<tr><td colspan="6" class="text-center">No interns found matching the required skills.</td></tr>');
+                        $('#internsReccTable tbody').html('<tr><td colspan="6" class="text-center">No interns found matching the required skills.</td></tr>');
                         $('#endorseSelectedBtn').hide();
                     }
                 },
@@ -505,15 +496,92 @@
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMsg = xhr.responseJSON.message;
                     }
-                    $('#internsTable tbody').html(`<tr><td colspan="6" class="text-center text-danger">${errorMsg}</td></tr>`);
+                    $('#internsReccTable tbody').html(`<tr><td colspan="6" class="text-center text-danger">${errorMsg}</td></tr>`);
                     $('#endorseSelectedBtn').hide();
                 }
             });
-        });
+        }
 
-        // Helper function to create knob display
+        function renderInternsTable(interns) {
+            let html = '';
+            interns.forEach((intern, index) => {
+                const isIncomplete = intern.status === 'pending requirements';
+                const statusClass = intern.status === 'ready for deployment' ? 'text-warning bg-warning-subtle' : 
+                                intern.status === 'endorsed' ? 'text-success' : 'text-danger bg-danger-subtle';
+
+                let knobColor = intern.match_percentage >= 70 ? '#198754' :
+                            intern.match_percentage >= 40 ? '#ffc107' :
+                            '#dc3545';
+
+                const checkboxDisabled = intern.status === 'ready for deployment' ? '' : 'disabled';
+
+                html += `
+                <tr ${isIncomplete ? 'class="table-danger"' : ''}>
+                    <td class="align-middle">${intern.student_id || 'N/A'}</td>
+                    <td class="align-middle">${intern.fname} ${intern.lname}</td>
+                    <td class="align-middle"><span class="badge px-3 py-2 w-100 rounded-pill ${statusClass}">${intern.status.toUpperCase()}</span></td>
+                    <td class="align-middle small text-muted">${intern.matching_skills.join(', ') || 'None'}</td>
+                    <td class="align-middle">
+                        ${createKnobDisplay(intern.match_percentage, knobColor)}
+                    </td>
+                    <td class="align-middle text-center">
+                        <div class="form-check">
+                            <input class="form-check-input intern-checkbox" type="checkbox" 
+                                id="checkbox-intern-${intern.id}" data-intern-id="${intern.id}"
+                                ${checkboxDisabled}>
+                            <label class="form-check-label" for="checkbox-intern-${intern.id}"></label>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            });
+            $('#internsReccTable tbody').html(html);
+
+            // Destroy existing DataTable if exists
+            if (dataTableInstance) {
+                dataTableInstance.destroy();
+                $('#internsReccTable tbody').off('change', '.intern-checkbox');
+            }
+
+            // Initialize DataTable
+            dataTableInstance = $('#internsReccTable').DataTable({
+                paging: true,
+                pageLength: 10,
+                lengthChange: true,
+                searching: true,
+                info: false,
+                ordering: true,
+                columnDefs: [
+                    { orderable: false, targets: 5 } // disable ordering on checkbox column
+                ],
+                language: {
+                    search: "Search interns:",
+                    zeroRecords: "No matching interns found",
+                    paginate: {
+                        previous: "&laquo;",
+                        next: "&raquo;"
+                    }
+                }
+            });
+
+            // Checkbox selection logic with max slots enforcement
+            $('#internsReccTable tbody').on('change', '.intern-checkbox', function() {
+                const checkedCount = $('.intern-checkbox:checked').length;
+
+                if (checkedCount > maxSelectable) {
+                    this.checked = false;
+                    alert(`Maximum number of selectable interns reached (${maxSelectable}).`);
+                    return;
+                }
+
+                $('#endorseSelectedBtn').toggle(checkedCount > 0);
+            });
+
+            $('#endorseSelectedBtn').hide();
+        }
+
         function createKnobDisplay(value, color) {
-            const angle = value * 3.6; // % to degrees
+            const angle = value * 3.6;
             return `
             <div class="d-flex justify-content-center align-items-center">
                 <div class="knob-container">
@@ -529,20 +597,24 @@
             `;
         }
 
-        // Clear slots info when selection is cleared
-        $('#hteSelect').on('select2:unselect', function() {
+        function resetTable() {
             $('#slots-info').html('');
+            $('#internsReccTable tbody').html('<tr><td colspan="6" class="text-center text-muted">Select an HTE to view recommended interns</td></tr>');
             $('#endorseSelectedBtn').hide();
-            $('#internsTable tbody').html('<tr><td colspan="6" class="text-center text-muted">Select an HTE to view recommended interns</td></tr>');
-        });
+            internsData = [];
+            maxSelectable = 0;
+            currentEndorsedCount = 0;
+            availableSlots = 0;
+            $('#internsTableHeader').text('Top Candidates');
 
-        // Show/hide endorse button based on checkbox selection
-        $(document).on('change', '.intern-checkbox', function() {
-            const anyChecked = $('.intern-checkbox:checked').length > 0;
-            $('#endorseSelectedBtn').toggle(anyChecked);
-        });
+            if (dataTableInstance) {
+                dataTableInstance.destroy();
+                $('#internsReccTable tbody').off('change', '.intern-checkbox');
+                dataTableInstance = null;
+            }
+        }
 
-        // Handle batch endorsement button click
+        // Batch endorse button click
         $('#endorseSelectedBtn').click(function() {
             const selectedInternIds = $('.intern-checkbox:checked').map(function() {
                 return $(this).data('intern-id');
@@ -559,7 +631,6 @@
                 return;
             }
 
-            // Disable button to prevent multiple clicks
             $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Endorsing...');
 
             $.ajax({
@@ -572,7 +643,6 @@
                 },
                 success: function(response) {
                     alert(response.message || 'Interns endorsed successfully.');
-                    // Refresh the table by triggering change event on HTE select
                     $('#hteSelect').trigger('change');
                 },
                 error: function(xhr) {
@@ -589,6 +659,7 @@
         });
     });
     </script>
+
 
 
 
