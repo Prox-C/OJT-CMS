@@ -561,6 +561,7 @@ use Maatwebsite\Excel\Facades\Excel;
             
             return [
                 'id' => $intern->id,
+                'student_id' => $intern->student_id,
                 'fname' => $intern->user->fname,
                 'lname' => $intern->user->lname,
                 'department' => $intern->department->short_name,
@@ -580,6 +581,12 @@ use Maatwebsite\Excel\Facades\Excel;
             'success' => true,
             'interns' => $sortedInterns
         ]);
+    }
+
+    public function getEndorsedCount(Request $request)
+    {
+        $count = \App\Models\InternsHte::where('hte_id', $request->hte_id)->count();
+        return response()->json(['count' => $count]);
     }
 
     public function batchEndorseInterns(Request $request)
