@@ -72,4 +72,9 @@ class Hte extends Model
     {
         return $query->where('status', 'new');
     }
+
+    public function internsHte()
+    {
+        return $this->hasMany(\App\Models\InternsHte::class, 'hte_id');
+    }
 }
