@@ -76,7 +76,7 @@
         color: #fff !important;
     }
 
-    .main-sidebar {
+    .main-sidebar, .brand-link {
         background-color: #a91414 !important;
     }
 
