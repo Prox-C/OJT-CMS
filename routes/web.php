@@ -94,9 +94,10 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::delete('/htes/{id}', [CoordinatorController::class, 'destroyHTE'])->name('coordinator.hte.destroy');
     Route::delete('/endorsement/{id}/remove', [CoordinatorController::class, 'removeEndorsement'])->name('coordinator.endorsement.remove');
 
-    Route::get('/deploy', [CoordinatorController::class, 'deploy'])->name('coordinator.deploy');
+    Route::get('/endorse', [CoordinatorController::class, 'deploy'])->name('coordinator.deploy');
     Route::post('/get-recommended-interns', [CoordinatorController::class, 'getRecommendedInterns'])->name('coordinator.getRecommendedInterns');
     Route::post('/endorse', [CoordinatorController::class, 'batchEndorseInterns'])->name('coordinator.batchEndorseInterns');
+    Route::post('/endorse/count', [CoordinatorController::class, 'getEndorsedCount'])->name('coordinator.getEndorsedCount');
 
 });
 
