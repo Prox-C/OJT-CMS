@@ -525,13 +525,16 @@ use Maatwebsite\Excel\Facades\Excel;
         }
     }
 
-
     public function deploy() {
         $htes = \App\Models\HTE::with('skills')
-        ->where('moa_is_signed', 'yes')
-        ->get();
+            ->where('moa_is_signed', 'yes')
+            ->withCount('internsHte') // assumes relation internsHte() defined in HTE model
+            ->havingRaw('slots > interns_hte_count')
+            ->get();
+
         return view('coordinator.deploy', compact('htes'));
     }
+
 
     public function getRecommendedInterns(Request $request) {
         $hteId = $request->input('hte_id');
