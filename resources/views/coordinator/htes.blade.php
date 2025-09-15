@@ -70,12 +70,19 @@
             </thead>
             <tbody>
               @foreach($htes as $hte)
+              @php
+                  $assigned = $hte->interns_hte_count;
+                  $slots = $hte->slots;
+                  $available = $slots - $assigned;
+                  $textClass = $available > 0 ? 'text-success' : 'text-danger';
+              @endphp
               <tr>
                 <td>HTE-{{ str_pad($hte->id, 3, '0', STR_PAD_LEFT) }}</td>
                 <td>{{ $hte->organization_name }}</td>
                 <td>{{ $hte->user->fname}}  {{ $hte->user->lname}}</td>
-                <td class="align-middle text-center text-medium text-success">
-                  0/{{ $hte->slots }}
+
+                <td class="align-middle text-center text-medium {{ $textClass }}">
+                  {{ $available }}
                 </td>
                 <td class="">
                 @if($hte->moa_path)

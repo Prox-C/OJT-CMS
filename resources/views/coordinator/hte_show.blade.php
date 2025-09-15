@@ -92,8 +92,12 @@
                                         @endif
                                     </li>                                    <li class="mb-2"><strong>ID:</strong> HTE-{{ str_pad($hte->id, 3, '0', STR_PAD_LEFT) }}</li>
                                     <li class="mb-2"><strong>Type:</strong> {{ ucfirst($hte->type) }}</li>
-                                    <li class="mb-2"><strong>Available Slots:</strong> {{ $hte->slots }}</li>
-                                    <li class="mb-2 align-middle"><strong>MOA:</strong>
+
+                                    @php
+                                        $textClass = $availableSlots > 0 ? 'text-success' : 'text-danger';
+                                    @endphp
+                                    <li class="mb-2"><strong>Available Slots:</strong><span class="{{$textClass}} text-bold"> {{ $availableSlots }}</span></li>
+                                    <li class="mb-2 align-middle"><strong>MOA: </strong>
                                         @if($hte->moa_path)
                                             @if($hte->moa_is_signed === 'yes')
                                                 <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#moaPreviewModal">
@@ -179,14 +183,19 @@
         <div class="col-md-12">
             <div class="card shadow">
                 <div class="card-header bg-white text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="ph-fill ph-user-list custom-icons-i mr-2"></i>
-                        Endorsements
+                    <h3 class="card-title mb-0 d-flex align-items-center justify-content-between w-100">
+                        <div>
+                            <i class="ph-fill ph-user-list custom-icons-i mr-2"></i>
+                            Interns <span class="text-muted fw-light">({{ $endorsedInterns->count() }})</span>
+                        </div>
+                        <div>
+                            <a href="" class="btn btn-success">Deploy</a>
+                        </div>
                     </h3>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-bordered">
                             <thead class="thead-light border-light-gray">
                                 <tr>
                                     <th>Student ID</th>
@@ -202,24 +211,64 @@
                                     @php
                                         $intern = $endorsement->intern;
                                     @endphp
-                                    <tr>
+                                    <tr id="row-endorsement-{{ $endorsement->id }}">
                                         <td>{{ $intern->student_id ?? 'N/A' }}</td>
                                         <td>{{ $intern->user->lname}}, {{ $intern->user->fname }}</td>
                                         <td>{{ $intern->department->dept_name ?? 'N/A' }}</td>
                                         <td>{{ $intern->year_level ?? 'N/A' }}</td>
-                                        <td>{{ ucfirst($endorsement->status) }}</td>
-                                        <td>
-                                            @if($canManage)
-                                            <form action="{{ route('coordinator.endorsement.remove', $endorsement->id) }}" method="POST" onsubmit="return confirm('Remove this intern endorsement?');" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="ph ph-trash"></i> Remove
+                                        <td class="align-middle text">
+                                            @php
+                                                $status = strtolower($intern->status);
+                                                $badgeClass = match($status) {
+                                                    'pending requirements' => 'bg-danger-subtle text-danger',
+                                                    'ready for deployment' => 'bg-warning-subtle text-warning',
+                                                    'endorsed' => 'bg-primary-subtle text-primary',
+                                                    default => 'bg-secondary'
+                                                };
+                                            @endphp
+                                            <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill">{{ ucfirst($intern->status) }}</span>
+                                        </td>
+                                        <td class="text-center px-2 align-middle">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="actionDropdown{{ $intern->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="ph-fill ph-gear custom-icons-i"></i>
                                                 </button>
-                                            </form>
-                                            @else
-                                            <span class="text-muted">No actions</span>
-                                            @endif
+                                                <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="actionDropdown{{ $intern->id }}">
+                                                    <a class="dropdown-item btn btn-outline-light text-dark" href="{{ route('coordinator.intern.show', $intern->id) }}">
+                                                        <i class="ph ph-eye custom-icons-i mr-2"></i>View
+                                                    </a>
+                                                    <a class="dropdown-item btn btn-outline-light text-danger" href="#" data-toggle="modal" data-target="#removeEndorsementModal{{ $intern->id }}">
+                                                        <i class="ph ph-trash custom-icons-i mr-2"></i>Remove
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <!-- Remove Endorsement Modal -->
+                                            <div class="modal fade" id="removeEndorsementModal{{ $intern->id }}" tabindex="-1" role="dialog" aria-labelledby="removeEndorsementModalLabel{{ $intern->id }}" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-light text-dark">
+                                                            <h5 class="modal-title" id="removeEndorsementModalLabel{{ $intern->id }}">
+                                                                <i class="ph-bold ph-warning details-icons-i mr-1"></i>
+                                                                Cancel Endorsement
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body text-left">
+                                                            <p>Are you sure you want to remove <strong>{{ $intern->user->fname }} {{ $intern->user->lname }}</strong> from <strong>{{ $hte->organization_name }}</strong>?</p>
+                                                            <p class="text-warning small"><strong>Warning:</strong> This intern will be unendorsed.</p>
+                                                        </div>
+                                                        <div class="modal-footer bg-light">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                            <button type="button" class="btn btn-danger fw-medium btn-remove-endorsement" data-interns-hte-id="{{ $endorsement->id }}" data-row-id="row-endorsement-{{ $endorsement->id }}">
+                                                                Remove Endorsement
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty

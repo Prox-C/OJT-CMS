@@ -240,7 +240,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
     // HTE Methods
     public function htes() {
-        $htes = Hte::all(); // Get all HTEs regardless of status
+        $htes = Hte::withCount('internsHte')->get();
         return view('coordinator.htes', compact('htes'));
     }
 
@@ -334,10 +334,15 @@ use Maatwebsite\Excel\Facades\Excel;
             ->where('hte_id', $id)
             ->get();
 
+        $endorsedCount = $endorsedInterns->count();
+        $availableSlots = $hte->slots - $endorsedCount;
+        $availableSlots = max(0, $availableSlots); // prevent negative
+
         $canManage = auth()->user()->coordinator->can_add_hte == 1;
 
-        return view('coordinator.hte_show', compact('hte', 'canManage', 'endorsedInterns'));
+        return view('coordinator.hte_show', compact('hte', 'canManage', 'endorsedInterns', 'availableSlots'));
     }
+
 
     public function toggleMoaStatus($id)
     {
@@ -409,7 +414,7 @@ use Maatwebsite\Excel\Facades\Excel;
             DB::rollBack();
             return back()->with('error', 'Failed to update HTE: ' . $e->getMessage());
         }
-    }
+    }   
 
     public function destroyHTE($id)
     {
@@ -464,28 +469,32 @@ use Maatwebsite\Excel\Facades\Excel;
         }
     }
 
-    public function removeEndorsement($id)
-    {
+public function removeEndorsement($id)
+{
+    try {
         $endorsement = \App\Models\InternsHte::findOrFail($id);
 
-        // Optional: check if current user can manage this HTE
         $canManage = auth()->user()->coordinator->can_add_hte == 1;
         if (!$canManage) {
-            abort(403, 'Unauthorized');
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
-        // Update intern status back to "ready for deployment"
         $intern = $endorsement->intern;
         if ($intern) {
             $intern->status = 'ready for deployment';
             $intern->save();
         }
 
-        // Delete the endorsement record
         $endorsement->delete();
 
-        return redirect()->back()->with('success', 'Intern endorsement removed successfully.');
+        return response()->json(['success' => true, 'message' => 'Intern endorsement removed successfully.']);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json(['success' => false, 'message' => 'Endorsement record not found.'], 404);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Failed to remove endorsement.'], 500);
     }
+}
+
 
     public function showImportForm()
     {
