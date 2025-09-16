@@ -189,7 +189,7 @@
                             Interns <span class="text-muted fw-light">({{ $endorsedInterns->count() }})</span>
                         </div>
                         <div>
-                            <a href="" class="btn btn-success">Deploy</a>
+                            <a href="" class="btn btn-success"><i class="ph-bold ph-arrow-square-out custom-icons-i mr-2"></i>Deploy</a>
                         </div>
                     </h3>
                 </div>
