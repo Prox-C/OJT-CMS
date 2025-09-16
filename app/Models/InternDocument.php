@@ -23,7 +23,8 @@ class InternDocument extends Model
             'medical_certificate' => 'Medical Certificate',
             'parent_consent' => 'Parent Consent (EVSU-IEA-041)',
             'insurance_certificate' => 'Insurance Certificate',
-            'pre_deployment_certification' => 'Pre-Deployment Certification'
+            'pre_deployment_certification' => 'Pre-Deployment Certification',
+            'ojt_fee_reciept' => 'OJT Fee Reciept',
         ];
     }
 
