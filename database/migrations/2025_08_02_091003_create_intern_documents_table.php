@@ -20,7 +20,8 @@ return new class extends Migration
                 'medical_certificate',
                 'parent_consent',
                 'insurance_certificate',
-                'pre_deployment_certification'
+                'pre_deployment_certification',
+                'ojt_fee_reciept',
             ]);
             
             $table->string('file_path')->comment('PDF storage path');
