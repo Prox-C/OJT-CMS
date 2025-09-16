@@ -37,7 +37,7 @@
             @endforeach
           </select>
 
-          <div id="slots-info" class="mt-2 text-muted"></div>
+          <div id="slots-info" class="mt-2 text-muted small"></div>
         </div>
       </div>
     </div>
@@ -46,7 +46,7 @@
       <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h3 class="card-title" id="internsTableHeader">Top Candidates</h3>
         <button id="endorseSelectedBtn" class="btn btn-primary ml-auto" style="display:none;">
-          <i class="fas fa-paper-plane"></i> Endorse Selected
+          <i class="ph ph-paper-plane-tilted"></i> Endorse Selected
         </button>
       </div>
       <div class="card-body">
