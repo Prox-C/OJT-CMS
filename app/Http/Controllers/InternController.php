@@ -29,7 +29,7 @@ class InternController extends Controller
     }
 
     public function updateStatus(Request $request) {
-        $request->validate(['status' => 'required|in:pending,incomplete']);
+        $request->validate(['status' => 'required|in:ready for deployment,pending requirements']);
         
         auth()->user()->intern->update(['status' => $request->status]);
         
@@ -42,14 +42,14 @@ class InternController extends Controller
         return response()->json(['documentCount' => $documentCount]);
     }
 
-public function checkDocumentsComplete()
-{
-    $count = auth()->user()->intern->documents()->count();
-    return response()->json([
-        'complete' => $count === 8,
-        'count' => $count
-    ]);
-}
+    public function checkDocumentsComplete()
+    {
+        $count = auth()->user()->intern->documents()->count();
+        return response()->json([
+            'complete' => $count === 9,
+            'count' => $count
+        ]);
+    }
 
     public function profile()
     {
@@ -219,7 +219,7 @@ public function checkDocumentsComplete()
         ]);
 
         // Check if this was the 8th document
-        $isComplete = $intern->documents()->count() === 8;
+        $isComplete = $intern->documents()->count() === 9;
         if ($isComplete) {
             $intern->update(['status' => 'ready for deployment']);
         }
