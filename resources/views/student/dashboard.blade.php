@@ -24,7 +24,7 @@
   <div class="container-fluid">
     <div class="card p-3 d-flex flex-column justify-content-center">
       <h5 class="align-middle w-100 d-flex justify-content-between align-items-center" style="position: relative; top: 4px">
-        <span class="text-muted">AY: {{$academic_year}}, {{$semester}} semester</span>
+        <span class="text-muted">AY: {{$academic_year}}, {{$semester}} Semester</span>
         @php
           $status = strtolower($status);
           $badgeClass = match($status) {
@@ -57,7 +57,7 @@
           <!-- small card -->
           <div class="small-box bg-info"> 
               <div class="inner p-3 d-flex flex-column justify-content-center align-items-start">
-                  <h2 class="fw-medium">{{ $documentCount }} out of 8</h2>
+                  <h2 class="fw-medium">{{ $documentCount }} out of 9</h2>
                   <p>Requirements</p>
               </div>
               <div class="infobox-icon">
