@@ -572,7 +572,7 @@
                             updateSlotsInfo(remainingSlots);
 
                             if (checkedCount > 0) {
-                                $('#endorseSelectedBtn').show().html(`<i class="fas fa-paper-plane"></i> Endorse (${checkedCount})`);
+                                $('#endorseSelectedBtn').show().html(`<i class="ph-fill ph-paper-plane-tilt custom-icons-i mr-2"></i>Endorse (${checkedCount})`);
                             } else {
                                 $('#endorseSelectedBtn').hide();
                             }
