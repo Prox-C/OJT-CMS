@@ -28,26 +28,26 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="mb-0">
                         <span id="statusBadge" class="badge py-2 px-3 
-                            @if($documents->count() >= 8)
+                            @if($documents->count() >= 9)
                                 bg-success-subtle text-success
                             @else
                                 bg-warning-subtle text-warning
                             @endif">
                             <i class="ph-fill custom-icons-i
-                                @if($documents->count() >= 8)
+                                @if($documents->count() >= 9)
                                     ph-seal-check
                                 @else
                                     ph-seal-question
                                 @endif 
                                 mr-1"></i>
                             <span id="statusText">
-                                @if($documents->count() >= 8)
+                                @if($documents->count() >= 9)
                                     Complete
                                 @else
                                     Incomplete
                                 @endif
                             </span>
-                            (<span id="documentCounter">{{ $documents->count() }}</span>/8)
+                            (<span id="documentCounter">{{ $documents->count() }}</span>/9)
                         </span>
                     </h5>
                 </div>
@@ -77,6 +77,7 @@
                                         @case('parent_consent') Notarized consent form from parent/guardian @break
                                         @case('insurance_certificate') Proof of valid insurance coverage @break
                                         @case('pre_deployment_certification') Certification of orientation attendance @break
+                                        @case('ojt_fee_reciept') Official reciept of paid internship fee @break
                                     @endswitch
                                 </td>
                                 <td class="text-center align-middle">

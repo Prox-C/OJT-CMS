@@ -174,15 +174,15 @@ $(document).ready(function() {
         const icon = badge.find('i');
         const statusText = $('#statusText');
         
-        if (count >= 8) {
+        if (count >= 9) {
             badge.removeClass('bg-warning-subtle text-warning')
                  .addClass('bg-success-subtle text-success');
-            icon.removeClass('fa-question').addClass('fa-check');
+            icon.removeClass('ph-seal-question').addClass('ph-seal-check');
             statusText.text('Complete');
         } else {
             badge.removeClass('bg-success-subtle text-success')
                  .addClass('bg-warning-subtle text-warning');
-            icon.removeClass('fa-check').addClass('fa-question');
+            icon.removeClass('ph-seal-check').addClass('ph-seal-question');
             statusText.text('Incomplete');
         }
     }
