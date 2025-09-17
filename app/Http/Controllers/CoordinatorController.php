@@ -469,31 +469,31 @@ use Maatwebsite\Excel\Facades\Excel;
         }
     }
 
-public function removeEndorsement($id)
-{
-    try {
-        $endorsement = \App\Models\InternsHte::findOrFail($id);
+    public function removeEndorsement($id)
+    {
+        try {
+            $endorsement = \App\Models\InternsHte::findOrFail($id);
 
-        $canManage = auth()->user()->coordinator->can_add_hte == 1;
-        if (!$canManage) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            $canManage = auth()->user()->coordinator->can_add_hte == 1;
+            if (!$canManage) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            $intern = $endorsement->intern;
+            if ($intern) {
+                $intern->status = 'ready for deployment';
+                $intern->save();
+            }
+
+            $endorsement->delete();
+
+            return response()->json(['success' => true, 'message' => 'Intern endorsement removed successfully.']);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'message' => 'Endorsement record not found.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to remove endorsement.'], 500);
         }
-
-        $intern = $endorsement->intern;
-        if ($intern) {
-            $intern->status = 'ready for deployment';
-            $intern->save();
-        }
-
-        $endorsement->delete();
-
-        return response()->json(['success' => true, 'message' => 'Intern endorsement removed successfully.']);
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return response()->json(['success' => false, 'message' => 'Endorsement record not found.'], 404);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => 'Failed to remove endorsement.'], 500);
     }
-}
 
 
     public function showImportForm()
