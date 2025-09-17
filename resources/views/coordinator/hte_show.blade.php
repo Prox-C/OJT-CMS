@@ -8,7 +8,7 @@
     <div class="modal fade" id="moaPreviewModal" tabindex="-1" role="dialog" aria-labelledby="moaPreviewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-white text-dark">
+                <div class="modal-header bg-light text-dark">
                     <h5 class="modal-title" id="moaPreviewModalLabel">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" style="position: relative; top: -3px" fill="currentColor" viewBox="0 0 256 256"><path d="M80.3,120.26A58.29,58.29,0,0,1,81,97.07C83.32,87,87.89,80,92.1,80c2.57,0,2.94.67,3.12,1,.88,1.61,4,10.93-12.63,46.52A28.87,28.87,0,0,1,80.3,120.26ZM232,56V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM84,160c2-3.59,3.94-7.32,5.9-11.14,10.34-.32,22.21-7.57,35.47-21.68,5,9.69,11.38,15.25,18.87,16.55,8,1.38,16-2.38,23.94-11.2,6,5.53,16.15,11.47,31.8,11.47a8,8,0,0,0,0-16c-17.91,0-24.3-10.88-24.84-11.86a7.83,7.83,0,0,0-6.54-4.51,8,8,0,0,0-7.25,3.6c-6.78,10-11.87,13.16-14.39,12.73-4-.69-9.15-10-11.23-18a8,8,0,0,0-14-3c-8.88,10.94-16.3,17.79-22.13,21.66,15.8-35.65,13.27-48.59,9.6-55.3C107.35,69.84,102.59,64,92.1,64,79.66,64,69.68,75,65.41,93.46a75,75,0,0,0-.83,29.81c1.7,8.9,5.17,15.73,10.16,20.12-3,5.81-6.09,11.43-9,16.61H56a8,8,0,0,0,0,16h.44c-4.26,7.12-7.11,11.59-7.18,11.69a8,8,0,0,0,13.48,8.62c.36-.55,5.47-8.57,12.29-20.31H200a8,8,0,0,0,0-16Z"></path></svg>
                         Memorandum of Agreement - {{ $hte->organization_name }}
@@ -33,11 +33,18 @@
                     </div>
                     @endif
                 </div>
-                <div class="modal-footer bg-white">
+                <div class="modal-footer">
                     @if($hte->moa_path)
-                    <a href="{{ Storage::url($hte->moa_path) }}" class="btn btn-success text-light mr-auto" download>
-                        <span class="text-white">Download File</span>
-                    </a>
+
+                    <div class="modal-left mr-auto">
+                        <a href="{{ Storage::url($hte->moa_path) }}" class="btn btn-outline-light border-0 rounded-4 text-muted py-2" download><i class="ph-fill ph-download custom-icons-i"></i></a>
+                        <button type="button" 
+                                class="btn btn-outline-light border-0 rounded-4 text-muted py-2" 
+                                onclick="document.getElementById('moaPreviewFrame').contentWindow.print();">
+                            <i class="ph-fill ph-printer custom-icons-i py-2"></i>
+                        </button>
+                    </div>
+
                     
                     <!-- Toggle MOA Status Button -->
                     <button type="button" class="btn {{ $hte->moa_is_signed === 'yes' ? 'btn-warning' : 'btn-primary' }}" 
@@ -60,9 +67,17 @@
         <div class="col-md-12">
             <div class="card shadow">
                 <div class="card-header bg-white text-dark">
-                    <h3 class="card-title mb-0">
-                        <i class="ph ph-building-apartment details-icons-i mr-2"></i>
-                        {{ $hte->organization_name }} - Details
+                    <h3 class="card-title mb-0 d-flex justify-content-between align-items-center w-100">
+                        <div class="title-left">
+                            <i class="ph ph-building-apartment details-icons-i mr-2"></i>
+                            {{ $hte->organization_name }} - Details
+                        </div>
+                        <div class="title-right">
+                            @if($canManage)
+                                <a href="{{ route('coordinator.edit_h', $hte->id) }}" class="btn btn-outline-light border-0 rounded-4 text-muted"><i class="ph ph-wrench details-icons-i p-0"></i></a>
+                                <a class="btn btn-outline-light border-0 rounded-4 text-muted" data-toggle="modal" data-target="#unregisterModal""><i class="ph ph-trash details-icons-i p-0"></i></a>
+                            @endif
+                        </div>
                     </h3>
                 </div>
                 
@@ -159,20 +174,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Action Buttons -->
-                    @if($canManage)
-                    <div class="row mt-4">
-                        <div class="col-md-12 text-right bg-light p-3 rounded">
-                            <a href="{{ route('coordinator.edit_h', $hte->id) }}" class="btn btn-primary mr-2 text-white">
-                               <span class="text-white"><i class="ph-fill ph-wrench custom-icons-i mr-2"></i>Update Info</span> 
-                            </a>
-                            <button class="btn btn-danger" data-toggle="modal" data-target="#unregisterModal">
-                                <i class="ph-fill ph-trash custom-icons-i mr-2"></i>Unregister HTE
-                            </button>
-                        </div>
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>

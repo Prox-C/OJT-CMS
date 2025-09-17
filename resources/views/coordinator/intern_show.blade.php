@@ -8,9 +8,16 @@
         <div class="col-md-12">
             <div class="card shadow">
                 <div class="card-header bg-white text-dark">
-                    <h3 class="card-title mb-0">
-                        <i class="ph ph-graduation-cap details-icons-i mr-2"></i>
-                        Intern Details
+                    <h3 class="card-title mb-0 d-flex justify-content-between align-items-center w-100">
+                        <div>
+                            <i class="ph ph-graduation-cap details-icons-i mr-2"></i>
+                            Intern Details
+                        </div>
+                        <div class="title-right">
+                            <a href="{{ route('coordinator.edit_i', $intern->id) }}" class="btn btn-outline-light border-0 rounded-4 text-muted"><i class="ph ph-wrench details-icons-i p-0"></i></a>
+                            <a class="btn btn-outline-light border-0 rounded-4 text-muted" data-toggle="modal" data-target="#removeModal"><i class="ph ph-trash details-icons-i p-0"></i></a>
+                        </div>
+
                     </h3>
                 </div>
                 
@@ -121,7 +128,7 @@
                     </div>
                     
                     <!-- Action Buttons -->
-                    <div class="row mt-4">
+                    <!-- <div class="row mt-4">
                         <div class="col-md-12 text-right bg-light p-3 rounded">
                             <a href="{{ route('coordinator.edit_i', $intern->id) }}" class="btn btn-primary fw-medium mr-2">
                                <span class="text-white"><i class="ph-fill ph-wrench custom-icons-i mr-2"></i></i>Update Info</span> 
@@ -130,7 +137,7 @@
                                 <i class="ph-fill ph-trash custom-icons-i mr-2"></i>Unregister Intern
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
