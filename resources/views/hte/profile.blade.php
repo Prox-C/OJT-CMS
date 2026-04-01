@@ -16,6 +16,71 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+.skill-filter-container {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.skills-list-container {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.selected-skills-container {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.selected-skill-badge {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.selected-skill-badge:hover {
+    background-color: #e9ecef;
+}
+
+.selected-skill-badge .skill-name {
+    font-weight: 500;
+}
+
+.selected-skill-badge .remove-skill {
+    color: #dc3545;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.selected-skill-badge .remove-skill:hover {
+    opacity: 1;
+}
+
+.empty-selected {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+.search-container {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
 </style>
 
 <section class="content-header">
@@ -139,22 +204,6 @@
                         </div>
                     </div>
 
-                    <!-- HTE Info (Display Only) -->
-                    <!-- <div class="row mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label">Available Slots</label>
-                            <input type="text" class="form-control" value="{{ auth()->user()->hte->slots }}" disabled>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">MOA Status</label>
-                            <input type="text" class="form-control" value="{{ auth()->user()->hte->moa_is_signed == 'yes' ? 'Signed' : 'Not Signed' }}" disabled>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Status</label>
-                            <input type="text" class="form-control" value="{{ ucfirst(auth()->user()->hte->status) }}" disabled>
-                        </div>
-                    </div> -->
-
                     <div class="card-footer d-flex justify-content-end py-3 rounded-3 mt-2">
                         <button type="submit" class="btn btn-primary">
                             <i class="ph-fill ph-floppy-disk-back custom-icons-i mr-1"></i>Save Changes
@@ -191,9 +240,9 @@
     </div>
 </section>
 
-<!-- Skills Modal -->
+<!-- Skills Modal - XL Size -->
 <div class="modal fade" id="skillsModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Update Required Skills</h5>
@@ -206,38 +255,72 @@
                 @method('PUT')
                 
                 <div class="modal-body p-0">
-                    <div class="container-fluid px-0">
-                        <!-- Selection Counter -->
-                        <div class="px-4 pt-3 pb-2 border-bottom bg-light">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Minimum 5 skills required
-                                </small>
-                                <span class="badge bg-light text-dark border">
-                                    <i class="fas fa-check text-primary me-1"></i>
-                                    Selected: <span id="selectedCount" class="fw-bold">0</span>/5
-                                </span>
-                            </div>
-                        </div>
+                    <div class="row g-0">
+                        <!-- Left Side - Skills Selection -->
+                        <div class="col-md-8 border-end">
+                            <div class="container-fluid px-0">
+                                <!-- Search Bar -->
+                                <div class="search-container">
+                                    <div class="mb-3">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0">
+                                                <i class="fas fa-search text-muted"></i>
+                                            </span>
+                                            <input type="text" 
+                                                   id="skillSearchInput" 
+                                                   class="form-control border-start-0 ps-0" 
+                                                   placeholder="Search for a skill...">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Minimum 5 skills required
+                                        </small>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="fas fa-check text-primary me-1"></i>
+                                            Selected: <span id="selectedCount" class="fw-bold">0</span>/5
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <!-- Skills List -->
-                        <div class="row mx-0" style="max-height: 50vh; overflow-y: auto;">
-                            @foreach($skills as $skill)
-                            <div class="col-12 px-3">
-                                <div class="skill-modal-item p-3 border-bottom cursor-pointer">
-                                    <div class="form-check mb-0">
-                                        <input type="checkbox" name="skills[]" value="{{ $skill->skill_id }}" 
-                                            class="form-check-input skill-checkbox"
-                                            id="skill_{{ $skill->skill_id }}"
-                                            {{ in_array($skill->skill_id, $selectedSkills) ? 'checked' : '' }}>
-                                        <label class="form-check-label fw-medium w-100 cursor-pointer" for="skill_{{ $skill->skill_id }}">
-                                            {{ $skill->name }}
-                                        </label>
+                                <!-- Skills List -->
+                                <div class="skills-list-container" id="skillsList">
+                                    @foreach($skills as $skill)
+                                    <div class="skill-item" data-skill-id="{{ $skill->skill_id }}" data-skill-name="{{ strtolower($skill->name) }}" data-skill-name-display="{{ $skill->name }}">
+                                        <div class="skill-modal-item p-3 border-bottom cursor-pointer">
+                                            <div class="form-check mb-0">
+                                                <input type="checkbox" name="skills[]" value="{{ $skill->skill_id }}" 
+                                                    class="form-check-input skill-checkbox"
+                                                    id="skill_{{ $skill->skill_id }}"
+                                                    {{ in_array($skill->skill_id, $selectedSkills) ? 'checked' : '' }}>
+                                                <label class="form-check-label fw-medium w-100 cursor-pointer" for="skill_{{ $skill->skill_id }}">
+                                                    {{ $skill->name }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                    <div id="noResultsMessage" class="text-center py-4 text-muted d-none">
+                                        <i class="fas fa-search fa-2x mb-2 d-block"></i>
+                                        No skills found
                                     </div>
                                 </div>
                             </div>
-                            @endforeach
+                        </div>
+
+                        <!-- Right Side - Selected Skills -->
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-check-circle text-primary me-2"></i>
+                                    Selected Skills
+                                    <span id="selectedSkillsCount" class="badge bg-primary ms-2">0</span>
+                                </h6>
+                                <div id="selectedSkillsList" class="selected-skills-container">
+                                    <!-- Dynamic selected skills will appear here -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -252,6 +335,108 @@
         </div>
     </div>
 </div>
+
+<script>
+// Skills modal functionality
+const skillSearchInput = document.getElementById('skillSearchInput');
+const skillItems = document.querySelectorAll('.skill-item');
+const noResultsMessage = document.getElementById('noResultsMessage');
+const skillCheckboxes = document.querySelectorAll('.skill-checkbox');
+const submitBtn = document.getElementById('submitSkillsBtn');
+const selectedCountSpan = document.getElementById('selectedCount');
+const selectedSkillsList = document.getElementById('selectedSkillsList');
+const selectedSkillsCountSpan = document.getElementById('selectedSkillsCount');
+
+function updateSelectedSkillsDisplay() {
+    const selectedCheckboxes = document.querySelectorAll('.skill-checkbox:checked');
+    const selectedCount = selectedCheckboxes.length;
+    
+    // Update counters
+    selectedCountSpan.textContent = selectedCount;
+    selectedSkillsCountSpan.textContent = selectedCount;
+    submitBtn.disabled = selectedCount < 5;
+    
+    // Clear and rebuild selected skills list
+    selectedSkillsList.innerHTML = '';
+    
+    if (selectedCount === 0) {
+        selectedSkillsList.innerHTML = '<div class="empty-selected"><i class="fas fa-info-circle fa-2x mb-2 d-block"></i>No skills selected yet<br><small>Select at least 5 skills</small></div>';
+        return;
+    }
+    
+    selectedCheckboxes.forEach(checkbox => {
+        const skillItem = checkbox.closest('.skill-item');
+        const skillName = skillItem.getAttribute('data-skill-name-display');
+        const skillId = checkbox.value;
+        
+        const selectedSkillDiv = document.createElement('div');
+        selectedSkillDiv.className = 'selected-skill-badge';
+        selectedSkillDiv.setAttribute('data-skill-id', skillId);
+        selectedSkillDiv.innerHTML = `
+            <div>
+                <div class="skill-name">${skillName}</div>
+            </div>
+            <i class="fas fa-times-circle remove-skill" data-skill-id="${skillId}"></i>
+        `;
+        
+        // Add remove functionality
+        const removeIcon = selectedSkillDiv.querySelector('.remove-skill');
+        removeIcon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const skillIdToRemove = this.getAttribute('data-skill-id');
+            const checkboxToUncheck = document.querySelector(`.skill-checkbox[value="${skillIdToRemove}"]`);
+            if (checkboxToUncheck) {
+                checkboxToUncheck.checked = false;
+                updateSelectedSkillsDisplay();
+                // Trigger change event to update the checkbox styling if needed
+                const event = new Event('change');
+                checkboxToUncheck.dispatchEvent(event);
+            }
+        });
+        
+        selectedSkillsList.appendChild(selectedSkillDiv);
+    });
+}
+
+function searchSkills() {
+    const searchTerm = skillSearchInput.value.toLowerCase().trim();
+    let visibleCount = 0;
+    
+    skillItems.forEach(item => {
+        const skillName = item.getAttribute('data-skill-name');
+        
+        if (searchTerm === '' || skillName.includes(searchTerm)) {
+            item.style.display = '';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    noResultsMessage.classList.toggle('d-none', visibleCount > 0);
+}
+
+// Initial setup
+updateSelectedSkillsDisplay();
+
+// Add event listeners
+skillCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateSelectedSkillsDisplay);
+});
+
+if (skillSearchInput) {
+    skillSearchInput.addEventListener('input', searchSkills);
+}
+
+// Reset modal state when opened
+$('#skillsModal').on('shown.bs.modal', function () {
+    // Reset search input
+    if (skillSearchInput) {
+        skillSearchInput.value = '';
+        searchSkills();
+    }
+    updateSelectedSkillsDisplay();
+});
+</script>
+
 @endsection
-
-
