@@ -18,7 +18,7 @@
     
     <li class="nav-item dropdown">
       <a class="nav-link d-flex align-items-center" data-toggle="dropdown" href="#" aria-expanded="false">
-        <span class="mr-2 d-none d-sm-inline">{{ Auth::user()->fname }} {{ Auth::user()->lname }}</span>
+        <span class="mr-2 d-none d-sm-inline">{{ Auth::user()->hte->organization_name }}</span>
         @if(auth()->user()->pic)
           <img src="{{ asset('storage/' . auth()->user()->pic) }}" class="img-circle elevation-2 border border-light" alt="User Image" style="width: 32px; height: 32px; object-fit: cover;">
         @else
@@ -37,7 +37,7 @@
           @endphp
           <div class="img-circle elevation-2 border border-light d-flex align-items-center justify-content-center text-white font-weight-bold" 
             style="width: 32px; height: 32px; font-size: 12px; background: {{ $randomGradient }};">
-            {{ strtoupper(substr(auth()->user()->fname, 0, 1) . substr(auth()->user()->lname, 0, 1)) }}
+            {{ strtoupper(substr(auth()->user()->hte->organization_name, 0, 1)) }}
           </div>
         @endif
       </a>
@@ -61,10 +61,10 @@
             @endphp
             <div class="img-circle elevation-2 mb-2 mx-auto d-flex align-items-center justify-content-center text-white font-weight-bold" 
               style="width: 60px; height: 60px; font-size: 20px; background: {{ $randomGradient }};">
-              {{ strtoupper(substr(auth()->user()->fname, 0, 1) . substr(auth()->user()->lname, 0, 1)) }}
+              {{ strtoupper(substr(auth()->user()->hte->organization_name, 0, 1)) }}
             </div>
           @endif
-          <h6 class="mb-0">{{ Auth::user()->fname }} {{ Auth::user()->lname }}</h6>
+          <h6 class="mb-0">{{ Auth::user()->hte->organization_name }}</h6>
           <small class="text-muted">HTE</small>
         </div>
         

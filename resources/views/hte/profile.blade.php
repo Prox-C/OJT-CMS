@@ -64,6 +64,21 @@
                     @method('PUT')
 
                     <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label for="organization_name" class="form-label">Organization Name*</label>
+                            <input type="text" class="form-control" id="organization_name" name="organization_name" 
+                                   value="{{ auth()->user()->hte->organization_name }}" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email*</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="{{ auth()->user()->email }}" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="row">
                                 <div class="col-md-6">
@@ -80,23 +95,9 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">Email*</label>
-                            <input type="email" class="form-control" id="email" name="email" 
-                                   value="{{ auth()->user()->email }}" disabled>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
                             <label for="contact" class="form-label">Contact Number*</label>
                             <input type="text" class="form-control" id="contact" name="contact" 
                                    value="{{ auth()->user()->contact }}" required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="organization_name" class="form-label">Organization Name*</label>
-                            <input type="text" class="form-control" id="organization_name" name="organization_name" 
-                                   value="{{ auth()->user()->hte->organization_name }}" required>
                         </div>
                     </div>
 

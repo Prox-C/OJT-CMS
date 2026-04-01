@@ -16,7 +16,7 @@
               @else
                   @php
                       // Generate a consistent random color based on user's name
-                      $name = auth()->user()->fname . auth()->user()->lname;
+                      $name = auth()->user()->hte->organization_name;
                       $colors = [
                           'linear-gradient(135deg, #007bff, #6610f2)', // Blue to Purple
                           'linear-gradient(135deg, #28a745, #20c997)', // Green to Teal
@@ -33,12 +33,12 @@
                   
                   <div class="img-circle elevation-2 d-flex align-items-center justify-content-center text-white font-weight-bold" 
                       style="width: 32px; height: 32px; font-size: 12px; background: {{ $randomGradient }};">
-                      {{ strtoupper(substr(auth()->user()->fname, 0, 1) . substr(auth()->user()->lname, 0, 1)) }}
+                      {{ strtoupper(substr(auth()->user()->hte->organization_name, 0, 1)) }}
                   </div>
               @endif
           </div>
           <div class="info">
-              <a href="{{ route('hte.profile') }}" class="d-block">{{ Auth::user()->fname }} {{ Auth::user()->lname }}</a>
+              <a href="{{ route('hte.profile') }}" class="d-block">{{ Auth::user()->hte->organization_name }}</a>
           </div>
       </div>
 
