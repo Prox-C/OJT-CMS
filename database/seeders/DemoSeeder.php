@@ -12,6 +12,7 @@ class DemoSeeder extends Seeder
             CoordinatorStudentSeeder::class,
             HTEEndorsementSeeder::class,
             InternAttendanceSeeder::class,
+            DeadlineSeeder::class,
         ]);
     }
 }

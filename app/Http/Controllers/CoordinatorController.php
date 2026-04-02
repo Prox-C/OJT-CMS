@@ -2,38 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use import;
-use Exception;
-
-use Carbon\Carbon;
-
-use App\Models\Hte;
-use App\Models\User;
-use App\Models\Intern;
-use App\Mail\HteSetupMail;
-use App\Models\InternsHte;
-
-use App\Models\Coordinator;
-use Illuminate\Support\Str;
-
-
-use Illuminate\Http\Request;
-use App\Mail\InternSetupMail;
 use App\Imports\InternsImport;
-use Illuminate\Support\Facades\DB;
+use App\Mail\HteSetupMail;
+use App\Mail\InternSetupMail;
 use App\Mail\StudentDeploymentMail;
+use App\Models\Coordinator;
 use App\Models\CoordinatorDocument;
-
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Maatwebsite\Excel\Facades\Excel;
-
+use App\Models\Deadline;
+use App\Models\Hte;
+use App\Models\Intern;
+use App\Models\InternsHte;
+use App\Models\User;
 use App\Services\UserAuditTrailService;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use import;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 
 class CoordinatorController extends Controller
@@ -1629,6 +1623,38 @@ public function registerHTE(Request $request)
             'status' => $coordinator->fresh()->status,
             'document_count' => $coordinator->documents()->count()
         ]);
+    }
+
+    public function deadlines()
+    {
+        $deadlines = Deadline::all();
+        return view('coordinator.deadlines', compact('deadlines'));
+    }
+
+    public function updateDeadline(Request $request, $id)
+    {
+        try {
+            $deadline = Deadline::findOrFail($id);
+            
+            $request->validate([
+                'deadline' => 'nullable|date'
+            ]);
+            
+            $deadline->update([
+                'deadline' => $request->deadline
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Deadline updated successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating deadline: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function userGuide()

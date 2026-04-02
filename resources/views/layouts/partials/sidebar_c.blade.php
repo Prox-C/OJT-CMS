@@ -87,6 +87,13 @@
             </a>
           </li>
 
+          <li class="nav-item float-bottom">
+            <a href="{{route('coordinator.deadlines')}}" class="nav-link {{ Request::is('coordinator/deadlines*') ? 'current-page' : '' }}">
+              <i class="ph{{ Request::is('coordinator/deadlines*') ? '-fill' : '' }} ph-calendar nav-link-i"></i>
+              <p>Deadlines</p>
+            </a>
+          </li>
+
           <div class="dropdown-divider border-dark"></div> 
           <li class="nav-item float-bottom">
             <a href="{{route('coordinator.user-guide')}}" class="nav-link {{ Request::is('coordinator/user-guide') ? 'current-page' : '' }}">
@@ -94,6 +101,8 @@
               <p>Guide</p>
             </a>
           </li>
+
+
 
         </ul>
       </nav>

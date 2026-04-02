@@ -133,6 +133,9 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::post('/honorarium/upload', [CoordinatorController::class, 'uploadDocument'])->name('coordinator.documents.upload');
     Route::delete('/honorarium/{id}', [CoordinatorController::class, 'deleteDocument'])->name('coordinator.documents.delete');
 
+    Route::get('/deadlines', [CoordinatorController::class, 'deadlines'])->name('coordinator.deadlines');
+    Route::put('/deadlines/{id}', [CoordinatorController::class, 'updateDeadline'])->name('coordinator.deadline.update');
+
     Route::get('/user-guide', [CoordinatorController::class, 'userGuide'])->name('coordinator.user-guide');
 });
 
