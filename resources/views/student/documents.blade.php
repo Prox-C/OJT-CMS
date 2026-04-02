@@ -22,6 +22,36 @@
 
 <section class="content">
     <div class="container-fluid px-0 px-sm-2">
+
+    @php
+        use App\Models\Deadline;
+        $documentDeadline = Deadline::find(1);
+        $internStatus = auth()->user()->intern->status ?? null;
+    @endphp
+
+    @if($documentDeadline && $documentDeadline->deadline && $internStatus === 'pending requirements')
+        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="ph ph-warning-circle fs-3 me-3"></i>
+                <div>
+                    <strong>Submission Reminder</strong><br>
+                    Upload requirements on or before: <strong>{{ $documentDeadline->formatted_deadline }}</strong>
+                    @if($documentDeadline->daysRemaining() <= 3 && !$documentDeadline->isOverdue())
+                        <span class="badge bg-warning text-dark ms-2">
+                            {{ $documentDeadline->daysRemaining() }} days remaining
+                        </span>
+                    @endif
+                    @if($documentDeadline->isOverdue())
+                        <span class="badge bg-danger ms-2">Overdue</span>
+                    @endif
+                </div>
+            </div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
         <div class="card shadow-sm ">
             <div class="card-body">                
                 <!-- Document Counter -->
