@@ -202,6 +202,43 @@ public function dashboard() {
         return view('coordinator.interns', compact('interns'));
     }
 
+    public function deleteInternDocument($documentId)
+    {
+        try {
+            $document = \App\Models\InternDocument::findOrFail($documentId);
+            
+            // Check if the coordinator has permission to delete this document
+            $intern = $document->intern;
+            $coordinatorId = auth()->user()->coordinator->id;
+            
+            if ($intern->coordinator_id !== $coordinatorId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized action.'
+                ], 403);
+            }
+            
+            // Delete file from storage
+            if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+                Storage::disk('public')->delete($document->file_path);
+            }
+            
+            // Delete document record
+            $document->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Document deleted successfully.'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting document: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function newIntern() {
         return view('coordinator.new-intern');
     }

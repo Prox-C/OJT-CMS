@@ -185,6 +185,7 @@
         </div>
     </div>
 
+
     <!-- Pre-Deployment Requirements Table for Pending/Ready for Deployment Status -->
     @if($intern->status === 'pending requirements' || $intern->status === 'ready for deployment')
     <div class="row">
@@ -202,37 +203,6 @@
                             </span>
                         </div>
                     </div>
-                    
-                    <!-- Document Counter -->
-                    <!-- <div class="mt-2">
-                        @php
-                            $uploadedCount = $intern->documents->count();
-                            $totalCount = count(App\Models\InternDocument::typeLabels());
-                            $percentage = $totalCount > 0 ? round(($uploadedCount / $totalCount) * 100) : 0;
-                        @endphp
-                        <span class="badge py-2 px-3 
-                            @if($uploadedCount >= $totalCount)
-                                bg-success-subtle text-success
-                            @else
-                                bg-warning-subtle text-warning
-                            @endif">
-                            <i class="ph-fill custom-icons-i
-                                @if($uploadedCount >= $totalCount)
-                                    ph-seal-check
-                                @else
-                                    ph-seal-question
-                                @endif 
-                                mr-1"></i>
-                            <span>
-                                @if($uploadedCount >= $totalCount)
-                                    Complete
-                                @else
-                                    Incomplete
-                                @endif
-                            </span>
-                            ({{ $uploadedCount }}/{{ $totalCount }})
-                        </span>
-                    </div> -->
                 </div>
                 
                 <div class="card-body p-0">
@@ -243,7 +213,7 @@
                                     <th width="45%" class="ps-3">Document Name</th>
                                     <th width="">Description</th>
                                     <th width="10%" class="text-center">Status</th>
-                                    <th width="13%" class="text-center" style="white-space: nowrap;">Action</th>
+                                    <th width="10%" class="text-center" style="white-space: nowrap;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -251,8 +221,10 @@
                                 @php 
                                     $document = $intern->documents->where('type', $type)->first();
                                     $hasDocument = $document !== null;
+                                    // Only allow deletion for pending requirements and ready for deployment status
+                                    $canDelete = ($intern->status === 'pending requirements' || $intern->status === 'ready for deployment');
                                 @endphp
-                                <tr data-document-type="{{ $type }}">
+                                <tr data-document-type="{{ $type }}" data-document-id="{{ $document->id ?? '' }}">
                                     <td class="align-middle ps-3">{{ $label }}</td>
                                     <td class="text-muted small align-middle">
                                         @switch($type)
@@ -280,20 +252,41 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="text-center align-middle">
+                                    <td class="text-center px-2 align-middle">
                                         @if($hasDocument)
-                                            <button class="btn btn-outline-primary rounded-pill px-3 fw-medium view-document-btn" 
-                                                    data-toggle="modal" 
-                                                    data-target="#documentModal"
-                                                    data-url="{{ asset('storage/' . $document->file_path) }}"
-                                                    data-name="{{ $label }}"
-                                                    data-download-url="{{ asset('storage/' . $document->file_path) }}"
-                                                    data-original-name="{{ $document->original_name }}">
-                                                <i class="ph ph-eye custom-icons-i me-1"></i>
-                                                <span>View</span>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-primary px-2 rounded-pill dropdown-toggle" type="button" id="actionDropdown{{ $document->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="ph-fill ph-gear custom-icons-i"></i>
                                             </button>
+                                            <div class="dropdown-menu dropdown-menu-right shadow border-0 py-0" aria-labelledby="actionDropdown{{ $document->id }}">
+                                                <!-- View Option -->
+                                                <a class="dropdown-item d-flex align-items-center justify-content-start py-2 view-document-btn" 
+                                                href="#"
+                                                data-toggle="modal" 
+                                                data-target="#documentModal"
+                                                data-url="{{ asset('storage/' . $document->file_path) }}"
+                                                data-name="{{ $label }}"
+                                                data-download-url="{{ asset('storage/' . $document->file_path) }}"
+                                                data-original-name="{{ $document->original_name }}">
+                                                    <i class="ph ph-eye mr-2"></i>View
+                                                </a>
+                                                
+                                                <!-- Delete Option - Only show if status allows deletion -->
+                                                @if($canDelete)
+                                                <div class="dropdown-divider my-1"></div>
+                                                <a class="dropdown-item d-flex align-items-center justify-content-start py-2 text-danger delete-document-btn" 
+                                                href="#"
+                                                data-toggle="modal" 
+                                                data-target="#deleteDocumentModal"
+                                                data-document-id="{{ $document->id }}"
+                                                data-document-name="{{ $label }}">
+                                                    <i class="ph ph-trash mr-2"></i>Remove
+                                                </a>
+                                                @endif
+                                            </div>
+                                        </div>
                                         @else
-                                            <span class="text-muted small">Awaiting upload</span>
+                                            <span class="text-muted small">No file</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -302,28 +295,6 @@
                         </table>
                     </div>
                 </div>
-                
-                <!-- Progress Summary -->
-                <!-- <div class="card-footer">
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <strong>Summary:</strong> {{ $uploadedCount }} of {{ $totalCount }} requirements uploaded
-                        </div>
-                        <div class="col-md-6">
-                            <div class="progress" style="height: 20px;">
-                                <div class="progress-bar {{ $percentage >= 100 ? 'bg-success' : ($percentage >= 50 ? 'bg-warning' : 'bg-danger') }}" 
-                                     role="progressbar" 
-                                     style="width: {{ $percentage }}%;"
-                                     aria-valuenow="{{ $percentage }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100">
-                                    {{ $percentage }}%
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                
             </div>
         </div>
     </div>
@@ -577,6 +548,31 @@
     </div>
 </div>
 
+<!-- Delete Document Confirmation Modal -->
+<div class="modal fade" id="deleteDocumentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-light text-white">
+                <h5 class="modal-title">
+                    <i class="ph ph-trash me-1"></i>
+                    Delete Confirmation
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteDocumentName"></strong>?</p>
+                <p class="text-danger small">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Document</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 .knob-container {
     position: relative;
@@ -710,6 +706,71 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set download link
         $('#downloadLink').attr('href', downloadUrl);
         $('#downloadLink').attr('download', originalName);
+    });
+    
+    // Clear iframe source when modal is hidden to prevent memory leaks
+    $('#documentModal').on('hidden.bs.modal', function() {
+        $('#documentFrame').attr('src', '');
+    });
+});
+
+function printDocument() {
+    const iframe = document.getElementById('documentFrame');
+    iframe.contentWindow.print();
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle document preview modal
+    $('.view-document-btn').on('click', function() {
+        const url = $(this).data('url');
+        const name = $(this).data('name');
+        const downloadUrl = $(this).data('download-url');
+        const originalName = $(this).data('original-name');
+        
+        // Set modal title
+        $('#documentModalTitle').text(name);
+        
+        // Set iframe source
+        $('#documentFrame').attr('src', url);
+        
+        // Set download link
+        $('#downloadLink').attr('href', downloadUrl);
+        $('#downloadLink').attr('download', originalName);
+    });
+    
+    // Handle document deletion
+    let documentIdToDelete = null;
+    
+    $('.delete-document-btn').on('click', function() {
+        documentIdToDelete = $(this).data('document-id');
+        const documentName = $(this).data('document-name');
+        $('#deleteDocumentName').text(documentName);
+        $('#deleteDocumentModal').modal('show');
+    });
+    
+    $('#confirmDeleteBtn').on('click', function() {
+        if (documentIdToDelete) {
+            $.ajax({
+                url: '{{ route("coordinator.intern.document.delete", "") }}/' + documentIdToDelete,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting document: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error deleting document. Please try again.');
+                }
+            });
+        }
+        $('#deleteDocumentModal').modal('hide');
     });
     
     // Clear iframe source when modal is hidden to prevent memory leaks

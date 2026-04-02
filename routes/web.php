@@ -102,6 +102,8 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::post('/interns', [CoordinatorController::class, 'registerIntern'])->name('coordinator.register_i');
     Route::post('/interns/import', [CoordinatorController::class, 'importInterns'])->name('coordinator.import_interns');
     Route::get('/interns/{id}', [CoordinatorController::class, 'showIntern'])->name('coordinator.intern.show');
+    Route::delete('/interns/documents/{documentId}', [CoordinatorController::class, 'deleteInternDocument'])
+    ->name('coordinator.intern.document.delete');
     Route::get('/interns/edit/{id}', [CoordinatorController::class, 'editIntern'])->name('coordinator.edit_i');
     Route::put('/interns/{id}', [CoordinatorController::class, 'updateIntern'])->name('coordinator.update_i');
     Route::delete('/interns/{id}', [CoordinatorController::class, 'destroyIntern'])->name('coordinator.intern.destroy');
