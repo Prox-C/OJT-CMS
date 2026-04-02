@@ -63,6 +63,13 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{route('admin.moas')}}" class="nav-link {{ Request::is('admin/moas*') ? 'current-page' : '' }}">
+                        <i class="ph{{ Request::is('admin/moas*') ? '-fill' : '' }} ph-signature nav-link-i "></i>
+                        <p>HTE MOAs</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{route('admin.consolidated-sics')}}" class="nav-link {{ Request::is('admin/consolidated-sics*') ? 'current-page' : '' }}">
                         <i class="ph{{ Request::is('admin/consolidated-sics*') ? '-fill' : '' }} ph-file-text nav-link-i "></i>
                         <p>Consolidated SICs</p>

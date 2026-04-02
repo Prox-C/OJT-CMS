@@ -85,6 +85,8 @@ Route::middleware(['auth:web', 'admin'])->prefix('admin')->group(function() {
     Route::get('/consolidated-sics/{id}/view', [AdminController::class, 'viewSic'])->name('admin.sics.view');
     Route::get('/consolidated-sics/{id}/download', [AdminController::class, 'downloadSic'])->name('admin.sics.download');
 
+    Route::get('/moas', [AdminController::class, 'moas'])->name('admin.moas');
+
     Route::get('/audit-trail/users', [AdminController::class, 'userAuditTrail'])->name('admin.audit-trail.users');
     Route::get('/audit-trail/users/data', [AdminController::class, 'getUserAuditData'])->name('admin.audit-trail.users.data');
 });

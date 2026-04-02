@@ -557,7 +557,7 @@ public function deleteSkill($id)
             'total' => $userActivities->total(),
             'per_page' => $userActivities->perPage(),
         ]);
-    }
+    }   
 
 public function consolidatedSics()
 {
@@ -567,11 +567,11 @@ public function consolidatedSics()
         'coordinator.department.college'
     ])
     ->where('type', 'consolidated_sics')
-    ->orderBy('created_at', 'desc')
-    ->get();
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-    return view('admin.sics', compact('consolidatedSics'));
-}
+        return view('admin.sics', compact('consolidatedSics'));
+    }
 
 public function viewSic($id)
 {
@@ -596,6 +596,12 @@ public function viewSic($id)
     }
 
     return response()->file($filePath);
+}
+
+public function moas()
+{
+    $htes = Hte::with('user')->orderBy('created_at', 'desc')->get();
+    return view('admin.moas', compact('htes'));
 }
 
 public function downloadSic($id)

@@ -221,6 +221,13 @@
         padding: 1rem;
     }
 
+    #moasTable_wrapper .row:first-child {
+        padding-top: 1rem;
+    }
+    #moasTable_wrapper .row:last-child {
+        padding: 1rem;
+    }
+
 /* Light mode (default) */
 #internsTable thead th,
 #htesTable thead th,
