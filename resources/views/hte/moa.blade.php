@@ -63,7 +63,7 @@
               <div class="d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="alert bg-warning-subtle text-warning text-center mb-4 w-100 small fs-medium">
                   <i class="ph-fill ph-warning-circle custom-icons-i mr-2"></i>
-                  Download the MOA template sent at <span class="text-decoration-underline">{{ Auth::user()->email }}</span>, fill it out, and upload the signed copy below.
+                  Download and fill out the memorandum of agreement sent at <span class="text-decoration-underline">{{ Auth::user()->email }}</span> and upload the signed copy below.
                 </div>
                 
                 <form id="moaUploadForm" 
