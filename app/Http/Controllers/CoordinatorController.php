@@ -32,70 +32,70 @@ use PhpOffice\PhpWord\TemplateProcessor;
 
 class CoordinatorController extends Controller
 {
-public function dashboard() {
-    // Get the currently logged-in coordinator
-    $coordinator = auth()->user()->coordinator;
-    
-    // Count students added by this coordinator
-    $myStudentsCount = Intern::where('coordinator_id', $coordinator->id)->count();
-    $totalHtesCount = Hte::count();
-    
-    // Count deployments and status breakdown
-    $activeDeploymentsCount = InternsHte::where('coordinator_id', $coordinator->id)
-        ->where('status', 'deployed')
-        ->count();
-    
-    $endorsedCount = InternsHte::where('coordinator_id', $coordinator->id)
-        ->where('status', 'endorsed')
-        ->count();
-    
-    // Count interns by all statuses
-    $pendingRequirementsCount = Intern::where('coordinator_id', $coordinator->id)
-        ->where('status', 'pending requirements')
-        ->count();
-    
-    $readyForDeploymentCount = Intern::where('coordinator_id', $coordinator->id)
-        ->where('status', 'ready for deployment')
-        ->count();
-    
-    $endorsedInternsCount = Intern::where('coordinator_id', $coordinator->id)
-        ->where('status', 'endorsed')
-        ->count();
-    
-    $processingCount = Intern::where('coordinator_id', $coordinator->id)
-        ->where('status', 'processing')
-        ->count();
-    
-    $deployedCount = Intern::where('coordinator_id', $coordinator->id)
-        ->where('status', 'deployed')
-        ->count();
-    
-    $completedCount = Intern::where('coordinator_id', $coordinator->id)
-        ->where('status', 'completed')
-        ->count();
-    
-    // Recent activity (last 5 deployments)
-    $recentDeployments = InternsHte::with(['intern.user', 'hte'])
-        ->where('coordinator_id', $coordinator->id)
-        ->latest()
-        ->take(5)
-        ->get();
+    public function dashboard() {
+        // Get the currently logged-in coordinator
+        $coordinator = auth()->user()->coordinator;
+        
+        // Count students added by this coordinator
+        $myStudentsCount = Intern::where('coordinator_id', $coordinator->id)->count();
+        $totalHtesCount = Hte::count();
+        
+        // Count deployments and status breakdown
+        $activeDeploymentsCount = InternsHte::where('coordinator_id', $coordinator->id)
+            ->where('status', 'deployed')
+            ->count();
+        
+        $endorsedCount = InternsHte::where('coordinator_id', $coordinator->id)
+            ->where('status', 'endorsed')
+            ->count();
+        
+        // Count interns by all statuses
+        $pendingRequirementsCount = Intern::where('coordinator_id', $coordinator->id)
+            ->where('status', 'pending requirements')
+            ->count();
+        
+        $readyForDeploymentCount = Intern::where('coordinator_id', $coordinator->id)
+            ->where('status', 'ready for deployment')
+            ->count();
+        
+        $endorsedInternsCount = Intern::where('coordinator_id', $coordinator->id)
+            ->where('status', 'endorsed')
+            ->count();
+        
+        $processingCount = Intern::where('coordinator_id', $coordinator->id)
+            ->where('status', 'processing')
+            ->count();
+        
+        $deployedCount = Intern::where('coordinator_id', $coordinator->id)
+            ->where('status', 'deployed')
+            ->count();
+        
+        $completedCount = Intern::where('coordinator_id', $coordinator->id)
+            ->where('status', 'completed')
+            ->count();
+        
+        // Recent activity (last 5 deployments)
+        $recentDeployments = InternsHte::with(['intern.user', 'hte'])
+            ->where('coordinator_id', $coordinator->id)
+            ->latest()
+            ->take(5)
+            ->get();
 
-    return view('coordinator.dashboard', [
-        'myStudentsCount' => $myStudentsCount,
-        'totalHtesCount' => $totalHtesCount,
-        'activeDeploymentsCount' => $activeDeploymentsCount,
-        'endorsedCount' => $endorsedCount,
-        'pendingRequirementsCount' => $pendingRequirementsCount,
-        'readyForDeploymentCount' => $readyForDeploymentCount,
-        'endorsedInternsCount' => $endorsedInternsCount,
-        'processingCount' => $processingCount,
-        'deployedCount' => $deployedCount,
-        'completedCount' => $completedCount,
-        'recentDeployments' => $recentDeployments,
-        'coordinator' => $coordinator
-    ]);
-}
+        return view('coordinator.dashboard', [
+            'myStudentsCount' => $myStudentsCount,
+            'totalHtesCount' => $totalHtesCount,
+            'activeDeploymentsCount' => $activeDeploymentsCount,
+            'endorsedCount' => $endorsedCount,
+            'pendingRequirementsCount' => $pendingRequirementsCount,
+            'readyForDeploymentCount' => $readyForDeploymentCount,
+            'endorsedInternsCount' => $endorsedInternsCount,
+            'processingCount' => $processingCount,
+            'deployedCount' => $deployedCount,
+            'completedCount' => $completedCount,
+            'recentDeployments' => $recentDeployments,
+            'coordinator' => $coordinator
+        ]);
+    }
 
     public function profile()
     {
@@ -574,154 +574,154 @@ public function dashboard() {
         return view('coordinator.new-hte');
     }
 
-public function registerHTE(Request $request)
-{
-    $validated = $request->validate([
-        'contact_email' => 'required|email|unique:users,email',
-        'contact_first_name' => 'required|string|max:255',
-        'contact_last_name' => 'required|string|max:255',
-        'contact_number' => 'required|string|max:20',
-        'address' => 'required|string|max:255',
-        'organization_name' => 'required|string|max:255',
-        'organization_type' => 'required|in:private,government,ngo,educational,other',
-        'hte_status' => 'required|in:active,new',
-        'description' => 'nullable|string',
-        'coordinator_id' => 'required|exists:coordinators,id',
-        'internship_plan' => 'required|file|mimes:pdf|max:10240', // 10MB max
-        'moa_document' => 'required_if:hte_status,active|file|mimes:pdf|max:10240' // Conditional required
-    ]);
-
-    DB::beginTransaction();
-    try {
-        $tempPassword = Str::random(16);
-
-        $user = User::create([
-            'email' => $validated['contact_email'],
-            'password' => Hash::make($tempPassword),
-            'fname' => $validated['contact_first_name'],
-            'lname' => $validated['contact_last_name'],
-            'contact' => $validated['contact_number'],
-            'pic' => 'profile-pictures/profile.jpg',
-            'temp_password' => true,
-            'username' => $validated['contact_email']
+    public function registerHTE(Request $request)
+    {
+        $validated = $request->validate([
+            'contact_email' => 'required|email|unique:users,email',
+            'contact_first_name' => 'required|string|max:255',
+            'contact_last_name' => 'required|string|max:255',
+            'contact_number' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'organization_name' => 'required|string|max:255',
+            'organization_type' => 'required|in:private,government,ngo,educational,other',
+            'hte_status' => 'required|in:active,new',
+            'description' => 'nullable|string',
+            'coordinator_id' => 'required|exists:coordinators,id',
+            'internship_plan' => 'required|file|mimes:pdf|max:10240', // 10MB max
+            'moa_document' => 'required_if:hte_status,active|file|mimes:pdf|max:10240' // Conditional required
         ]);
 
-        // Handle MOA file upload for active HTEs
-        $moaPath = null;
-        if ($validated['hte_status'] === 'active' && $request->hasFile('moa_document')) {
-            $moaFile = $request->file('moa_document');
-            $moaPath = $moaFile->store('moa-documents', 'public');
-        }
+        DB::beginTransaction();
+        try {
+            $tempPassword = Str::random(16);
 
-        $hte = Hte::create([
-            'user_id' => $user->id,
-            'status' => $validated['hte_status'],
-            'type' => $validated['organization_type'],
-            'address' => $validated['address'],
-            'description' => $validated['description'],
-            'organization_name' => $validated['organization_name'],
-            'slots' => 10,
-            'moa_path' => $moaPath,
-            'moa_is_signed' => $validated['hte_status'] === 'active' ? 'yes' : 'no'
-        ]);
-
-        // Handle Student Internship Plan upload
-        $internshipPlanPath = null;
-        if ($request->hasFile('internship_plan')) {
-            $internshipPlanFile = $request->file('internship_plan');
-            $internshipPlanPath = $internshipPlanFile->store('internship-plans', 'public');
-            
-            // Store internship plan reference (you might want to create a new table for this)
-            // For now, we'll attach it to the email
-        }
-
-        // AUDIT TRAIL: Log HTE creation
-        UserAuditTrailService::logUserCreation(
-            $user->id,
-            [
+            $user = User::create([
+                'email' => $validated['contact_email'],
+                'password' => Hash::make($tempPassword),
                 'fname' => $validated['contact_first_name'],
                 'lname' => $validated['contact_last_name'],
-                'email' => $validated['contact_email'],
                 'contact' => $validated['contact_number'],
-                'organization_name' => $validated['organization_name'],
-                'organization_type' => $validated['organization_type'],
-                'hte_status' => $validated['hte_status']
-            ],
-            'hte',
-            $request
-        );
+                'pic' => 'profile-pictures/profile.jpg',
+                'temp_password' => true,
+                'username' => $validated['contact_email']
+            ]);
 
-        $token = Str::random(60);
-        DB::table('password_setup_tokens')->insert([
-            'email' => $user->email,
-            'token' => $token,
-            'created_at' => now()
-        ]);
-
-        $setupLink = route('password.setup', [
-            'token' => $token,
-            'role' => 'hte'
-        ]);
-        $contactName = $validated['contact_first_name'] . ' ' . $validated['contact_last_name'];
-
-        $moaAttachmentPath = null;
-        $generatedDocxPath = null;
-
-        if ($validated['hte_status'] === 'new') {
-            $templatePath = public_path('templates/moa-template.docx');
-            $generatedDocxPath = storage_path('app/public/moa-documents/generated-moa-' . $hte->id . '.docx');
-
-            // Fill DOCX template
-            $templateProcessor = new TemplateProcessor($templatePath);
-            $templateProcessor->setValue('organization_name', $validated['organization_name']);
-            $templateProcessor->setValue('org_name', strtoupper($validated['organization_name']));
-            $templateProcessor->setValue('address', $validated['address']);
-            $templateProcessor->setValue('contact_name', $contactName);
-            $templateProcessor->saveAs($generatedDocxPath);
-
-            if (file_exists($generatedDocxPath)) {
-                $moaAttachmentPath = $generatedDocxPath;
+            // Handle MOA file upload for active HTEs
+            $moaPath = null;
+            if ($validated['hte_status'] === 'active' && $request->hasFile('moa_document')) {
+                $moaFile = $request->file('moa_document');
+                $moaPath = $moaFile->store('moa-documents', 'public');
             }
+
+            $hte = Hte::create([
+                'user_id' => $user->id,
+                'status' => $validated['hte_status'],
+                'type' => $validated['organization_type'],
+                'address' => $validated['address'],
+                'description' => $validated['description'],
+                'organization_name' => $validated['organization_name'],
+                'slots' => 10,
+                'moa_path' => $moaPath,
+                'moa_is_signed' => $validated['hte_status'] === 'active' ? 'yes' : 'no'
+            ]);
+
+            // Handle Student Internship Plan upload
+            $internshipPlanPath = null;
+            if ($request->hasFile('internship_plan')) {
+                $internshipPlanFile = $request->file('internship_plan');
+                $internshipPlanPath = $internshipPlanFile->store('internship-plans', 'public');
+                
+                // Store internship plan reference (you might want to create a new table for this)
+                // For now, we'll attach it to the email
+            }
+
+            // AUDIT TRAIL: Log HTE creation
+            UserAuditTrailService::logUserCreation(
+                $user->id,
+                [
+                    'fname' => $validated['contact_first_name'],
+                    'lname' => $validated['contact_last_name'],
+                    'email' => $validated['contact_email'],
+                    'contact' => $validated['contact_number'],
+                    'organization_name' => $validated['organization_name'],
+                    'organization_type' => $validated['organization_type'],
+                    'hte_status' => $validated['hte_status']
+                ],
+                'hte',
+                $request
+            );
+
+            $token = Str::random(60);
+            DB::table('password_setup_tokens')->insert([
+                'email' => $user->email,
+                'token' => $token,
+                'created_at' => now()
+            ]);
+
+            $setupLink = route('password.setup', [
+                'token' => $token,
+                'role' => 'hte'
+            ]);
+            $contactName = $validated['contact_first_name'] . ' ' . $validated['contact_last_name'];
+
+            $moaAttachmentPath = null;
+            $generatedDocxPath = null;
+
+            if ($validated['hte_status'] === 'new') {
+                $templatePath = public_path('templates/moa-template.docx');
+                $generatedDocxPath = storage_path('app/public/moa-documents/generated-moa-' . $hte->id . '.docx');
+
+                // Fill DOCX template
+                $templateProcessor = new TemplateProcessor($templatePath);
+                $templateProcessor->setValue('organization_name', $validated['organization_name']);
+                $templateProcessor->setValue('org_name', strtoupper($validated['organization_name']));
+                $templateProcessor->setValue('address', $validated['address']);
+                $templateProcessor->setValue('contact_name', $contactName);
+                $templateProcessor->saveAs($generatedDocxPath);
+
+                if (file_exists($generatedDocxPath)) {
+                    $moaAttachmentPath = $generatedDocxPath;
+                }
+            }
+
+            // Get the internship plan file path for email attachment
+            $internshipPlanAttachmentPath = $internshipPlanPath ? storage_path('app/public/' . $internshipPlanPath) : null;
+
+            // Send email with both attachments
+            Mail::to($user->email)->send(new HteSetupMail(
+                $setupLink,
+                $contactName,
+                $validated['organization_name'],
+                $tempPassword,
+                $moaAttachmentPath, // Generated MOA for new HTEs
+                $user->email,
+                $internshipPlanAttachmentPath // Student Internship Plan for all HTEs
+            ));
+
+            // Clean up temporary files
+            if ($generatedDocxPath && file_exists($generatedDocxPath)) {
+                unlink($generatedDocxPath);
+            }
+
+            DB::commit();
+
+            return redirect()->route('coordinator.htes')
+                ->with('success', 'HTE registered successfully. Activation email sent with Student Internship Plan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('HTE Registration Error: ' . $e->getMessage());
+
+            // Clean up temporary files on error
+            if (isset($generatedDocxPath) && $generatedDocxPath && file_exists($generatedDocxPath)) {
+                unlink($generatedDocxPath);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to register HTE. Please try again.')
+                ->withInput();
         }
-
-        // Get the internship plan file path for email attachment
-        $internshipPlanAttachmentPath = $internshipPlanPath ? storage_path('app/public/' . $internshipPlanPath) : null;
-
-        // Send email with both attachments
-        Mail::to($user->email)->send(new HteSetupMail(
-            $setupLink,
-            $contactName,
-            $validated['organization_name'],
-            $tempPassword,
-            $moaAttachmentPath, // Generated MOA for new HTEs
-            $user->email,
-            $internshipPlanAttachmentPath // Student Internship Plan for all HTEs
-        ));
-
-        // Clean up temporary files
-        if ($generatedDocxPath && file_exists($generatedDocxPath)) {
-            unlink($generatedDocxPath);
-        }
-
-        DB::commit();
-
-        return redirect()->route('coordinator.htes')
-            ->with('success', 'HTE registered successfully. Activation email sent with Student Internship Plan.');
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('HTE Registration Error: ' . $e->getMessage());
-
-        // Clean up temporary files on error
-        if (isset($generatedDocxPath) && $generatedDocxPath && file_exists($generatedDocxPath)) {
-            unlink($generatedDocxPath);
-        }
-
-        return redirect()->back()
-            ->with('error', 'Failed to register HTE. Please try again.')
-            ->withInput();
     }
-}
 
     public function updateHte(Request $request, $id)
     {
@@ -1623,38 +1623,6 @@ public function registerHTE(Request $request)
             'status' => $coordinator->fresh()->status,
             'document_count' => $coordinator->documents()->count()
         ]);
-    }
-
-    public function deadlines()
-    {
-        $deadlines = Deadline::all();
-        return view('coordinator.deadlines', compact('deadlines'));
-    }
-
-    public function updateDeadline(Request $request, $id)
-    {
-        try {
-            $deadline = Deadline::findOrFail($id);
-            
-            $request->validate([
-                'deadline' => 'nullable|date'
-            ]);
-            
-            $deadline->update([
-                'deadline' => $request->deadline
-            ]);
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Deadline updated successfully'
-            ]);
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error updating deadline: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
     public function userGuide()

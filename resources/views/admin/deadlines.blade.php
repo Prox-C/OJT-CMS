@@ -1,4 +1,4 @@
-@extends('layouts.coordinator')
+@extends('layouts.admin')
 
 @section('title', 'Manage Deadlines')
 
@@ -154,7 +154,7 @@ $(document).ready(function() {
         
         $('#deadline_name').val(name);
         $('#deadline_date').val(deadline);
-        $('#editDeadlineForm').attr('action', '/coordinator/deadlines/' + id);
+        $('#editDeadlineForm').attr('action', '/admin/deadlines/' + id);
     });
     
     // Handle form submission

@@ -8,6 +8,7 @@ use App\Models\Skill;
 use App\Models\Intern;
 
 use App\Models\Department;
+use App\Models\Deadline;
 use App\Models\InternsHte;
 use App\Models\Coordinator;
 use Illuminate\Http\Request;
@@ -626,4 +627,36 @@ public function downloadSic($id)
 
     return response()->download($filePath, basename($sic->file_path));
 }
+
+    public function deadlines()
+    {
+        $deadlines = Deadline::all();
+        return view('admin.deadlines', compact('deadlines'));
+    }
+
+    public function updateDeadline(Request $request, $id)
+    {
+        try {
+            $deadline = Deadline::findOrFail($id);
+            
+            $request->validate([
+                'deadline' => 'nullable|date'
+            ]);
+            
+            $deadline->update([
+                'deadline' => $request->deadline
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Deadline updated successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating deadline: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

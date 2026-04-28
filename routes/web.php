@@ -68,10 +68,12 @@ Route::middleware(['auth:web', 'admin'])->prefix('admin')->group(function() {
     Route::get('/coordinators/{id}/edit', [AdminController::class, 'editCoordinator'])->name('admin.coordinators.edit');
     Route::put('/coordinators/{id}', [AdminController::class, 'updateCoordinator'])->name('admin.coordinators.update');
 
-
     Route::get('/departments', [AdminController::class, 'departments'])->name('admin.departments');
     Route::post('/departments', [AdminController::class, 'storeDepartment'])->name('admin.new_d');
     Route::delete('/departments/{id}', [AdminController::class, 'deleteDepartment'])->name('admin.delete_D');
+
+    Route::get('/deadlines', [AdminController::class, 'deadlines'])->name('admin.deadlines');
+    Route::put('/deadlines/{id}', [AdminController::class, 'updateDeadline'])->name('admin.deadline.update');
     
     Route::get('/skills', [AdminController::class, 'skills'])->name('admin.skills');
     Route::post('/skills', [AdminController::class, 'storeSkill'])->name('admin.new_skill');
@@ -134,9 +136,6 @@ Route::middleware(['auth:web', 'coordinator'])->prefix('coordinator')->group(fun
     Route::get('/honorarium', [CoordinatorController::class, 'documents'])->name('coordinator.documents');
     Route::post('/honorarium/upload', [CoordinatorController::class, 'uploadDocument'])->name('coordinator.documents.upload');
     Route::delete('/honorarium/{id}', [CoordinatorController::class, 'deleteDocument'])->name('coordinator.documents.delete');
-
-    Route::get('/deadlines', [CoordinatorController::class, 'deadlines'])->name('coordinator.deadlines');
-    Route::put('/deadlines/{id}', [CoordinatorController::class, 'updateDeadline'])->name('coordinator.deadline.update');
 
     Route::get('/user-guide', [CoordinatorController::class, 'userGuide'])->name('coordinator.user-guide');
 });

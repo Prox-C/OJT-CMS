@@ -70,6 +70,13 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{route('admin.deadlines')}}" class="nav-link {{ Request::is('admin/deadlines*') ? 'current-page' : '' }}">
+                        <i class="ph{{ Request::is('admin/deadlines*') ? '-fill' : '' }} ph-calendar nav-link-i "></i>
+                        <p>Deadlines</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{route('admin.consolidated-sics')}}" class="nav-link {{ Request::is('admin/consolidated-sics*') ? 'current-page' : '' }}">
                         <i class="ph{{ Request::is('admin/consolidated-sics*') ? '-fill' : '' }} ph-file-text nav-link-i "></i>
                         <p>Consolidated SICs</p>
