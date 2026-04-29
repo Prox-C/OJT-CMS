@@ -185,121 +185,6 @@
         </div>
     </div>
 
-
-    <!-- Pre-Deployment Requirements Table for Pending/Ready for Deployment Status -->
-    @if($intern->status === 'pending requirements' || $intern->status === 'ready for deployment')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="ph ph-clipboard-text custom-icons-i me-1"></i>
-                            Pre-Deployment Requirements
-                        </h5>
-                        <div class="card-tools">
-                            <span class="badge bg-{{ $intern->status === 'pending requirements' ? 'danger-subtle text-danger' : 'warning-subtle text-warning' }} py-2 px-3 rounded-pill">
-                                {{ ucfirst($intern->status) }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered mb-0">
-                            <thead class="thead-white bg-light">
-                                <tr>
-                                    <th width="45%" class="ps-3">Document Name</th>
-                                    <th width="">Description</th>
-                                    <th width="10%" class="text-center">Status</th>
-                                    <th width="10%" class="text-center" style="white-space: nowrap;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach(App\Models\InternDocument::typeLabels() as $type => $label)
-                                @php 
-                                    $document = $intern->documents->where('type', $type)->first();
-                                    $hasDocument = $document !== null;
-                                    // Only allow deletion for pending requirements and ready for deployment status
-                                    $canDelete = ($intern->status === 'pending requirements' || $intern->status === 'ready for deployment');
-                                @endphp
-                                <tr data-document-type="{{ $type }}" data-document-id="{{ $document->id ?? '' }}">
-                                    <td class="align-middle ps-3">{{ $label }}</td>
-                                    <td class="text-muted small align-middle">
-                                        @switch($type)
-                                            @case('requirements_checklist') Signed checklist of all required documents @break
-                                            @case('certificate_of_registration') Current semester registration certificate @break
-                                            @case('report_of_grades') Latest official transcript with OJT qualification @break
-                                            @case('application_resume') Formal application letter with updated resume @break
-                                            @case('medical_certificate') Health clearance from university clinic @break
-                                            @case('parent_consent') Notarized consent form from parent/guardian @break
-                                            @case('insurance_certificate') Proof of valid insurance coverage @break
-                                            @case('pre_deployment_certification') Certification of orientation attendance @break
-                                            @case('ojt_fee_reciept') Official receipt of paid internship fee @break
-                                        @endswitch
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        @if($hasDocument)
-                                            <span class="badge bg-success-subtle text-success py-2 px-3 rounded-4 w-100 status-badge">
-                                                <i class="ph ph-check-circle me-1"></i>Submitted
-                                            </span>
-                                            <br>
-                                            <small class="text-muted">{{ $document->created_at->format('Y-m-d') }}</small>
-                                        @else
-                                            <span class="badge bg-danger-subtle text-danger py-2 px-3 rounded-pill w-100 status-badge">
-                                                <i class="ph ph-x-circle me-1"></i>Missing
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center px-2 align-middle">
-                                        @if($hasDocument)
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-primary px-2 rounded-pill dropdown-toggle" type="button" id="actionDropdown{{ $document->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="ph-fill ph-gear custom-icons-i"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right shadow border-0 py-0" aria-labelledby="actionDropdown{{ $document->id }}">
-                                                <!-- View Option -->
-                                                <a class="dropdown-item d-flex align-items-center justify-content-start py-2 view-document-btn" 
-                                                href="#"
-                                                data-toggle="modal" 
-                                                data-target="#documentModal"
-                                                data-url="{{ asset('storage/' . $document->file_path) }}"
-                                                data-name="{{ $label }}"
-                                                data-download-url="{{ asset('storage/' . $document->file_path) }}"
-                                                data-original-name="{{ $document->original_name }}">
-                                                    <i class="ph ph-eye mr-2"></i>View
-                                                </a>
-                                                
-                                                <!-- Delete Option - Only show if status allows deletion -->
-                                                @if($canDelete)
-                                                <div class="dropdown-divider my-1"></div>
-                                                <a class="dropdown-item d-flex align-items-center justify-content-start py-2 text-danger delete-document-btn" 
-                                                href="#"
-                                                data-toggle="modal" 
-                                                data-target="#deleteDocumentModal"
-                                                data-document-id="{{ $document->id }}"
-                                                data-document-name="{{ $label }}">
-                                                    <i class="ph ph-trash mr-2"></i>Remove
-                                                </a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        @else
-                                            <span class="text-muted small">No file</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-
     <!-- Internship Progress, Reports & Evaluation Cards -->
     @if($intern->status === 'deployed' || $intern->status === 'completed')
     <div class="row">
@@ -491,6 +376,122 @@
         </div>
     </div>
     @endif
+
+
+    <!-- Pre-Deployment Requirements Table for Pending/Ready for Deployment Status -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="ph ph-clipboard-text custom-icons-i me-1"></i>
+                            Pre-Deployment Requirements
+                        </h5>
+                        <div class="card-tools">
+                            <span class="badge bg-{{ $intern->status === 'pending requirements' ? 'danger-subtle text-danger' : 'warning-subtle text-warning' }} py-2 px-3 rounded-pill">
+                                {{ ucfirst($intern->status) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered mb-0">
+                            <thead class="thead-white bg-light">
+                                <tr>
+                                    <th width="45%" class="ps-3">Document Name</th>
+                                    <th width="">Description</th>
+                                    <th width="10%" class="text-center">Status</th>
+                                    <th width="10%" class="text-center" style="white-space: nowrap;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(App\Models\InternDocument::typeLabels() as $type => $label)
+                                @php 
+                                    $document = $intern->documents->where('type', $type)->first();
+                                    $hasDocument = $document !== null;
+                                    // Only allow deletion for pending requirements and ready for deployment status
+                                    $canDelete = ($intern->status === 'pending requirements' || $intern->status === 'ready for deployment');
+                                @endphp
+                                <tr data-document-type="{{ $type }}" data-document-id="{{ $document->id ?? '' }}">
+                                    <td class="align-middle ps-3">{{ $label }}</td>
+                                    <td class="text-muted small align-middle">
+                                        @switch($type)
+                                            @case('requirements_checklist') Signed checklist of all required documents @break
+                                            @case('certificate_of_registration') Current semester registration certificate @break
+                                            @case('report_of_grades') Latest official transcript with OJT qualification @break
+                                            @case('application_resume') Formal application letter with updated resume @break
+                                            @case('medical_certificate') Health clearance from university clinic @break
+                                            @case('parent_consent') Notarized consent form from parent/guardian @break
+                                            @case('insurance_certificate') Proof of valid insurance coverage @break
+                                            @case('pre_deployment_certification') Certification of orientation attendance @break
+                                            @case('ojt_fee_reciept') Official receipt of paid internship fee @break
+                                        @endswitch
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        @if($hasDocument)
+                                            <span class="badge bg-success-subtle text-success py-2 px-3 rounded-4 w-100 status-badge">
+                                                <i class="ph ph-check-circle me-1"></i>Submitted
+                                            </span>
+                                            <br>
+                                            <small class="text-muted">{{ $document->created_at->format('Y-m-d') }}</small>
+                                        @else
+                                            <span class="badge bg-danger-subtle text-danger py-2 px-3 rounded-pill w-100 status-badge">
+                                                <i class="ph ph-x-circle me-1"></i>Missing
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center px-2 align-middle">
+                                        @if($hasDocument)
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-primary px-2 rounded-pill dropdown-toggle" type="button" id="actionDropdown{{ $document->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="ph-fill ph-gear custom-icons-i"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right shadow border-0 py-0" aria-labelledby="actionDropdown{{ $document->id }}">
+                                                <!-- View Option -->
+                                                <a class="dropdown-item d-flex align-items-center justify-content-start py-2 view-document-btn" 
+                                                href="#"
+                                                data-toggle="modal" 
+                                                data-target="#documentModal"
+                                                data-url="{{ asset('storage/' . $document->file_path) }}"
+                                                data-name="{{ $label }}"
+                                                data-download-url="{{ asset('storage/' . $document->file_path) }}"
+                                                data-original-name="{{ $document->original_name }}">
+                                                    <i class="ph ph-eye mr-2"></i>View
+                                                </a>
+                                                
+                                                <!-- Delete Option - Only show if status allows deletion -->
+                                                @if($canDelete)
+                                                <div class="dropdown-divider my-1"></div>
+                                                <a class="dropdown-item d-flex align-items-center justify-content-start py-2 text-danger delete-document-btn" 
+                                                href="#"
+                                                data-toggle="modal" 
+                                                data-target="#deleteDocumentModal"
+                                                data-document-id="{{ $document->id }}"
+                                                data-document-name="{{ $label }}">
+                                                    <i class="ph ph-trash mr-2"></i>Remove
+                                                </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @else
+                                            <span class="text-muted small">No file</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 
 <!-- Remove Modal -->
