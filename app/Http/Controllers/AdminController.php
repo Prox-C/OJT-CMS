@@ -441,13 +441,32 @@ public function deleteSkill($id)
     return redirect()->route('admin.skills')->with('success', 'Skill deleted successfully');
 }
 
-    public function coordinatorDocuments($id)
-    {
-        $coordinator = Coordinator::with(['user', 'department', 'documents'])->findOrFail($id);
-        $documents = $coordinator->documents;
-        
-        return view('admin.documents', compact('coordinator', 'documents'));
-    }
+public function coordinatorDocuments($id)
+{
+    $coordinator = Coordinator::with(['user', 'department', 'documents', 'evaluations'])->findOrFail($id);
+    $documents = $coordinator->documents;
+    
+    // Calculate average rating
+    $averageRating = $coordinator->evaluations()
+        ->where('status', 'submitted')
+        ->avg('average_rating');
+    
+    // Get total number of evaluations
+    $totalEvaluations = $coordinator->evaluations()
+        ->where('status', 'submitted')
+        ->count();
+    
+    // Get rating distribution
+    $ratingDistribution = [
+        'excellent' => $coordinator->evaluations()->where('average_rating', '>=', 4.5)->count(),
+        'good' => $coordinator->evaluations()->whereBetween('average_rating', [3.5, 4.49])->count(),
+        'average' => $coordinator->evaluations()->whereBetween('average_rating', [2.5, 3.49])->count(),
+        'poor' => $coordinator->evaluations()->whereBetween('average_rating', [1.5, 2.49])->count(),
+        'very_poor' => $coordinator->evaluations()->where('average_rating', '<', 1.5)->count(),
+    ];
+    
+    return view('admin.documents', compact('coordinator', 'documents', 'averageRating', 'totalEvaluations', 'ratingDistribution'));
+}
 
     public function updateCoordinatorStatus(Request $request, $id)
     {

@@ -10,12 +10,12 @@ class DeadlineSeeder extends Seeder
     public function run(): void
     {
         Deadline::create([
-            'name' => 'Intern Document Deadline',
+            'name' => 'Pre-deployment Requirements Deadline',
             'deadline' => null
         ]);
 
         Deadline::create([
-            'name' => 'Deployment Deadline',
+            'name' => 'Submission of Honorarium Requirements Deadline',
             'deadline' => null
         ]);
     }

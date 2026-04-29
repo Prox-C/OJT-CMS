@@ -5,29 +5,14 @@
 @section('title', 'Coordinator Documents')
 
 @section('content')
-<!-- <section class="content-header">
-  <div class="container-fluid px-3">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1 class="page-header">COORDINATOR DOCUMENTS</h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item fw-medium">Admin</li>
-          <li class="breadcrumb-item"><a href="{{ route('admin.coordinators') }}">Coordinators</a></li>
-          <li class="breadcrumb-item active text-muted">Documents</li>
-        </ol>
-      </div>
-    </div>
-  </div>
-</section> -->
 
 <section class="content">
   <div class="container-fluid">
-    <div class="row" style="min-height: 600px;">
-      <div class="col-md-4 d-flex flex-column justify-content-between">
-        <!-- Coordinator Info Card -->
-        <div class="card">
+    <!-- Three Cards in One Row -->
+    <div class="row mb-4">
+      <!-- Coordinator Info Card -->
+      <div class="col-md-4">
+        <div class="card h-100">
           <div class="card-header">
             <h5 class="card-title mb-0">Coordinator Information</h5>
           </div>
@@ -85,9 +70,108 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Status Card - Takes remaining space -->
-        <div class="card mt-1 flex-grow-1 mb-0">
+      <!-- Coordinator Rating Card -->
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="ph-star text-warning mr-1"></i>
+              Coordinator Rating
+            </h5>
+          </div>
+          <div class="card-body">
+            @if($totalEvaluations > 0)
+              <div class="text-center mb-3">
+                <div class="display-4 text-warning fw-bold mb-0">
+                  {{ number_format($averageRating, 1) }}
+                </div>
+                <div class="text-muted small">out of 5.0</div>
+                <div class="mt-2">
+                  @for($i = 1; $i <= 5; $i++)
+                    @if($i <= round($averageRating))
+                      <i class="ph-star-fill text-warning"></i>
+                    @elseif($i - 0.5 <= $averageRating)
+                      <i class="ph-star-half text-warning"></i>
+                    @else
+                      <i class="ph-star text-warning"></i>
+                    @endif
+                  @endfor
+                </div>
+                <div class="mt-2">
+                  <span class="badge bg-primary">
+                    {{ $totalEvaluations }} {{ Str::plural('Evaluation', $totalEvaluations) }}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Rating Breakdown -->
+              <div class="border-top pt-3">
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>Excellent (4.5 - 5.0)</span>
+                    <span>{{ $ratingDistribution['excellent'] }}</span>
+                  </div>
+                  <div class="progress" style="height: 5px;">
+                    <div class="progress-bar bg-success" style="width: {{ ($ratingDistribution['excellent'] / max($totalEvaluations, 1)) * 100 }}%"></div>
+                  </div>
+                </div>
+                
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>Good (3.5 - 4.4)</span>
+                    <span>{{ $ratingDistribution['good'] }}</span>
+                  </div>
+                  <div class="progress" style="height: 5px;">
+                    <div class="progress-bar bg-info" style="width: {{ ($ratingDistribution['good'] / max($totalEvaluations, 1)) * 100 }}%"></div>
+                  </div>
+                </div>
+                
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>Average (2.5 - 3.4)</span>
+                    <span>{{ $ratingDistribution['average'] }}</span>
+                  </div>
+                  <div class="progress" style="height: 5px;">
+                    <div class="progress-bar bg-warning" style="width: {{ ($ratingDistribution['average'] / max($totalEvaluations, 1)) * 100 }}%"></div>
+                  </div>
+                </div>
+                
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>Poor (1.5 - 2.4)</span>
+                    <span>{{ $ratingDistribution['poor'] }}</span>
+                  </div>
+                  <div class="progress" style="height: 5px;">
+                    <div class="progress-bar bg-danger" style="width: {{ ($ratingDistribution['poor'] / max($totalEvaluations, 1)) * 100 }}%"></div>
+                  </div>
+                </div>
+                
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>Very Poor (1.0 - 1.4)</span>
+                    <span>{{ $ratingDistribution['very_poor'] }}</span>
+                  </div>
+                  <div class="progress" style="height: 5px;">
+                    <div class="progress-bar bg-dark" style="width: {{ ($ratingDistribution['very_poor'] / max($totalEvaluations, 1)) * 100 }}%"></div>
+                  </div>
+                </div>
+              </div>
+            @else
+              <div class="text-center py-4">
+                <i class="ph-star text-muted fs-1 mb-2 d-block"></i>
+                <p class="text-muted mb-0">No evaluations yet</p>
+                <small class="text-muted">Ratings will appear once interns submit their evaluations</small>
+              </div>
+            @endif
+          </div>
+        </div>
+      </div>
+
+      <!-- Honorarium Status Card -->
+      <div class="col-md-4">
+        <div class="card h-100">
           <div class="card-header">
             <h5 class="card-title mb-0">Honorarium Status</h5>
           </div>
@@ -119,7 +203,7 @@
               @elseif($coordinator->status === 'eligible for claim')
                 <button class="btn btn-block bg-success mb-0" disabled>
                   <i class="ph-fill ph-seal-check custom-icons-i mr-2"></i>Documents approved
-              </button>
+                </button>
               @elseif($coordinator->status === 'claimed')
                 <div class="alert alert-secondary mb-0">
                   <i class="ph ph-currency-circle-dollar mr-2"></i>Honorarium has been claimed
@@ -127,24 +211,26 @@
               @else
                 <button class="btn btn-block bg-secondary mb-0 border-0" disabled>
                   <i class="ph ph-clock mr-2"></i>Waiting for all documents to be submitted
-              </button>
+                </button>
               @endif
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="col-md-8">
-        <!-- Documents Card - Full height -->
-        <div class="card h-100">
+    <!-- Documents Table Row -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Required Documents</h5>
             <span class="badge ml-auto {{ $documents->count() >= 6 ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-danger' }}">
               {{ $documents->count() }}/6 Submitted
             </span>
           </div>
-          <div class="card-body p-0 d-flex flex-column">
-            <div class="table-responsive flex-grow-1">
+          <div class="card-body p-0">
+            <div class="table-responsive">
               <table class="table table-bordered mb-0">
                 <thead class="table-light">
                   <tr>
@@ -165,7 +251,7 @@
                             @switch($type)
                               @case('consolidated_moas') Consolidated and notarized Memorandum of Agreements for all interns @break
                               @case('consolidated_sics') Consolidated and notarized Student Internship Contracts @break
-                              @case('annex_cmo104') ANEXX CMO104 Series of 2017 compliance document @break
+                              @case('annex_c') ANEXX CMO104 Series of 2017 compliance document @break
                               @case('honorarium_request') Official honorarium request form from the President's office @break
                               @case('special_order') Special Order issued by the President @break
                               @case('board_resolution') Board Resolution approving the honorarium @break
@@ -221,7 +307,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="card-footer mt-auto">
+            <div class="card-footer">
               <div class="row">
                 <div class="col-md-6">
                   <small class="text-muted">
@@ -266,75 +352,75 @@
   </div>
 </div>
 
-    @include('layouts.partials.scripts-main')
+@include('layouts.partials.scripts-main')
 
-    <!-- ADMIN: Coordinator Documents Management -->
-    <script>
-    $(document).ready(function() {
-        // View document
-        $('.view-document').click(function() {
-            const url = $(this).data('url');
-            const label = $(this).data('label');
-            
-            $('#documentTitle').text(label);
-            $('#documentFrame').attr('src', url);
-            $('#downloadLink').attr('href', url);
-            $('#documentModal').modal('show');
-        });
+<!-- ADMIN: Coordinator Documents Management -->
+<script>
+$(document).ready(function() {
+    // View document
+    $('.view-document').click(function() {
+        const url = $(this).data('url');
+        const label = $(this).data('label');
+        
+        $('#documentTitle').text(label);
+        $('#documentFrame').attr('src', url);
+        $('#downloadLink').attr('href', url);
+        $('#documentModal').modal('show');
+    });
 
-        // Approve documents
-        $('#approveBtn').click(function() {
-            if (confirm('Are you sure you want to approve all documents and mark this coordinator as eligible for claim?')) {
-                updateStatus('eligible for claim');
+    // Approve documents
+    $('#approveBtn').click(function() {
+        if (confirm('Are you sure you want to approve all documents and mark this coordinator as eligible for claim?')) {
+            updateStatus('eligible for claim');
+        }
+    });
+
+    function updateStatus(newStatus) {
+        const button = $(event.target);
+        const originalText = button.html();
+        
+        button.prop('disabled', true).html('<i class="ph ph-circle-notch ph-spin mr-2"></i>Processing...');
+        
+        $.ajax({
+            url: '{{ route("admin.coordinators.update-status", $coordinator->id) }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                status: newStatus
+            },
+            success: function(response) {
+                if (response.success) {
+                    toastr.success(response.message, 'Success');
+                    
+                    // Update UI
+                    $('.badge.bg-warning, .badge.bg-info, .badge.bg-success, .badge.bg-secondary')
+                        .removeClass('bg-warning bg-info bg-success bg-secondary')
+                        .addClass(response.new_status === 'eligible for claim' ? 'bg-success' : 'bg-info')
+                        .text(response.display_status);
+                    
+                    // Reload page to show updated buttons
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            },
+            error: function(xhr) {
+                button.prop('disabled', false).html(originalText);
+                
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    toastr.error(xhr.responseJSON.message, 'Error');
+                } else {
+                    toastr.error('An error occurred while updating status', 'Error');
+                }
             }
         });
+    }
 
-        function updateStatus(newStatus) {
-            const button = $(event.target);
-            const originalText = button.html();
-            
-            button.prop('disabled', true).html('<i class="ph ph-circle-notch ph-spin mr-2"></i>Processing...');
-            
-            $.ajax({
-                url: '{{ route("admin.coordinators.update-status", $coordinator->id) }}',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    status: newStatus
-                },
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message, 'Success');
-                        
-                        // Update UI
-                        $('.badge.bg-warning, .badge.bg-info, .badge.bg-success, .badge.bg-secondary')
-                            .removeClass('bg-warning bg-info bg-success bg-secondary')
-                            .addClass(response.new_status === 'eligible for claim' ? 'bg-success' : 'bg-info')
-                            .text(response.display_status);
-                        
-                        // Reload page to show updated buttons
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    }
-                },
-                error: function(xhr) {
-                    button.prop('disabled', false).html(originalText);
-                    
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        toastr.error(xhr.responseJSON.message, 'Error');
-                    } else {
-                        toastr.error('An error occurred while updating status', 'Error');
-                    }
-                }
-            });
-        }
-
-        // Handle modal iframes - clean up when modal is closed
-        $('#documentModal').on('hidden.bs.modal', function() {
-            $('#documentFrame').attr('src', '');
-        });
+    // Handle modal iframes - clean up when modal is closed
+    $('#documentModal').on('hidden.bs.modal', function() {
+        $('#documentFrame').attr('src', '');
     });
-    </script>
+});
+</script>
 
 @endsection
