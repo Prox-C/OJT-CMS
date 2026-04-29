@@ -25,6 +25,38 @@
 
 <section class="content">
     <div class="container-fluid">
+        @php
+            use App\Models\Deadline;
+            $honorariumDeadline = Deadline::find(2); // Deadline ID 2 for honorarium requirements
+            $coordinatorStatus = $coordinator->status ?? null;
+        @endphp
+
+        @if($honorariumDeadline && $honorariumDeadline->deadline && ($coordinatorStatus === 'pending documents' || $coordinatorStatus === 'for validation'))
+            <div class="alert alert-info alert-dismissible fade show mb-4" role="alert" id="deadlineAlert">
+                <div class="d-flex align-items-center">
+                    <i class="ph ph-calendar-clock fs-3 me-3"></i>
+                    <div>
+                        <strong>Honorarium Requirements Submission Reminder</strong><br>
+                        Please submit all required documents on or before: <strong>{{ \Carbon\Carbon::parse($honorariumDeadline->deadline)->format('F d, Y') }}</strong>
+                        @php
+                            $daysRemaining = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($honorariumDeadline->deadline), false);
+                        @endphp
+                        @if($daysRemaining <= 3 && $daysRemaining > 0 && !\Carbon\Carbon::parse($honorariumDeadline->deadline)->isPast())
+                            <span class="badge bg-warning text-dark ms-2">
+                                {{ $daysRemaining }} day{{ $daysRemaining != 1 ? 's' : '' }} remaining
+                            </span>
+                        @endif
+                        @if(\Carbon\Carbon::parse($honorariumDeadline->deadline)->isPast())
+                            <span class="badge bg-danger ms-2">Overdue</span>
+                        @endif
+                    </div>
+                </div>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+
         <div class="card shadow-sm">
             <div class="card-body">                
                 <!-- Status and Document Counter -->
@@ -247,6 +279,17 @@
     <!-- Coordinator: Documents Management -->
     <script>
     $(document).ready(function() {
+        // Check localStorage for alert dismissal
+        const alertDismissed = localStorage.getItem('deadlineAlertDismissed');
+        if (alertDismissed === 'true') {
+            $('#deadlineAlert').hide();
+        }
+
+        // Handle alert dismiss
+        $('#deadlineAlert .close').on('click', function() {
+            localStorage.setItem('deadlineAlertDismissed', 'true');
+        });
+
         // Upload document modal
         $('.upload-document').click(function() {
             const type = $(this).data('type');
