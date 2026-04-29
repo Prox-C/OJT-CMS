@@ -73,6 +73,13 @@
             </a>
           </li>
 
+          <!-- <li class="nav-item">
+            <a href="{{route('intern.attendances')}}" class="nav-link {{ Request::is('intern/attendances*') ? 'current-page' : '' }}">
+              <i class="ph{{ Request::is('intern/attendances') ? '-fill' : '' }} ph-calendar-dots nav-link-i"></i>
+              <p>Evaluation</p>
+            </a>
+          </li> -->
+
 
 
         </ul>
