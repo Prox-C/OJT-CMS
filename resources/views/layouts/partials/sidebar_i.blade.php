@@ -1,5 +1,5 @@
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a class="brand-link">
       <img src="{{ asset('assets/images/EVSU_Official_Logo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
@@ -73,14 +73,31 @@
             </a>
           </li>
 
-          <!-- <li class="nav-item">
-            <a href="{{route('intern.attendances')}}" class="nav-link {{ Request::is('intern/attendances*') ? 'current-page' : '' }}">
-              <i class="ph{{ Request::is('intern/attendances') ? '-fill' : '' }} ph-calendar-dots nav-link-i"></i>
-              <p>Evaluation</p>
+          <!-- Coordinator Evaluation Link - Only show for completed interns who haven't evaluated yet -->
+          @php
+            $intern = auth()->user()->intern ?? null;
+            $hasCompletedInternship = $intern && $intern->completed_internship;
+            $hasNotEvaluated = $intern && !$intern->coordinatorEvaluation;
+          @endphp
+          
+          @if($hasCompletedInternship && $hasNotEvaluated)
+          <li class="nav-item">
+            <a href="{{ route('coordinator-evaluation.index') }}" class="nav-link {{ Request::is('intern/coordinator-evaluation*') ? 'current-page' : '' }}">
+              <i class="ph{{ Request::is('intern/coordinator-evaluation*') ? '-fill' : '' }} ph-star nav-link-i"></i>
+              <p>Evaluate Coordinator</p>
             </a>
-          </li> -->
-
-
+          </li>
+          @endif
+          
+          <!-- Show View Evaluation link if already evaluated -->
+          @if($hasCompletedInternship && !$hasNotEvaluated && $intern && $intern->coordinatorEvaluation)
+          <li class="nav-item">
+            <a href="{{ route('coordinator-evaluation.view', $intern->coordinatorEvaluation->id) }}" class="nav-link {{ Request::is('intern/coordinator-evaluation*') ? 'current-page' : '' }}">
+              <i class="ph{{ Request::is('intern/coordinator-evaluation*') ? '-fill' : '' }} ph-star nav-link-i"></i>
+              <p>Evaluate Coordinator</p>
+            </a>
+          </li>
+          @endif
 
         </ul>
       </nav>

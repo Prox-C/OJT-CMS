@@ -68,5 +68,28 @@ class Intern extends Model
     { 
         return $this->hasMany(WeeklyReport::class, 'intern_id');
     }
+
+    public function coordinatorEvaluation()
+{
+    return $this->hasOne(CoordinatorEvaluation::class, 'intern_id');
+}
+
+public function canEvaluateCoordinator()
+{
+    // Check if intern has completed their internship
+    $internHte = $this->internsHte()->where('status', 'completed')->first();
+    
+    return $internHte && !$this->coordinatorEvaluation;
+}
+
+public function getCompletedInternshipAttribute()
+{
+    return $this->internsHte()->where('status', 'completed')->exists();
+}
+
+public function internsHte()
+{
+    return $this->hasMany(InternsHte::class, 'intern_id');
+}
 }
 

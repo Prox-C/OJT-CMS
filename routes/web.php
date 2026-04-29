@@ -168,6 +168,12 @@ Route::middleware(['auth:web', 'intern'])->prefix('intern')->group(function() {
     Route::delete('/journal/delete/{id}', [InternController::class, 'deleteWeeklyReport'])->name('intern.weekly-reports.delete');
 
     Route::get('/attendances', [InternController::class, 'attendances'])->name('intern.attendances');
+
+    // Coordinator Evaluation Routes
+    Route::get('/coordinator-evaluation', [InternController::class, 'coordinatorEvaluation'])->name('coordinator-evaluation.index');
+    Route::post('/coordinator-evaluation/store', [InternController::class, 'storeCoordinatorEvaluation'])->name('coordinator-evaluation.store');
+    Route::get('/coordinator-evaluation/{id}', [InternController::class, 'viewCoordinatorEvaluation'])->name('coordinator-evaluation.view');
+
 });
 
 // Protected HTE routes

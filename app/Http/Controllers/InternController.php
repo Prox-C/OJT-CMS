@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Skill;
-use App\Models\Intern;
 use App\Models\Attendance;
+use App\Models\CoordinatorEvaluation;
+use App\Models\Intern;
+use App\Models\InternDocument;
 use App\Models\InternsHte;
+use App\Models\Skill;
+use App\Models\User;
 use App\Models\WeeklyReport;
 use Illuminate\Http\Request;
-use App\Models\InternDocument;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class InternController extends Controller
@@ -849,5 +850,146 @@ public function attendances()
         'progressPercentage',
         'internship'
     ));
+}
+
+public function coordinatorEvaluation()
+{
+    $user = Auth::user();
+    $intern = $user->intern;
+    
+    // Check if intern exists
+    if (!$intern) {
+        abort(403, 'Intern profile not found');
+    }
+    
+    // Check if already evaluated FIRST
+    $existingEvaluation = $intern->coordinatorEvaluation;
+    
+    if ($existingEvaluation) {
+        return redirect()->route('coordinator-evaluation.view', $existingEvaluation->id);
+    }
+    
+    // Check if intern has completed internship
+    $completedHtes = $intern->internsHte()
+        ->where('status', 'completed')
+        ->with('hte')
+        ->get();
+    
+    if ($completedHtes->isEmpty()) {
+        return redirect()->route('intern.dashboard')
+            ->with('error', 'You can only evaluate your coordinator after completing your internship.');
+    }
+    
+    // Get coordinator info
+    $coordinator = $intern->coordinator;
+    $completedHte = $completedHtes->first(); // Get the first completed HTE
+    
+    return view('student.coordinator-evaluation', [  // Changed to match your folder
+        'intern' => $intern,
+        'coordinator' => $coordinator,
+        'hte' => $completedHte,
+        'criteriaLabels' => CoordinatorEvaluation::getCriteriaLabels(),
+        'ratingLabels' => CoordinatorEvaluation::getRatingLabels(),
+    ]);
+}
+
+/**
+ * Store coordinator evaluation
+ */
+public function storeCoordinatorEvaluation(Request $request)
+{
+    $user = Auth::user();
+    $intern = $user->intern;
+    
+    // Check if already evaluated FIRST
+    if ($intern->coordinatorEvaluation) {
+        return redirect()->route('coordinator-evaluation.index')
+            ->with('error', 'You have already submitted an evaluation.');
+    }
+    
+    // Validate intern status
+    if (!$intern || !$intern->completed_internship) {
+        return redirect()->back()->with('error', 'You can only evaluate after completing your internship.');
+    }
+    
+    $validated = $request->validate([
+        'communication' => 'required|numeric|min:1|max:5',
+        'responsiveness' => 'required|numeric|min:1|max:5',
+        'support' => 'required|numeric|min:1|max:5',
+        'guidance' => 'required|numeric|min:1|max:5',
+        'fairness' => 'required|numeric|min:1|max:5',
+        'professionalism' => 'required|numeric|min:1|max:5',
+        'timeliness' => 'required|numeric|min:1|max:5',
+        'clarity' => 'required|numeric|min:1|max:5',
+        'comments' => 'nullable|string|max:1000',
+        'suggestions' => 'nullable|string|max:1000',
+    ]);
+    
+    // Calculate average rating
+    $criteria = [
+        $validated['communication'],
+        $validated['responsiveness'],
+        $validated['support'],
+        $validated['guidance'],
+        $validated['fairness'],
+        $validated['professionalism'],
+        $validated['timeliness'],
+        $validated['clarity'],
+    ];
+    
+    $averageRating = array_sum($criteria) / count($criteria);
+    
+    // Get completed HTE
+    $completedHte = $intern->internsHte()->where('status', 'completed')->first();
+    
+    DB::beginTransaction();
+    try {
+        $evaluation = CoordinatorEvaluation::create([
+            'intern_id' => $intern->id,
+            'coordinator_id' => $intern->coordinator_id,
+            'hte_id' => $completedHte->hte_id ?? null,
+            'communication' => $validated['communication'],
+            'responsiveness' => $validated['responsiveness'],
+            'support' => $validated['support'],
+            'guidance' => $validated['guidance'],
+            'fairness' => $validated['fairness'],
+            'professionalism' => $validated['professionalism'],
+            'timeliness' => $validated['timeliness'],
+            'clarity' => $validated['clarity'],
+            'average_rating' => round($averageRating, 2),
+            'comments' => $validated['comments'],
+            'suggestions' => $validated['suggestions'],
+            'status' => 'submitted',
+            'evaluated_at' => now(),
+        ]);
+        
+        DB::commit();
+        
+        return redirect()->route('coordinator-evaluation.view', $evaluation->id)
+            ->with('success', 'Thank you for your feedback! Your evaluation has been submitted successfully.');
+            
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Failed to submit evaluation. Please try again.');
+    }
+}
+
+/**
+ * View coordinator evaluation
+ */
+public function viewCoordinatorEvaluation($id)
+{
+    $user = Auth::user();
+    $intern = $user->intern;
+    
+    $evaluation = CoordinatorEvaluation::where('intern_id', $intern->id)
+        ->findOrFail($id);
+    
+    return view('student.coordinator-evaluation-view', [  // Changed to your view name
+        'evaluation' => $evaluation,
+        'intern' => $intern,
+        'criteriaLabels' => CoordinatorEvaluation::getCriteriaLabels(),
+        'ratingLabels' => CoordinatorEvaluation::getRatingLabels(),
+    ]);
 }
 }

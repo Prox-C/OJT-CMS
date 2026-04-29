@@ -116,4 +116,16 @@ class Coordinator extends Model
             $this->update(['status' => 'pending documents']);
         }
     }
+
+    // In app/Models/Coordinator.php - Add this relationship
+
+public function evaluations()
+{
+    return $this->hasMany(CoordinatorEvaluation::class, 'coordinator_id');
+}
+
+public function averageRating()
+{
+    return $this->evaluations()->where('status', 'submitted')->avg('average_rating');
+}
 }
